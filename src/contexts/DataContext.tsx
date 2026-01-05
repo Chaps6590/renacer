@@ -125,8 +125,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     setAsistencias([...asistencias, asistencia]);
     // TODO: Llamar a API
   };
-updateMiembroRol,
-    
+
   const getCelulaById = (id: string) => {
     return celulas.find(c => c.id === id);
   };
@@ -141,6 +140,7 @@ updateMiembroRol,
     removeMiembroFromCelula,
     addColiderToCelula,
     removeColiderFromCelula,
+    updateMiembroRol,
     registrarAsistencia,
     getCelulaById,
   };

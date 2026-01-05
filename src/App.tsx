@@ -6,7 +6,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './components/auth/Login';
 import { Register } from './components/auth/Register';
 import { PastorDashboard } from './components/pastor/PastorDashboard';
-import { LiderDashboard } from './components/lider/LiderDashboard';
+import LiderDashboard from './components/lider/LiderDashboard';
 
 const Dashboard: React.FC = () => {
   // Este componente redirige según el rol del usuario
