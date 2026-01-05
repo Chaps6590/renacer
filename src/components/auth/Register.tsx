@@ -81,12 +81,21 @@ export const Register: React.FC = () => {
           <div className="bg-primary-600 p-4 rounded-full mb-4">
             <Church className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800">Registro de Líder</h1>
-          <p className="text-gray-600 mt-2">Completa tu registro</p>
+          <h1 className="text-3xl font-bold text-gray-800">Registro de Líderes</h1>
+          <p className="text-gray-600 mt-2 text-center">
+            Registro exclusivo para que cada líder pueda acceder a la aplicación
+          </p>
         </div>
 
         {step === 'search' && (
           <div className="space-y-6">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-blue-800 text-center">
+                <strong>Bienvenido Líder:</strong> Busca tu nombre para activar tu acceso a la aplicación. 
+                Tu pastor ya te ha registrado en el sistema.
+              </p>
+            </div>
+            
             <div>
               <label htmlFor="searchName" className="block text-sm font-medium text-gray-700 mb-2">
                 Busca tu nombre
