@@ -359,7 +359,9 @@ const LiderDashboard: React.FC = () => {
                                 Cambiar
                               </button>
                             ) : (
-                              <span className="text-gray-400 text-xs">N/A</span>
+                              <span className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 rounded-lg">
+                                Protegido
+                              </span>
                             )}
                           </td>
                           
@@ -375,7 +377,9 @@ const LiderDashboard: React.FC = () => {
                                 Eliminar
                               </button>
                             ) : (
-                              <span className="text-gray-400 text-xs">N/A</span>
+                              <span className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 rounded-lg">
+                                Protegido
+                              </span>
                             )}
                           </td>
                         </>
