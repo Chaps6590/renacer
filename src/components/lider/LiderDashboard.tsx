@@ -3,7 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useData } from '../../contexts/DataContext';
 import { Navbar } from '../layout/Navbar';
 import { AsistenciaModal } from './AsistenciaModal';
-import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, MoreVertical, X } from 'lucide-react';
+import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit } from 'lucide-react';
 import type { RolCelula } from '../../types';
 
 interface AddMiembroModalProps {

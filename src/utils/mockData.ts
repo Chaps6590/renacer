@@ -50,6 +50,7 @@ export const mockCelulas: Celula[] = [
         phone: '123456789',
         email: 'maria@example.com',
         addedAt: new Date('2024-01-10'),
+        rolCelula: 'miembro',
       },
       {
         id: 'm2',
@@ -57,6 +58,7 @@ export const mockCelulas: Celula[] = [
         phone: '987654321',
         email: 'pedro@example.com',
         addedAt: new Date('2024-01-12'),
+        rolCelula: 'miembro',
       },
       {
         id: 'm3',
@@ -64,6 +66,7 @@ export const mockCelulas: Celula[] = [
         phone: '456789123',
         email: 'laura@example.com',
         addedAt: new Date('2024-01-20'),
+        rolCelula: 'miembro',
       },
     ],
     createdAt: new Date('2024-01-01'),
@@ -81,6 +84,7 @@ export const mockCelulas: Celula[] = [
         phone: '789456123',
         email: 'carlos@example.com',
         addedAt: new Date('2024-02-01'),
+        rolCelula: 'miembro',
       },
       {
         id: 'm5',
@@ -88,6 +92,7 @@ export const mockCelulas: Celula[] = [
         phone: '321654987',
         email: 'sofia@example.com',
         addedAt: new Date('2024-02-05'),
+        rolCelula: 'miembro',
       },
     ],
     createdAt: new Date('2024-02-01'),
@@ -98,7 +103,7 @@ export const mockCelulas: Celula[] = [
 export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Mock de login
-export const mockLogin = async (email: string, password: string) => {
+export const mockLogin = async (email: string, _password: string) => {
   await delay(500);
   
   const user = mockUsers.find(u => u.email === email);

@@ -4,7 +4,6 @@ import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Check, X, Save } from 'lucide-react';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 
 interface AsistenciaModalProps {
   celula: Celula;

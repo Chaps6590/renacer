@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useData } from '../../contexts/DataContext';
-import { useAuth } from '../../contexts/AuthContext';
 import { Users, BarChart3, UserPlus, Download, TrendingUp } from 'lucide-react';
 import { Navbar } from '../layout/Navbar';
 import jsPDF from 'jspdf';

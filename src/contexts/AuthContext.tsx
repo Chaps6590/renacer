@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, UserRole } from '../types';
+import { User } from '../types';
 
 interface AuthContextType {
   user: User | null;
@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, _password: string) => {
     setIsLoading(true);
     try {
       // TODO: Reemplazar con llamada a API real
@@ -89,12 +89,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // TODO: Reemplazar con llamada a API real
       await new Promise(resolve => setTimeout(resolve, 500));
       
+      // Destructure password to mark it as used (even though we don't use it in mock)
+      const { password, ...userDataWithoutPassword } = userData;
+      
       const newUser: User = {
         id: Date.now().toString(),
-        name: userData.name || '',
-        email: userData.email || '',
-        role: userData.role || 'lider',
-        celulaId: userData.celulaId,
+        name: userDataWithoutPassword.name || '',
+        email: userDataWithoutPassword.email || '',
+        role: userDataWithoutPassword.role || 'lider',
+        celulaId: userDataWithoutPassword.celulaId,
         isRegistered: true,
       };
       
