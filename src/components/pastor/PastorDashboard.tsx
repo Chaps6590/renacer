@@ -1,29 +1,96 @@
 import React, { useState } from 'react';
 import { useData } from '../../contexts/DataContext';
-import { Users, BarChart3, UserPlus, Download, TrendingUp } from 'lucide-react';
+import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, CheckCircle2, XCircle } from 'lucide-react';
 import { Navbar } from '../layout/Navbar';
+import { User } from '../../types';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+interface Lider extends User {
+  celulaAsignada?: string;
+  nombreCelula?: string;
+}
+
 export const PastorDashboard: React.FC = () => {
   const { celulas, asistencias } = useData();
+  const [view, setView] = useState<'dashboard' | 'lideres' | 'celulas'>('dashboard');
+  
+  // Estado para líderes
+  const [lideres, setLideres] = useState<Lider[]>([
+    { id: '3', name: 'Juan Pérez', email: 'juan@renacer.com', role: 'lider', celulaId: '1', celulaAsignada: '1', nombreCelula: 'Célula Jóvenes', isRegistered: true },
+    { id: '4', name: 'María González', email: 'maria@renacer.com', role: 'lider', celulaId: '2', celulaAsignada: '2', nombreCelula: 'Célula Familias', isRegistered: true },
+  ]);
   const [showAddLider, setShowAddLider] = useState(false);
   const [newLider, setNewLider] = useState({ name: '', email: '' });
+  
+  // Estado para células
+  const [showAddCelula, setShowAddCelula] = useState(false);
+  const [showAssignLider, setShowAssignLider] = useState(false);
+  const [selectedCelula, setSelectedCelula] = useState<string>('');
+  const [newCelula, setNewCelula] = useState({ name: '', liderId: '' });
+  
   const [timeframe, setTimeframe] = useState<'semanal' | 'mensual' | 'anual'>('semanal');
 
+  // Función para agregar líder
   const handleAddLider = () => {
-    // TODO: Llamar a API para crear líder precargado
-    console.log('Crear líder:', newLider);
+    if (!newLider.name.trim()) return;
+    
+    const nuevoLider: Lider = {
+      id: Date.now().toString(),
+      name: newLider.name,
+      email: newLider.email || `${newLider.name.toLowerCase().replace(/\s+/g, '.')}@renacer.com`,
+      role: 'lider',
+      isRegistered: false,
+    };
+    
+    setLideres([...lideres, nuevoLider]);
     setNewLider({ name: '', email: '' });
     setShowAddLider(false);
   };
+
+  // Función para crear célula
+  const handleAddCelula = () => {
+    if (!newCelula.name.trim() || !newCelula.liderId) return;
+    
+    // Aquí se crearía la célula en el backend
+    console.log('Crear célula:', newCelula);
+    
+    // Actualizar líder con la célula asignada
+    setLideres(lideres.map(l => 
+      l.id === newCelula.liderId 
+        ? { ...l, celulaAsignada: Date.now().toString(), nombreCelula: newCelula.name }
+        : l
+    ));
+    
+    setNewCelula({ name: '', liderId: '' });
+    setShowAddCelula(false);
+  };
+
+  // Función para asignar líder a célula existente
+  const handleAssignLider = (liderId: string) => {
+    if (!selectedCelula || !liderId) return;
+    
+    const celula = celulas.find(c => c.id === selectedCelula);
+    if (!celula) return;
+    
+    setLideres(lideres.map(l => 
+      l.id === liderId 
+        ? { ...l, celulaId: selectedCelula, celulaAsignada: selectedCelula, nombreCelula: celula.name }
+        : l
+    ));
+    
+    setSelectedCelula('');
+    setShowAssignLider(false);
+  };
+
+  // Obtener líderes sin célula
+  const lideresDisponibles = lideres.filter(l => !l.celulaAsignada);
 
   const getEstadisticas = () => {
     return celulas.map(celula => {
       const celasAsistencias = asistencias.filter(a => a.celulaId === celula.id);
       const totalMiembros = celula.miembros.length;
       
-      // Calcular promedio de asistencia
       const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
       const promedioAsistencia = celasAsistencias.length > 0 
         ? Math.round((totalPresentes / celasAsistencias.length / totalMiembros) * 100)
@@ -67,7 +134,6 @@ export const PastorDashboard: React.FC = () => {
       headStyles: { fillColor: [14, 165, 233] },
     });
 
-    // Resumen
     const totalMiembros = estadisticas.reduce((sum, e) => sum + e.totalMiembros, 0);
     const promedioGeneral = Math.round(
       estadisticas.reduce((sum, e) => sum + e.promedioAsistencia, 0) / estadisticas.length
@@ -92,84 +158,343 @@ export const PastorDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">Dashboard del Pastor</h2>
-          <p className="text-gray-600">Vista general de todas las células</p>
+          <p className="text-gray-600">Gestión de células y líderes</p>
         </div>
 
-        {/* Estadísticas Generales */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="card bg-gradient-to-br from-primary-500 to-primary-600 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-primary-100 text-sm mb-1">Total Células</p>
-                <p className="text-4xl font-bold">{celulas.length}</p>
-              </div>
-              <Users className="w-12 h-12 text-primary-200" />
-            </div>
-          </div>
-
-          <div className="card bg-gradient-to-br from-green-500 to-green-600 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-green-100 text-sm mb-1">Total Miembros</p>
-                <p className="text-4xl font-bold">{totalMiembros}</p>
-              </div>
-              <TrendingUp className="w-12 h-12 text-green-200" />
-            </div>
-          </div>
-
-          <div className="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-purple-100 text-sm mb-1">Líderes Activos</p>
-                <p className="text-4xl font-bold">{celulas.length}</p>
-              </div>
-              <BarChart3 className="w-12 h-12 text-purple-200" />
-            </div>
-          </div>
-        </div>
-
-        {/* Controles */}
-        <div className="flex flex-wrap gap-4 mb-6">
+        {/* Navegación de vistas */}
+        <div className="flex gap-2 mb-6 border-b border-gray-200">
           <button
-            onClick={() => setShowAddLider(true)}
-            className="btn btn-primary flex items-center gap-2"
+            onClick={() => setView('dashboard')}
+            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
+              view === 'dashboard' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-600 hover:text-gray-800'
+            }`}
           >
-            <UserPlus className="w-5 h-5" />
-            Agregar Líder
+            Dashboard
           </button>
-
-          <div className="flex gap-2 items-center">
-            <label className="text-sm font-medium text-gray-700">Período:</label>
-            <select
-              value={timeframe}
-              onChange={(e) => setTimeframe(e.target.value as any)}
-              className="input py-2"
-            >
-              <option value="semanal">Semanal</option>
-              <option value="mensual">Mensual</option>
-              <option value="anual">Anual</option>
-            </select>
-          </div>
-
           <button
-            onClick={exportToPDF}
-            className="btn btn-secondary flex items-center gap-2 ml-auto"
+            onClick={() => setView('lideres')}
+            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
+              view === 'lideres' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-600 hover:text-gray-800'
+            }`}
           >
-            <Download className="w-5 h-5" />
-            Descargar PDF
+            Líderes
+          </button>
+          <button
+            onClick={() => setView('celulas')}
+            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
+              view === 'celulas' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Células
           </button>
         </div>
 
-        {/* Modal para agregar líder */}
+        {/* Vista Dashboard */}
+        {view === 'dashboard' && (
+          <>
+            {/* Estadísticas Generales */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="card bg-gradient-to-br from-primary-500 to-primary-600 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-primary-100 text-sm mb-1">Total Células</p>
+                    <p className="text-4xl font-bold">{celulas.length}</p>
+                  </div>
+                  <Users className="w-12 h-12 text-primary-200" />
+                </div>
+              </div>
+
+              <div className="card bg-gradient-to-br from-green-500 to-green-600 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-green-100 text-sm mb-1">Total Miembros</p>
+                    <p className="text-4xl font-bold">{totalMiembros}</p>
+                  </div>
+                  <TrendingUp className="w-12 h-12 text-green-200" />
+                </div>
+              </div>
+
+              <div className="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-purple-100 text-sm mb-1">Líderes Activos</p>
+                    <p className="text-4xl font-bold">{lideres.filter(l => l.celulaAsignada).length}</p>
+                  </div>
+                  <BarChart3 className="w-12 h-12 text-purple-200" />
+                </div>
+              </div>
+            </div>
+
+            {/* Controles */}
+            <div className="flex flex-wrap gap-4 mb-6">
+              <div className="flex gap-2 items-center">
+                <label className="text-sm font-medium text-gray-700">Período:</label>
+                <select
+                  value={timeframe}
+                  onChange={(e) => setTimeframe(e.target.value as any)}
+                  className="input py-2"
+                >
+                  <option value="semanal">Semanal</option>
+                  <option value="mensual">Mensual</option>
+                  <option value="anual">Anual</option>
+                </select>
+              </div>
+
+              <button
+                onClick={exportToPDF}
+                className="btn btn-secondary flex items-center gap-2 ml-auto"
+              >
+                <Download className="w-5 h-5" />
+                Descargar PDF
+              </button>
+            </div>
+
+            {/* Lista de Células */}
+            <div className="card">
+              <h3 className="text-xl font-bold mb-4">Células y Estadísticas</h3>
+              
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Célula
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Líder
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Miembros
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Asistencias
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Promedio
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {estadisticas.map((est) => (
+                      <tr key={est.celulaId} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">{est.celulaNombre}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{est.liderNombre}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{est.totalMiembros}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{est.cantidadAsistencias}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            est.promedioAsistencia >= 80 ? 'bg-green-100 text-green-800' :
+                            est.promedioAsistencia >= 60 ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {est.promedioAsistencia}%
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Vista Líderes */}
+        {view === 'lideres' && (
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h3 className="text-xl font-bold text-gray-800">Gestión de Líderes</h3>
+                <p className="text-gray-600 text-sm">Total: {lideres.length} líderes</p>
+              </div>
+              <button
+                onClick={() => setShowAddLider(true)}
+                className="btn btn-primary flex items-center gap-2"
+              >
+                <UserPlus className="w-5 h-5" />
+                Agregar Líder
+              </button>
+            </div>
+
+            {/* Líderes sin célula */}
+            {lideresDisponibles.length > 0 && (
+              <div className="card mb-6 bg-amber-50 border-amber-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <Users className="w-5 h-5 text-amber-600" />
+                  <h4 className="font-semibold text-amber-900">Líderes sin célula asignada ({lideresDisponibles.length})</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {lideresDisponibles.map(lider => (
+                    <div key={lider.id} className="bg-white p-4 rounded-lg border border-amber-200">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium text-gray-900">{lider.name}</p>
+                          <p className="text-sm text-gray-600">{lider.email}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {lider.isRegistered ? (
+                              <span className="flex items-center gap-1 text-green-600">
+                                <CheckCircle2 className="w-3 h-3" />
+                                Registrado
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-gray-500">
+                                <XCircle className="w-3 h-3" />
+                                Pendiente registro
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Tabla de líderes */}
+            <div className="card">
+              <h4 className="font-semibold text-gray-900 mb-4">Todos los Líderes</h4>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        Nombre
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        Email
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        Célula
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        Estado
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        Contraseña
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {lideres.map((lider) => (
+                      <tr key={lider.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">{lider.name}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-600">{lider.email}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {lider.nombreCelula ? (
+                            <span className="text-sm text-gray-900">{lider.nombreCelula}</span>
+                          ) : (
+                            <span className="text-sm text-gray-400">Sin asignar</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {lider.isRegistered ? (
+                            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                              Registrado
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600">
+                              Pendiente
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <code className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-700">Renacer</code>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Vista Células */}
+        {view === 'celulas' && (
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h3 className="text-xl font-bold text-gray-800">Gestión de Células</h3>
+                <p className="text-gray-600 text-sm">Total: {celulas.length} células</p>
+              </div>
+              <button
+                onClick={() => setShowAddCelula(true)}
+                className="btn btn-primary flex items-center gap-2"
+              >
+                <Plus className="w-5 h-5" />
+                Crear Célula
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {celulas.map(celula => (
+                <div key={celula.id} className="card hover:shadow-lg transition-shadow">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h4 className="text-lg font-bold text-gray-900">{celula.name}</h4>
+                      <p className="text-sm text-gray-600">Líder: {celula.liderName}</p>
+                    </div>
+                    <button className="text-gray-400 hover:text-gray-600">
+                      <Edit2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Miembros:</span>
+                      <span className="font-semibold">{celula.miembros.length}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Colíderes:</span>
+                      <span className="font-semibold">{celula.colideres.length}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Creada:</span>
+                      <span className="font-semibold">
+                        {new Date(celula.createdAt).toLocaleDateString('es-AR')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Modal Agregar Líder */}
         {showAddLider && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
-              <h3 className="text-xl font-bold mb-4">Agregar Nuevo Líder</h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">Agregar Nuevo Líder</h3>
+                <button onClick={() => setShowAddLider(false)} className="text-gray-400 hover:text-gray-600">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
               
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre Completo
+                    Nombre Completo *
                   </label>
                   <input
                     type="text"
@@ -191,11 +516,17 @@ export const PastorDashboard: React.FC = () => {
                     className="input"
                     placeholder="juan@email.com"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Si no se ingresa, se generará automáticamente
+                  </p>
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p className="text-sm text-blue-800">
-                    El líder podrá registrarse buscando su nombre en la página de registro.
+                  <p className="text-sm text-blue-800 font-medium mb-2">
+                    Contraseña por defecto: <code className="bg-blue-100 px-2 py-1 rounded">Renacer</code>
+                  </p>
+                  <p className="text-xs text-blue-700">
+                    El líder podrá cambiar su contraseña después de registrarse.
                   </p>
                 </div>
               </div>
@@ -204,6 +535,7 @@ export const PastorDashboard: React.FC = () => {
                 <button
                   onClick={handleAddLider}
                   className="btn btn-primary flex-1"
+                  disabled={!newLider.name.trim()}
                 >
                   Agregar
                 </button>
@@ -218,61 +550,73 @@ export const PastorDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Lista de Células */}
-        <div className="card">
-          <h3 className="text-xl font-bold mb-4">Células y Estadísticas</h3>
-          
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Célula
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Líder
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Miembros
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Asistencias
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Promedio
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {estadisticas.map((est) => (
-                  <tr key={est.celulaId} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{est.celulaNombre}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{est.liderNombre}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{est.totalMiembros}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{est.cantidadAsistencias}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        est.promedioAsistencia >= 80 ? 'bg-green-100 text-green-800' :
-                        est.promedioAsistencia >= 60 ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {est.promedioAsistencia}%
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {/* Modal Crear Célula */}
+        {showAddCelula && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">Crear Nueva Célula</h3>
+                <button onClick={() => setShowAddCelula(false)} className="text-gray-400 hover:text-gray-600">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre de la Célula *
+                  </label>
+                  <input
+                    type="text"
+                    value={newCelula.name}
+                    onChange={(e) => setNewCelula({ ...newCelula, name: e.target.value })}
+                    className="input"
+                    placeholder="Célula Jóvenes"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Asignar Líder *
+                  </label>
+                  <select
+                    value={newCelula.liderId}
+                    onChange={(e) => setNewCelula({ ...newCelula, liderId: e.target.value })}
+                    className="input"
+                  >
+                    <option value="">Seleccionar líder...</option>
+                    {lideresDisponibles.map(lider => (
+                      <option key={lider.id} value={lider.id}>
+                        {lider.name} - {lider.email}
+                      </option>
+                    ))}
+                  </select>
+                  {lideresDisponibles.length === 0 && (
+                    <p className="text-xs text-amber-600 mt-1">
+                      No hay líderes disponibles. Crea un líder primero.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-4 mt-6">
+                <button
+                  onClick={handleAddCelula}
+                  className="btn btn-primary flex-1"
+                  disabled={!newCelula.name.trim() || !newCelula.liderId}
+                >
+                  Crear Célula
+                </button>
+                <button
+                  onClick={() => setShowAddCelula(false)}
+                  className="btn btn-secondary flex-1"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

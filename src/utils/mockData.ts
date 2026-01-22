@@ -6,12 +6,18 @@ import { User, Celula } from '../types';
 export const mockUsers: User[] = [
   {
     id: '1',
+    name: 'Admin Principal',
+    email: 'admin@renacer.com',
+    role: 'admin',
+  },
+  {
+    id: '2',
     name: 'Pastor Principal',
     email: 'pastor@renacer.com',
     role: 'pastor',
   },
   {
-    id: '2',
+    id: '3',
     name: 'Juan Pérez',
     email: 'juan@renacer.com',
     role: 'lider',
@@ -19,11 +25,29 @@ export const mockUsers: User[] = [
     isRegistered: true,
   },
   {
-    id: '3',
+    id: '4',
     name: 'María González',
     email: 'maria@renacer.com',
     role: 'lider',
     celulaId: '2',
+    isRegistered: true,
+  },
+];
+
+// Líderes disponibles (sin célula asignada)
+export const mockLideresDisponibles: User[] = [
+  {
+    id: '5',
+    name: 'Carlos Rodríguez',
+    email: 'carlos@renacer.com',
+    role: 'lider',
+    isRegistered: false,
+  },
+  {
+    id: '6',
+    name: 'Laura Martínez',
+    email: 'laura@renacer.com',
+    role: 'lider',
     isRegistered: false,
   },
 ];
@@ -33,7 +57,7 @@ export const mockCelulas: Celula[] = [
   {
     id: '1',
     name: 'Célula Jóvenes',
-    liderId: '2',
+    liderId: '3',
     liderName: 'Juan Pérez',
     colideres: [
       {
@@ -51,6 +75,8 @@ export const mockCelulas: Celula[] = [
         email: 'maria@example.com',
         addedAt: new Date('2024-01-10'),
         rolCelula: 'miembro',
+        isBautizado: true,
+        tieneDiscipulado: true,
       },
       {
         id: 'm2',
@@ -59,6 +85,8 @@ export const mockCelulas: Celula[] = [
         email: 'pedro@example.com',
         addedAt: new Date('2024-01-12'),
         rolCelula: 'miembro',
+        isBautizado: true,
+        tieneDiscipulado: false,
       },
       {
         id: 'm3',
@@ -67,6 +95,8 @@ export const mockCelulas: Celula[] = [
         email: 'laura@example.com',
         addedAt: new Date('2024-01-20'),
         rolCelula: 'miembro',
+        isBautizado: false,
+        tieneDiscipulado: false,
       },
     ],
     createdAt: new Date('2024-01-01'),
@@ -74,7 +104,7 @@ export const mockCelulas: Celula[] = [
   {
     id: '2',
     name: 'Célula Familias',
-    liderId: '3',
+    liderId: '4',
     liderName: 'María González',
     colideres: [],
     miembros: [
@@ -85,6 +115,8 @@ export const mockCelulas: Celula[] = [
         email: 'carlos@example.com',
         addedAt: new Date('2024-02-01'),
         rolCelula: 'miembro',
+        isBautizado: true,
+        tieneDiscipulado: true,
       },
       {
         id: 'm5',
@@ -93,6 +125,8 @@ export const mockCelulas: Celula[] = [
         email: 'sofia@example.com',
         addedAt: new Date('2024-02-05'),
         rolCelula: 'miembro',
+        isBautizado: false,
+        tieneDiscipulado: false,
       },
     ],
     createdAt: new Date('2024-02-01'),

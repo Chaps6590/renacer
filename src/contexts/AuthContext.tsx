@@ -47,27 +47,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Mock de usuarios según el email
       let mockUser: User;
       
-      if (email === 'pastor@renacer.com') {
+      if (email === 'admin@renacer.com') {
         mockUser = {
           id: '1',
+          name: 'Admin Principal',
+          email: email,
+          role: 'admin',
+        };
+      } else if (email === 'pastor@renacer.com') {
+        mockUser = {
+          id: '2',
           name: 'Pastor Principal',
           email: email,
           role: 'pastor',
         };
-      } else if (email === 'juan@renacer.com') {
+      } else if (email === 'lider@renacer.com') {
         mockUser = {
-          id: '2',
+          id: '3',
           name: 'Juan Pérez',
           email: email,
           role: 'lider',
           celulaId: '1',
         };
-      } else if (email === 'maria@renacer.com') {
+      } else if (email === 'colider@renacer.com') {
         mockUser = {
-          id: '3',
+          id: '4',
           name: 'María González',
           email: email,
-          role: 'lider',
+          role: 'colider',
           celulaId: '2',
         };
       } else {

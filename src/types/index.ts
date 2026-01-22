@@ -1,4 +1,4 @@
-export type UserRole = 'pastor' | 'lider' | 'colider';
+export type UserRole = 'admin' | 'pastor' | 'lider' | 'colider';
 
 export interface User {
   id: string;
@@ -35,6 +35,8 @@ export interface Miembro {
   email?: string;
   rolCelula: RolCelula;
   addedAt: Date;
+  isBautizado: boolean;
+  tieneDiscipulado: boolean;
 }
 
 export interface AsistenciaRecord {

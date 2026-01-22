@@ -3,20 +3,22 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useData } from '../../contexts/DataContext';
 import { Navbar } from '../layout/Navbar';
 import { AsistenciaModal } from './AsistenciaModal';
-import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit } from 'lucide-react';
+import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle } from 'lucide-react';
 import type { RolCelula } from '../../types';
 
 interface AddMiembroModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (miembro: { name: string; phone?: string; email?: string }) => void;
+  onAdd: (miembro: { name: string; phone?: string; email?: string; isBautizado: boolean; tieneDiscipulado: boolean }) => void;
 }
 
 const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAdd }) => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    email: ''
+    email: '',
+    isBautizado: false,
+    tieneDiscipulado: false
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,9 +27,11 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
       onAdd({
         name: formData.name.trim(),
         phone: formData.phone.trim() || undefined,
-        email: formData.email.trim() || undefined
+        email: formData.email.trim() || undefined,
+        isBautizado: formData.isBautizado,
+        tieneDiscipulado: formData.tieneDiscipulado
       });
-      setFormData({ name: '', phone: '', email: '' });
+      setFormData({ name: '', phone: '', email: '', isBautizado: false, tieneDiscipulado: false });
       onClose();
     }
   };
@@ -83,6 +87,35 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
+          </div>
+
+          {/* Checkboxes */}
+          <div className="bg-gray-50 p-4 rounded-xl space-y-3">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="isBautizado"
+                checked={formData.isBautizado}
+                onChange={(e) => setFormData({ ...formData, isBautizado: e.target.checked })}
+                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <label htmlFor="isBautizado" className="ml-3 text-sm font-medium text-gray-700">
+                ¿Está bautizado?
+              </label>
+            </div>
+            
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="tieneDiscipulado"
+                checked={formData.tieneDiscipulado}
+                onChange={(e) => setFormData({ ...formData, tieneDiscipulado: e.target.checked })}
+                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <label htmlFor="tieneDiscipulado" className="ml-3 text-sm font-medium text-gray-700">
+                ¿Tiene discipulado?
+              </label>
+            </div>
           </div>
 
           {/* Buttons */}
@@ -164,7 +197,7 @@ const LiderDashboard: React.FC = () => {
     ...miCelula.miembros
   ].filter(Boolean) : [];
 
-  const handleAddMiembro = (miembroData: { name: string; phone?: string; email?: string }) => {
+  const handleAddMiembro = (miembroData: { name: string; phone?: string; email?: string; isBautizado: boolean; tieneDiscipulado: boolean }) => {
     if (miCelula) {
       const nuevoMiembro = {
         id: `member-${Date.now()}`,
@@ -172,7 +205,9 @@ const LiderDashboard: React.FC = () => {
         phone: miembroData.phone,
         email: miembroData.email,
         addedAt: new Date(),
-        rolCelula: 'nuevo' as const
+        rolCelula: 'nuevo' as const,
+        isBautizado: miembroData.isBautizado,
+        tieneDiscipulado: miembroData.tieneDiscipulado
       };
       
       addMiembroToCelula(miCelula.id, nuevoMiembro);
@@ -304,6 +339,12 @@ const LiderDashboard: React.FC = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Email
                     </th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Bautizado
+                    </th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Discipulado
+                    </th>
                     {isLider && (
                       <>
                         <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -344,6 +385,40 @@ const LiderDashboard: React.FC = () => {
                         <div className="text-sm text-gray-900">
                           {'email' in miembro ? (miembro.email || '-') : '-'}
                         </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        {'isBautizado' in miembro ? (
+                          miembro.isBautizado ? (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                              <CheckCircle2 className="w-3 h-3 mr-1" />
+                              Sí
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
+                              <XCircle className="w-3 h-3 mr-1" />
+                              No
+                            </span>
+                          )
+                        ) : (
+                          <span className="text-sm text-gray-400">-</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        {'tieneDiscipulado' in miembro ? (
+                          miembro.tieneDiscipulado ? (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                              <CheckCircle2 className="w-3 h-3 mr-1" />
+                              Sí
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
+                              <XCircle className="w-3 h-3 mr-1" />
+                              No
+                            </span>
+                          )
+                        ) : (
+                          <span className="text-sm text-gray-400">-</span>
+                        )}
                       </td>
                       {isLider && (
                         <>
