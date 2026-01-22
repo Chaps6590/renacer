@@ -14,6 +14,8 @@ export interface Celula {
   name: string;
   liderId: string;
   liderName: string;
+  diaSemana: string;
+  horario: string;
   colideres: CoLider[];
   miembros: Miembro[];
   createdAt: Date;

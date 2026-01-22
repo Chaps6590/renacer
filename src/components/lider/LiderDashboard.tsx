@@ -268,6 +268,14 @@ const LiderDashboard: React.FC = () => {
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">Mi Célula: {miCelula.name}</h2>
           <p className="text-gray-600">Gestiona tu célula y toma asistencia</p>
+          <div className="mt-2 flex items-center gap-4">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+              📅 {miCelula.diaSemana}
+            </span>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+              🕐 {miCelula.horario}
+            </span>
+          </div>
         </div>
 
         {/* Estadísticas de la Célula */}

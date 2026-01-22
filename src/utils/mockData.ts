@@ -59,6 +59,8 @@ export const mockCelulas: Celula[] = [
     name: 'Célula Jóvenes',
     liderId: '3',
     liderName: 'Juan Pérez',
+    diaSemana: 'Viernes',
+    horario: '19:00',
     colideres: [
       {
         id: 'c1',
@@ -106,6 +108,8 @@ export const mockCelulas: Celula[] = [
     name: 'Célula Familias',
     liderId: '4',
     liderName: 'María González',
+    diaSemana: 'Miércoles',
+    horario: '20:00',
     colideres: [],
     miembros: [
       {

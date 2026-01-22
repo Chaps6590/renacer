@@ -25,9 +25,7 @@ export const PastorDashboard: React.FC = () => {
   
   // Estado para células
   const [showAddCelula, setShowAddCelula] = useState(false);
-  const [showAssignLider, setShowAssignLider] = useState(false);
-  const [selectedCelula, setSelectedCelula] = useState<string>('');
-  const [newCelula, setNewCelula] = useState({ name: '', liderId: '' });
+  const [newCelula, setNewCelula] = useState({ name: '', liderId: '', diaSemana: '', horario: '' });
   
   const [timeframe, setTimeframe] = useState<'semanal' | 'mensual' | 'anual'>('semanal');
 
@@ -50,7 +48,7 @@ export const PastorDashboard: React.FC = () => {
 
   // Función para crear célula
   const handleAddCelula = () => {
-    if (!newCelula.name.trim() || !newCelula.liderId) return;
+    if (!newCelula.name.trim() || !newCelula.liderId || !newCelula.diaSemana || !newCelula.horario) return;
     
     // Aquí se crearía la célula en el backend
     console.log('Crear célula:', newCelula);
@@ -62,25 +60,8 @@ export const PastorDashboard: React.FC = () => {
         : l
     ));
     
-    setNewCelula({ name: '', liderId: '' });
+    setNewCelula({ name: '', liderId: '', diaSemana: '', horario: '' });
     setShowAddCelula(false);
-  };
-
-  // Función para asignar líder a célula existente
-  const handleAssignLider = (liderId: string) => {
-    if (!selectedCelula || !liderId) return;
-    
-    const celula = celulas.find(c => c.id === selectedCelula);
-    if (!celula) return;
-    
-    setLideres(lideres.map(l => 
-      l.id === liderId 
-        ? { ...l, celulaId: selectedCelula, celulaAsignada: selectedCelula, nombreCelula: celula.name }
-        : l
-    ));
-    
-    setSelectedCelula('');
-    setShowAssignLider(false);
   };
 
   // Obtener líderes sin célula
@@ -452,6 +433,9 @@ export const PastorDashboard: React.FC = () => {
                     <div>
                       <h4 className="text-lg font-bold text-gray-900">{celula.name}</h4>
                       <p className="text-sm text-gray-600">Líder: {celula.liderName}</p>
+                      <p className="text-sm text-blue-600 font-medium mt-1">
+                        {celula.diaSemana} - {celula.horario}
+                      </p>
                     </div>
                     <button className="text-gray-400 hover:text-gray-600">
                       <Edit2 className="w-5 h-5" />
@@ -577,6 +561,38 @@ export const PastorDashboard: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Día de la Semana *
+                  </label>
+                  <select
+                    value={newCelula.diaSemana}
+                    onChange={(e) => setNewCelula({ ...newCelula, diaSemana: e.target.value })}
+                    className="input"
+                  >
+                    <option value="">Seleccionar día...</option>
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miércoles">Miércoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sábado">Sábado</option>
+                    <option value="Domingo">Domingo</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Horario *
+                  </label>
+                  <input
+                    type="time"
+                    value={newCelula.horario}
+                    onChange={(e) => setNewCelula({ ...newCelula, horario: e.target.value })}
+                    className="input"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Asignar Líder *
                   </label>
                   <select
@@ -603,7 +619,7 @@ export const PastorDashboard: React.FC = () => {
                 <button
                   onClick={handleAddCelula}
                   className="btn btn-primary flex-1"
-                  disabled={!newCelula.name.trim() || !newCelula.liderId}
+                  disabled={!newCelula.name.trim() || !newCelula.liderId || !newCelula.diaSemana || !newCelula.horario}
                 >
                   Crear Célula
                 </button>
