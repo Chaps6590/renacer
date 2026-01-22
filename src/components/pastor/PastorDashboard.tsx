@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useData } from '../../contexts/DataContext';
-import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, CheckCircle2, XCircle } from 'lucide-react';
+import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, CheckCircle2, XCircle, FileText, Newspaper, Heart, Settings, AlertCircle } from 'lucide-react';
 import { Navbar } from '../layout/Navbar';
+import { MaterialesModal } from '../common/MaterialesModal';
+import { NoticiasModal } from '../common/NoticiasModal';
+import { DonacionesModal } from '../common/DonacionesModal';
+import { PeticionesModal } from '../common/PeticionesModal';
 import { User } from '../../types';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -12,8 +16,14 @@ interface Lider extends User {
 }
 
 export const PastorDashboard: React.FC = () => {
-  const { celulas, asistencias } = useData();
-  const [view, setView] = useState<'dashboard' | 'lideres' | 'celulas'>('dashboard');
+  const { celulas, asistencias, noticias, materiales, configuracionDonaciones } = useData();
+  const [view, setView] = useState<'dashboard' | 'lideres' | 'celulas' | 'recursos'>('dashboard');
+  
+  // Estados para modales de recursos
+  const [showMateriales, setShowMateriales] = useState(false);
+  const [showNoticias, setShowNoticias] = useState(false);
+  const [showDonaciones, setShowDonaciones] = useState(false);
+  const [showPeticiones, setShowPeticiones] = useState(false);
   
   // Estado para líderes
   const [lideres, setLideres] = useState<Lider[]>([
@@ -174,13 +184,23 @@ export const PastorDashboard: React.FC = () => {
           >
             Células
           </button>
+          <button
+            onClick={() => setView('recursos')}
+            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
+              view === 'recursos' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Recursos
+          </button>
         </div>
 
         {/* Vista Dashboard */}
         {view === 'dashboard' && (
           <>
             {/* Estadísticas Generales */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
               <div className="card bg-gradient-to-br from-primary-500 to-primary-600 text-white">
                 <div className="flex items-center justify-between">
                   <div>
@@ -208,6 +228,27 @@ export const PastorDashboard: React.FC = () => {
                     <p className="text-4xl font-bold">{lideres.filter(l => l.celulaAsignada).length}</p>
                   </div>
                   <BarChart3 className="w-12 h-12 text-purple-200" />
+                </div>
+              </div>
+
+              <div 
+                className="card bg-gradient-to-br from-orange-500 to-red-600 text-white cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => setShowPeticiones(true)}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-orange-100 text-sm mb-1">Peticiones Altas</p>
+                    <p className="text-4xl font-bold">
+                      {asistencias.reduce((count, asistencia) => {
+                        return count + asistencia.miembros.filter(m => 
+                          m.prioridadAnotacion === 'alta' && 
+                          (m.anotacionEspecial || m.motivoFalta)
+                        ).length;
+                      }, 0)}
+                    </p>
+                    <p className="text-orange-200 text-xs">Click para ver</p>
+                  </div>
+                  <AlertCircle className="w-12 h-12 text-orange-200" />
                 </div>
               </div>
             </div>
@@ -633,7 +674,156 @@ export const PastorDashboard: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Vista Recursos */}
+        {view === 'recursos' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Gestión de Materiales */}
+              <div className="card">
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-blue-500 p-2 rounded-lg">
+                      <FileText className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">Materiales</h3>
+                      <p className="text-sm text-gray-600">Gestionar mensajes y recursos</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="bg-blue-50 p-3 rounded-lg">
+                      <div className="text-sm text-blue-800 font-medium">{materiales.filter(m => m.activo).length} materiales activos</div>
+                    </div>
+                    <button
+                      onClick={() => setShowMateriales(true)}
+                      className="w-full btn btn-primary"
+                    >
+                      Gestionar Materiales
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Gestión de Noticias */}
+              <div className="card">
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-green-500 p-2 rounded-lg">
+                      <Newspaper className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">Noticias</h3>
+                      <p className="text-sm text-gray-600">Anuncios para la iglesia</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="bg-green-50 p-3 rounded-lg">
+                      <div className="text-sm text-green-800 font-medium">{noticias.filter(n => n.visible).length} noticias publicadas</div>
+                      <div className="text-sm text-green-700">{noticias.filter(n => n.importante && n.visible).length} importantes</div>
+                    </div>
+                    <button
+                      onClick={() => setShowNoticias(true)}
+                      className="w-full btn btn-primary"
+                    >
+                      Gestionar Noticias
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Configuración de Donaciones */}
+              <div className="card">
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-red-500 p-2 rounded-lg">
+                      <Heart className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">Donaciones</h3>
+                      <p className="text-sm text-gray-600">Configurar métodos de donación</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="bg-red-50 p-3 rounded-lg">
+                      <div className="text-sm text-red-800 font-medium">Alias configurado</div>
+                      <div className="text-sm text-red-700 font-mono">{configuracionDonaciones.aliasIglesia}</div>
+                    </div>
+                    <button
+                      onClick={() => setShowDonaciones(true)}
+                      className="w-full btn btn-primary"
+                    >
+                      Configurar Donaciones
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Peticiones y Situaciones */}
+              <div className="card">
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-orange-500 p-2 rounded-lg">
+                      <AlertCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">Peticiones</h3>
+                      <p className="text-sm text-gray-600">Situaciones importantes</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="bg-orange-50 p-3 rounded-lg">
+                      <div className="text-sm text-orange-800 font-medium">
+                        {asistencias.reduce((count, asistencia) => {
+                          return count + asistencia.miembros.filter(m => 
+                            m.prioridadAnotacion === 'alta' && 
+                            (m.anotacionEspecial || m.motivoFalta)
+                          ).length;
+                        }, 0)} prioridad alta
+                      </div>
+                      <div className="text-sm text-orange-700">
+                        {asistencias.reduce((count, asistencia) => {
+                          return count + asistencia.miembros.filter(m => 
+                            m.prioridadAnotacion && 
+                            (m.anotacionEspecial || m.motivoFalta)
+                          ).length;
+                        }, 0)} total
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setShowPeticiones(true)}
+                      className="w-full btn btn-primary"
+                    >
+                      Ver Peticiones
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Modales */}
+      <MaterialesModal
+        isOpen={showMateriales}
+        onClose={() => setShowMateriales(false)}
+      />
+
+      <NoticiasModal
+        isOpen={showNoticias}
+        onClose={() => setShowNoticias(false)}
+      />
+
+      <DonacionesModal
+        isOpen={showDonaciones}
+        onClose={() => setShowDonaciones(false)}
+      />
+
+      <PeticionesModal
+        isOpen={showPeticiones}
+        onClose={() => setShowPeticiones(false)}
+      />
     </div>
   );
 };

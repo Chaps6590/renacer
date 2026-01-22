@@ -3,7 +3,11 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useData } from '../../contexts/DataContext';
 import { Navbar } from '../layout/Navbar';
 import { AsistenciaModal } from './AsistenciaModal';
-import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle } from 'lucide-react';
+import { PendientesModal } from './PendientesModal';
+import { MaterialesModal } from '../common/MaterialesModal';
+import { NoticiasModal } from '../common/NoticiasModal';
+import { DonacionesModal } from '../common/DonacionesModal';
+import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, AlertCircle, Bell, FileText, Newspaper, Heart } from 'lucide-react';
 import type { RolCelula } from '../../types';
 
 interface AddMiembroModalProps {
@@ -142,14 +146,27 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
 const LiderDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { celulas, addMiembroToCelula, updateMiembroRol } = useData();
+  const { celulas, addMiembroToCelula, updateMiembroRol, getPendientesAsistencia, noticias } = useData();
   const [showAsistencia, setShowAsistencia] = useState(false);
   const [showAddMiembro, setShowAddMiembro] = useState(false);
+  const [showPendientes, setShowPendientes] = useState(false);
+  const [showMateriales, setShowMateriales] = useState(false);
+  const [showNoticias, setShowNoticias] = useState(false);
+  const [showDonaciones, setShowDonaciones] = useState(false);
   
   // Estados para modales de confirmación y acciones
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [selectedMiembro, setSelectedMiembro] = useState<any>(null);
+
+  // Obtener pendientes de asistencia
+  const pendientesAsistencia = getPendientesAsistencia(user?.id || '');
+  const totalPendientes = pendientesAsistencia.reduce((sum, p) => sum + p.cantidadPendientes, 0);
+
+  // Obtener noticias importantes
+  const noticiasImportantes = noticias.filter(n => 
+    n.visible && n.importante && (!n.fechaVencimiento || new Date(n.fechaVencimiento) > new Date())
+  ).length;
 
   // Encontrar la célula donde el usuario es líder o colíder
   const miCelula = celulas.find(c => 
@@ -313,11 +330,90 @@ const LiderDashboard: React.FC = () => {
             <UserPlus className="w-5 h-5 group-hover:scale-110 transition duration-300" />
             <span>Agregar Nueva Persona</span>
           </button>
+          
+          <button
+            onClick={() => setShowPendientes(true)}
+            className={`group inline-flex items-center gap-3 px-6 py-3 font-semibold rounded-xl transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${
+              totalPendientes > 0 
+                ? 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white' 
+                : 'bg-gradient-to-r from-gray-400 to-gray-500 text-white cursor-not-allowed'
+            }`}
+            disabled={totalPendientes === 0}
+          >
+            <Bell className="w-5 h-5 group-hover:scale-110 transition duration-300" />
+            <span>Pendientes ({totalPendientes})</span>
+            {totalPendientes > 0 && (
+              <span className="bg-white text-yellow-600 text-xs px-2 py-1 rounded-full">
+                {totalPendientes}
+              </span>
+            )}
+          </button>
+          
           {!isLider && (
             <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded-lg flex items-center gap-2">
               <span className="text-sm">Eres Colíder - No puedes cambiar roles</span>
             </div>
           )}
+        </div>
+
+        {/* Accesos Rápidos */}
+        <div className="card mb-6">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">Recursos</h3>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button
+                onClick={() => setShowMateriales(true)}
+                className="group p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg hover:from-blue-100 hover:to-blue-200 hover:border-blue-300 transition-all duration-200"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-blue-500 p-2 rounded-lg group-hover:scale-110 transition-transform">
+                    <FileText className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-blue-900">Materiales</div>
+                    <div className="text-sm text-blue-700">Mensajes y recursos</div>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => setShowNoticias(true)}
+                className="group p-4 bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 rounded-lg hover:from-green-100 hover:to-green-200 hover:border-green-300 transition-all duration-200 relative"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-green-500 p-2 rounded-lg group-hover:scale-110 transition-transform">
+                    <Newspaper className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-green-900">Noticias</div>
+                    <div className="text-sm text-green-700">Anuncios de la iglesia</div>
+                  </div>
+                </div>
+                {noticiasImportantes > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                    {noticiasImportantes}
+                  </span>
+                )}
+              </button>
+
+              <button
+                onClick={() => setShowDonaciones(true)}
+                className="group p-4 bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-200 rounded-lg hover:from-red-100 hover:to-red-200 hover:border-red-300 transition-all duration-200"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-red-500 p-2 rounded-lg group-hover:scale-110 transition-transform">
+                    <Heart className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-red-900">Donaciones</div>
+                    <div className="text-sm text-red-700">Apoyar la iglesia</div>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Lista de Miembros */}
@@ -604,6 +700,30 @@ const LiderDashboard: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Modal de pendientes */}
+        <PendientesModal
+          isOpen={showPendientes}
+          onClose={() => setShowPendientes(false)}
+        />
+
+        {/* Modal de materiales */}
+        <MaterialesModal
+          isOpen={showMateriales}
+          onClose={() => setShowMateriales(false)}
+        />
+
+        {/* Modal de noticias */}
+        <NoticiasModal
+          isOpen={showNoticias}
+          onClose={() => setShowNoticias(false)}
+        />
+
+        {/* Modal de donaciones */}
+        <DonacionesModal
+          isOpen={showDonaciones}
+          onClose={() => setShowDonaciones(false)}
+        />
       </div>
     </div>
   );

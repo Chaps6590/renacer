@@ -1,9 +1,15 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Celula, Miembro, CoLider, AsistenciaRecord } from '../types';
+import { Celula, Miembro, CoLider, AsistenciaRecord, MiembroAsistencia, MotivoFalta, Noticia, MaterialCelula, ConfiguracionDonaciones, PendienteAsistencia } from '../types';
 
 interface DataContextType {
   celulas: Celula[];
   asistencias: AsistenciaRecord[];
+  noticias: Noticia[];
+  materiales: MaterialCelula[];
+  configuracionDonaciones: ConfiguracionDonaciones;
+  pendientesAsistencia: PendienteAsistencia[];
+  
+  // Funciones de células
   addCelula: (celula: Celula) => void;
   updateCelula: (id: string, celula: Partial<Celula>) => void;
   deleteCelula: (id: string) => void;
@@ -12,8 +18,27 @@ interface DataContextType {
   addColiderToCelula: (celulaId: string, colider: CoLider) => void;
   removeColiderFromCelula: (celulaId: string, coliderId: string) => void;
   updateMiembroRol: (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo') => void;
+  
+  // Funciones de asistencia
   registrarAsistencia: (asistencia: AsistenciaRecord) => void;
+  actualizarMotivoFalta: (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string) => void;
+  marcarAsistenciaCompletada: (asistenciaId: string) => void;
+  
+  // Funciones de noticias
+  agregarNoticia: (noticia: Omit<Noticia, 'id' | 'fechaCreacion'>) => void;
+  actualizarNoticia: (id: string, noticia: Partial<Noticia>) => void;
+  eliminarNoticia: (id: string) => void;
+  
+  // Funciones de materiales
+  subirMaterial: (material: Omit<MaterialCelula, 'id' | 'fechaSubida'>) => void;
+  eliminarMaterial: (id: string) => void;
+  
+  // Funciones de donaciones
+  actualizarConfiguracionDonaciones: (config: Partial<ConfiguracionDonaciones>) => void;
+  
+  // Utilidades
   getCelulaById: (id: string) => Celula | undefined;
+  getPendientesAsistencia: (liderId: string) => PendienteAsistencia[];
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -59,6 +84,22 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   ]);
 
   const [asistencias, setAsistencias] = useState<AsistenciaRecord[]>([]);
+  
+  // Estado para noticias
+  const [noticias, setNoticias] = useState<Noticia[]>([]);
+  
+  // Estado para materiales de célula
+  const [materiales, setMateriales] = useState<MaterialCelula[]>([]);
+  
+  // Estado para configuración de donaciones
+  const [configuracionDonaciones, setConfiguracionDonaciones] = useState<ConfiguracionDonaciones>({
+    aliasIglesia: 'IGLESIA.RENACER.MP',
+    descripcion: 'Tu donación ayuda a que nuestra iglesia pueda seguir cumpliendo la misión de llevar esperanza a las familias.',
+    actualizadoPor: ''
+  });
+  
+  // Estado para pendientes de asistencia
+  const [pendientesAsistencia, setPendientesAsistencia] = useState<PendienteAsistencia[]>([]);
 
   const addCelula = (celula: Celula) => {
     setCelulas([...celulas, celula]);
@@ -132,6 +173,130 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const registrarAsistencia = (asistencia: AsistenciaRecord) => {
     setAsistencias([...asistencias, asistencia]);
+    
+    // Crear pendientes para ausentes sin motivo
+    const miembrosSinMotivo = asistencia.miembros
+      .filter(m => !m.presente && !m.motivoCompletado)
+      .map(m => {
+        const miembro = getCelulaById(asistencia.celulaId)?.miembros.find(mb => mb.id === m.miembroId);
+        return {
+          miembroId: m.miembroId,
+          miembroNombre: miembro?.name || 'Desconocido'
+        };
+      });
+    
+    if (miembrosSinMotivo.length > 0) {
+      const celula = getCelulaById(asistencia.celulaId);
+      const pendiente: PendienteAsistencia = {
+        asistenciaId: asistencia.id,
+        celulaId: asistencia.celulaId,
+        celulaNombre: celula?.name || 'Desconocida',
+        fecha: asistencia.date,
+        miembrosPendientes: miembrosSinMotivo,
+        cantidadPendientes: miembrosSinMotivo.length
+      };
+      setPendientesAsistencia([...pendientesAsistencia, pendiente]);
+    }
+    
+    // TODO: Llamar a API
+  };
+  
+  const actualizarMotivoFalta = (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string) => {
+    setAsistencias(asistencias.map(a => {
+      if (a.id === asistenciaId) {
+        const miembrosActualizados = a.miembros.map(m => {
+          if (m.miembroId === miembroId) {
+            return {
+              ...m,
+              motivoFalta: motivo,
+              motivoPersonalizado,
+              motivoCompletado: true
+            };
+          }
+          return m;
+        });
+        
+        const pendientesCompletar = miembrosActualizados.filter(m => !m.presente && !m.motivoCompletado).length;
+        const completado = pendientesCompletar === 0;
+        
+        return {
+          ...a,
+          miembros: miembrosActualizados,
+          pendientesCompletar,
+          completado
+        };
+      }
+      return a;
+    }));
+    
+    // Actualizar pendientes
+    setPendientesAsistencia(pendientesAsistencia.map(p => {
+      if (p.asistenciaId === asistenciaId) {
+        const miembrosPendientes = p.miembrosPendientes.filter(mp => mp.miembroId !== miembroId);
+        return {
+          ...p,
+          miembrosPendientes,
+          cantidadPendientes: miembrosPendientes.length
+        };
+      }
+      return p;
+    }).filter(p => p.cantidadPendientes > 0));
+    
+    // TODO: Llamar a API
+  };
+  
+  const marcarAsistenciaCompletada = (asistenciaId: string) => {
+    setAsistencias(asistencias.map(a => 
+      a.id === asistenciaId ? { ...a, completado: true } : a
+    ));
+    setPendientesAsistencia(pendientesAsistencia.filter(p => p.asistenciaId !== asistenciaId));
+    // TODO: Llamar a API
+  };
+  
+  // Funciones de noticias
+  const agregarNoticia = (noticia: Omit<Noticia, 'id' | 'fechaCreacion'>) => {
+    const nuevaNoticia: Noticia = {
+      ...noticia,
+      id: Date.now().toString(),
+      fechaCreacion: new Date()
+    };
+    setNoticias([...noticias, nuevaNoticia]);
+    // TODO: Llamar a API
+  };
+  
+  const actualizarNoticia = (id: string, noticia: Partial<Noticia>) => {
+    setNoticias(noticias.map(n => n.id === id ? { ...n, ...noticia } : n));
+    // TODO: Llamar a API
+  };
+  
+  const eliminarNoticia = (id: string) => {
+    setNoticias(noticias.filter(n => n.id !== id));
+    // TODO: Llamar a API
+  };
+  
+  // Funciones de materiales
+  const subirMaterial = (material: Omit<MaterialCelula, 'id' | 'fechaSubida'>) => {
+    const nuevoMaterial: MaterialCelula = {
+      ...material,
+      id: Date.now().toString(),
+      fechaSubida: new Date()
+    };
+    setMateriales([...materiales, nuevoMaterial]);
+    // TODO: Llamar a API
+  };
+  
+  const eliminarMaterial = (id: string) => {
+    setMateriales(materiales.filter(m => m.id !== id));
+    // TODO: Llamar a API
+  };
+  
+  // Funciones de donaciones
+  const actualizarConfiguracionDonaciones = (config: Partial<ConfiguracionDonaciones>) => {
+    setConfiguracionDonaciones({
+      ...configuracionDonaciones,
+      ...config,
+      fechaActualizacion: new Date()
+    });
     // TODO: Llamar a API
   };
 
@@ -139,9 +304,19 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     return celulas.find(c => c.id === id);
   };
 
+  const getPendientesAsistencia = (liderId: string) => {
+    const celulasLider = celulas.filter(c => c.liderId === liderId || c.colideres.some(col => col.id === liderId));
+    const idscelulas = celulasLider.map(c => c.id);
+    return pendientesAsistencia.filter(p => idscelulas.includes(p.celulaId));
+  };
+
   const value = {
     celulas,
     asistencias,
+    noticias,
+    materiales,
+    configuracionDonaciones,
+    pendientesAsistencia,
     addCelula,
     updateCelula,
     deleteCelula,
@@ -151,7 +326,16 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     removeColiderFromCelula,
     updateMiembroRol,
     registrarAsistencia,
+    actualizarMotivoFalta,
+    marcarAsistenciaCompletada,
+    agregarNoticia,
+    actualizarNoticia,
+    eliminarNoticia,
+    subirMaterial,
+    eliminarMaterial,
+    actualizarConfiguracionDonaciones,
     getCelulaById,
+    getPendientesAsistencia,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
