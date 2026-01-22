@@ -17,8 +17,8 @@ export const PastorDashboard: React.FC = () => {
   
   // Estado para líderes
   const [lideres, setLideres] = useState<Lider[]>([
-    { id: '3', name: 'Juan Pérez', email: 'juan@renacer.com', role: 'lider', celulaId: '1', celulaAsignada: '1', nombreCelula: 'Célula Jóvenes', isRegistered: true },
-    { id: '4', name: 'María González', email: 'maria@renacer.com', role: 'lider', celulaId: '2', celulaAsignada: '2', nombreCelula: 'Célula Familias', isRegistered: true },
+    { id: '3', name: 'Juan Pérez', email: 'lider@renacer.com', role: 'lider', celulaId: '1', celulaAsignada: '1', nombreCelula: 'Célula Jóvenes', isRegistered: true },
+    { id: '4', name: 'María González', email: 'colider@renacer.com', role: 'colider', celulaId: '1', celulaAsignada: '1', nombreCelula: 'Célula Jóvenes', isRegistered: true },
   ]);
   const [showAddLider, setShowAddLider] = useState(false);
   const [newLider, setNewLider] = useState({ name: '', email: '' });

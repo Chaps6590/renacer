@@ -75,6 +75,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           name: 'María González',
           email: email,
           role: 'colider',
+          celulaId: '1',
+        };
+      } else if (email === 'juan@renacer.com') {
+        mockUser = {
+          id: '5',
+          name: 'Juan Pérez (viejo)',
+          email: email,
+          role: 'lider',
+          celulaId: '1',
+        };
+      } else if (email === 'maria@renacer.com') {
+        mockUser = {
+          id: '6',
+          name: 'María González (vieja)',
+          email: email,
+          role: 'lider',
           celulaId: '2',
         };
       } else {

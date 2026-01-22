@@ -36,11 +36,18 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     {
       id: '1',
       name: 'Célula Jóvenes',
-      liderId: '2',
+      liderId: '3',
       liderName: 'Juan Pérez',
       diaSemana: 'Viernes',
       horario: '19:00',
-      colideres: [],
+      colideres: [
+        {
+          id: '4',
+          name: 'María González',
+          email: 'colider@renacer.com',
+          addedAt: new Date('2024-01-15'),
+        },
+      ],
       miembros: [
         { id: 'm1', name: 'María García', phone: '123456789', email: 'maria@example.com', rolCelula: 'miembro', addedAt: new Date(), isBautizado: true, tieneDiscipulado: true },
         { id: 'm2', name: 'Pedro López', phone: '987654321', email: 'pedro@example.com', rolCelula: 'miembro', addedAt: new Date(), isBautizado: true, tieneDiscipulado: false },

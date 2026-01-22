@@ -19,7 +19,7 @@ export const mockUsers: User[] = [
   {
     id: '3',
     name: 'Juan Pérez',
-    email: 'juan@renacer.com',
+    email: 'lider@renacer.com',
     role: 'lider',
     celulaId: '1',
     isRegistered: true,
@@ -27,9 +27,9 @@ export const mockUsers: User[] = [
   {
     id: '4',
     name: 'María González',
-    email: 'maria@renacer.com',
-    role: 'lider',
-    celulaId: '2',
+    email: 'colider@renacer.com',
+    role: 'colider',
+    celulaId: '1',
     isRegistered: true,
   },
 ];
@@ -63,9 +63,9 @@ export const mockCelulas: Celula[] = [
     horario: '19:00',
     colideres: [
       {
-        id: 'c1',
-        name: 'Ana López',
-        email: 'ana@example.com',
+        id: '4',
+        name: 'María González',
+        email: 'colider@renacer.com',
         addedAt: new Date('2024-01-15'),
       },
     ],
