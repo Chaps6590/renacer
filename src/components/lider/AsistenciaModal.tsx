@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Celula, AsistenciaRecord, MiembroAsistencia, MotivoFalta, PrioridadAnotacion } from '../../types';
+import { Celula, AsistenciaRecord, MiembroAsistencia, PrioridadAnotacion } from '../../types';
 import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Check, X, Save, AlertCircle, MessageCircle, Flag } from 'lucide-react';
