@@ -51,16 +51,6 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
       }
     });
   };
-  
-  const motivosFalta: { value: MotivoFalta; label: string }[] = [
-    { value: 'trabajo', label: 'Trabajo' },
-    { value: 'enfermedad', label: 'Enfermedad' },
-    { value: 'vacaciones', label: 'Vacaciones' },
-    { value: 'familia', label: 'Asunto familiar' },
-    { value: 'viaje', label: 'Viaje' },
-    { value: 'sin-motivo', label: 'Sin motivo' },
-    { value: 'otro', label: 'Otro (especificar)' }
-  ];
 
   const handleGuardar = () => {
     const miembros = Object.values(miembrosAsistencia);

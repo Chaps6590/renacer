@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Celula, Miembro, CoLider, AsistenciaRecord, MiembroAsistencia, MotivoFalta, Noticia, MaterialCelula, ConfiguracionDonaciones, PendienteAsistencia } from '../types';
+import { Celula, Miembro, CoLider, AsistenciaRecord, MotivoFalta, Noticia, MaterialCelula, ConfiguracionDonaciones, PendienteAsistencia } from '../types';
 
 interface DataContextType {
   celulas: Celula[];
@@ -95,6 +95,8 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const [configuracionDonaciones, setConfiguracionDonaciones] = useState<ConfiguracionDonaciones>({
     aliasIglesia: 'IGLESIA.RENACER.MP',
     descripcion: 'Tu donación ayuda a que nuestra iglesia pueda seguir cumpliendo la misión de llevar esperanza a las familias.',
+    activo: true,
+    fechaActualizacion: new Date(),
     actualizadoPor: ''
   });
   

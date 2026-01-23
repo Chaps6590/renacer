@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useData } from '../../contexts/DataContext';
-import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, CheckCircle2, XCircle, FileText, Newspaper, Heart, Settings, AlertCircle } from 'lucide-react';
+import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, CheckCircle2, XCircle, FileText, Newspaper, Heart, AlertCircle } from 'lucide-react';
 import { Navbar } from '../layout/Navbar';
 import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';

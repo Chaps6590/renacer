@@ -7,7 +7,7 @@ import { PendientesModal } from './PendientesModal';
 import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
-import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, AlertCircle, Bell, FileText, Newspaper, Heart } from 'lucide-react';
+import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart } from 'lucide-react';
 import type { RolCelula } from '../../types';
 
 interface AddMiembroModalProps {
