@@ -50,9 +50,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       const userData: User = {
         id: response.user.id,
-        name: response.user.nombre,
+        name: response.user.name,
         email: response.user.email,
-        role: response.user.rol,
+        role: response.user.role,
         celulaId: response.user.celulaId,
       };
       
@@ -77,9 +77,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       const newUser: User = {
         id: response.user.id,
-        name: response.user.nombre,
+        name: response.user.name,
         email: response.user.email,
-        role: response.user.rol,
+        role: response.user.role,
         celulaId: response.user.celulaId,
         isRegistered: true,
       };

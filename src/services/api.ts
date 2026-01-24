@@ -2,7 +2,9 @@
 // Este archivo será la base para integrar las llamadas a la API
 
 const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
-const API_BASE = API_URL.endsWith('/api') ? API_URL : `${API_URL}/api`;
+// Remover trailing slash si existe
+const cleanApiUrl = API_URL.replace(/\/$/, '');
+const API_BASE = cleanApiUrl.endsWith('/api') ? cleanApiUrl : `${cleanApiUrl}/api`;
 
 interface RequestOptions extends RequestInit {
   headers?: Record<string, string>;
