@@ -1,7 +1,8 @@
 // API Base Configuration
 // Este archivo será la base para integrar las llamadas a la API
 
-const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
+const API_BASE = API_URL.endsWith('/api') ? API_URL : `${API_URL}/api`;
 
 interface RequestOptions extends RequestInit {
   headers?: Record<string, string>;
@@ -12,6 +13,7 @@ class ApiService {
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
+    console.log('API Service initialized with baseUrl:', this.baseUrl);
   }
 
   private async request<T>(
@@ -30,13 +32,20 @@ class ApiService {
     };
 
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, config);
+      const url = `${this.baseUrl}${endpoint}`;
+      console.log('Making API request to:', url);
+      
+      const response = await fetch(url, config);
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        console.error('API error response:', errorData);
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
       
-      return await response.json();
+      const data = await response.json();
+      console.log('API response:', data);
+      return data;
     } catch (error) {
       console.error('API request failed:', error);
       throw error;
@@ -132,4 +141,5 @@ class ApiService {
   }
 }
 
-export const api = new ApiService(API_URL);
+export const api = new ApiService(API_BASE);
+export default api;

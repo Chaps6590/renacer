@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '../types';
+import api from '../services/api';
 
 interface AuthContextType {
   user: User | null;
@@ -37,68 +38,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, _password: string) => {
+  const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // TODO: Reemplazar con llamada a API real
-      // Simulación de login
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Llamada real a la API
+      const response: any = await api.login(email, password);
       
-      // Mock de usuarios según el email
-      let mockUser: User;
-      
-      if (email === 'admin@renacer.com') {
-        mockUser = {
-          id: '1',
-          name: 'Admin Principal',
-          email: email,
-          role: 'admin',
-        };
-      } else if (email === 'pastor@renacer.com') {
-        mockUser = {
-          id: '2',
-          name: 'Pastor Principal',
-          email: email,
-          role: 'pastor',
-        };
-      } else if (email === 'lider@renacer.com') {
-        mockUser = {
-          id: '3',
-          name: 'Juan Pérez',
-          email: email,
-          role: 'lider',
-          celulaId: '1',
-        };
-      } else if (email === 'colider@renacer.com') {
-        mockUser = {
-          id: '4',
-          name: 'María González',
-          email: email,
-          role: 'colider',
-          celulaId: '1',
-        };
-      } else if (email === 'juan@renacer.com') {
-        mockUser = {
-          id: '5',
-          name: 'Juan Pérez (viejo)',
-          email: email,
-          role: 'lider',
-          celulaId: '1',
-        };
-      } else if (email === 'maria@renacer.com') {
-        mockUser = {
-          id: '6',
-          name: 'María González (vieja)',
-          email: email,
-          role: 'lider',
-          celulaId: '2',
-        };
-      } else {
-        throw new Error('Usuario no encontrado');
+      if (response.token) {
+        localStorage.setItem('token', response.token);
       }
       
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
+      const userData: User = {
+        id: response.user.id,
+        name: response.user.nombre,
+        email: response.user.email,
+        role: response.user.rol,
+        celulaId: response.user.celulaId,
+      };
+      
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
     } catch (error) {
       throw new Error('Error al iniciar sesión');
     } finally {
@@ -109,18 +68,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (userData: Partial<User> & { password: string }) => {
     setIsLoading(true);
     try {
-      // TODO: Reemplazar con llamada a API real
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Llamada real a la API
+      const response: any = await api.register(userData);
       
-      // Destructure password to mark it as used (even though we don't use it in mock)
-      const { password, ...userDataWithoutPassword } = userData;
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+      }
       
       const newUser: User = {
-        id: Date.now().toString(),
-        name: userDataWithoutPassword.name || '',
-        email: userDataWithoutPassword.email || '',
-        role: userDataWithoutPassword.role || 'lider',
-        celulaId: userDataWithoutPassword.celulaId,
+        id: response.user.id,
+        name: response.user.nombre,
+        email: response.user.email,
+        role: response.user.rol,
+        celulaId: response.user.celulaId,
         isRegistered: true,
       };
       
@@ -136,6 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
   };
 
   const value = {
