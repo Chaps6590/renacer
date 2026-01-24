@@ -40,15 +40,28 @@ export const PastorDashboard: React.FC = () => {
       
       // Enriquecer con información de células
       const lideresEnriquecidos = lideresUsuarios.map(lider => {
-        // Buscar si este líder tiene una célula asignada
+        // Buscar si este líder es el líder principal de una célula
         const celulaDelLider = celulas.find(c => c.liderId === lider.id);
         if (celulaDelLider) {
           return {
             ...lider,
             celulaAsignada: celulaDelLider.id,
-            nombreCelula: celulaDelLider.name
+            nombreCelula: `${celulaDelLider.name} (Líder)`
           };
         }
+        
+        // Buscar si este líder es colíder de alguna célula
+        const celulaComoColider = celulas.find(c => 
+          c.colideres.some(col => col.id === lider.id)
+        );
+        if (celulaComoColider) {
+          return {
+            ...lider,
+            celulaAsignada: celulaComoColider.id,
+            nombreCelula: `${celulaComoColider.name} (Colíder)`
+          };
+        }
+        
         return lider;
       });
       
