@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './components/auth/Login';
@@ -10,9 +10,14 @@ import LiderDashboard from './components/lider/LiderDashboard';
 
 const Dashboard: React.FC = () => {
   // Este componente redirige según el rol del usuario
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const { user } = useAuth();
   
-  if (user.role === 'pastor') {
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+  
+  // Admin y Pastor usan el mismo dashboard
+  if (user.role === 'admin' || user.role === 'pastor') {
     return <PastorDashboard />;
   } else if (user.role === 'lider' || user.role === 'colider') {
     return <LiderDashboard />;
