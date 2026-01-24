@@ -6,6 +6,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './components/auth/Login';
 import { Register } from './components/auth/Register';
 import { PastorDashboard } from './components/pastor/PastorDashboard';
+import AdminDashboard from './components/admin/AdminDashboard';
 import LiderDashboard from './components/lider/LiderDashboard';
 
 const Dashboard: React.FC = () => {
@@ -17,11 +18,21 @@ const Dashboard: React.FC = () => {
   }
   
   // Admin y Pastor usan el mismo dashboard
-  if (user.role === 'admin' || user.role === 'pastor') {
+  if (user.role === 'admin') {
+    return <AdminDashboard />;
+  } else if (user.role === 'pastor') {
     return <PastorDashboard />;
   } else if (user.role === 'lider' || user.role === 'colider') {
     return <LiderDashboard />;
   }
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
   
   return <Navigate to="/login" />;
 };
