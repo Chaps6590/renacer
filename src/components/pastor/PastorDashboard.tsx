@@ -49,7 +49,7 @@ export const PastorDashboard: React.FC = () => {
   
   // Estado para células
   const [showAddCelula, setShowAddCelula] = useState(false);
-  const [newCelula, setNewCelula] = useState({ name: '', liderId: '', diaSemana: '', horario: '' });
+  const [newCelula, setNewCelula] = useState({ name: '', liderId: '', diaSemana: '', horario: '', coliderIds: [] as string[] });
   
   const [timeframe, setTimeframe] = useState<'semanal' | 'mensual' | 'anual'>('semanal');
 
@@ -89,7 +89,7 @@ export const PastorDashboard: React.FC = () => {
         : l
     ));
     
-    setNewCelula({ name: '', liderId: '', diaSemana: '', horario: '' });
+    setNewCelula({ name: '', liderId: '', diaSemana: '', horario: '', coliderIds: [] });
     setShowAddCelula(false);
   };
 
@@ -654,14 +654,14 @@ export const PastorDashboard: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Asignar Líder *
+                    Asignar Líder Principal *
                   </label>
                   <select
                     value={newCelula.liderId}
                     onChange={(e) => setNewCelula({ ...newCelula, liderId: e.target.value })}
                     className="input"
                   >
-                    <option value="">Seleccionar líder...</option>
+                    <option value="">Seleccionar líder principal...</option>
                     {lideresDisponibles.map(lider => (
                       <option key={lider.id} value={lider.id}>
                         {lider.name} - {lider.email}
@@ -673,6 +673,39 @@ export const PastorDashboard: React.FC = () => {
                       No hay líderes disponibles. Crea un líder primero.
                     </p>
                   )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Colíderes (opcional)
+                  </label>
+                  <div className="border rounded-lg p-3 max-h-40 overflow-y-auto space-y-2">
+                    {lideresDisponibles.filter(l => l.id !== newCelula.liderId).map(lider => (
+                      <label key={lider.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                        <input
+                          type="checkbox"
+                          checked={newCelula.coliderIds.includes(lider.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setNewCelula({ ...newCelula, coliderIds: [...newCelula.coliderIds, lider.id] });
+                            } else {
+                              setNewCelula({ ...newCelula, coliderIds: newCelula.coliderIds.filter(id => id !== lider.id) });
+                            }
+                          }}
+                          className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                        />
+                        <span className="text-sm text-gray-700">{lider.name}</span>
+                      </label>
+                    ))}
+                    {lideresDisponibles.filter(l => l.id !== newCelula.liderId).length === 0 && (
+                      <p className="text-xs text-gray-500 text-center py-2">
+                        No hay más líderes disponibles para agregar como colíderes
+                      </p>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Selecciona uno o más colíderes para apoyar al líder principal
+                  </p>
                 </div>
               </div>
 
