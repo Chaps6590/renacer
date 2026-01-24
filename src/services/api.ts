@@ -69,6 +69,27 @@ class ApiService {
     });
   }
 
+  // Perfil endpoints
+  async getMe() {
+    return this.request('/auth/me', {
+      method: 'GET',
+    });
+  }
+
+  async changePassword(currentPassword: string, newPassword: string) {
+    return this.request('/auth/change-password', {
+      method: 'PUT',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+  }
+
+  async updateProfile(userId: string, profileData: { name?: string; email?: string }) {
+    return this.request(`/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(profileData),
+    });
+  }
+
   // Pastor endpoints - Crear líder (ahora usa /users)
   async createLider(liderData: any) {
     return this.request('/users', {
