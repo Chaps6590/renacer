@@ -489,11 +489,11 @@ export const PastorDashboard: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           {lider.isRegistered ? (
                             <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                              Registrado
+                              Activo
                             </span>
                           ) : (
-                            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600">
-                              Pendiente
+                            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-700">
+                              Pendiente ingreso
                             </span>
                           )}
                         </td>
