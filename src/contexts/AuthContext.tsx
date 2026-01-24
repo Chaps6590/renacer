@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '../types';
+import { User, UserRole } from '../types';
 import api from '../services/api';
 
 interface AuthContextType {
@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         id: response.user.id,
         name: response.user.name,
         email: response.user.email,
-        role: response.user.role,
+        role: response.user.role.toLowerCase() as UserRole,
         celulaId: response.user.celulaId,
       };
       
@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         id: response.user.id,
         name: response.user.name,
         email: response.user.email,
-        role: response.user.role,
+        role: response.user.role.toLowerCase() as UserRole,
         celulaId: response.user.celulaId,
         isRegistered: true,
       };
