@@ -60,7 +60,7 @@ export const PastorDashboard: React.FC = () => {
       const liderData = {
         name: newLider.name,
         email: newLider.email || `${newLider.name.toLowerCase().replace(/\s+/g, '.')}@renacer.com`,
-        password: 'renacer123', // Contraseña por defecto
+        password: 'Renacer', // Contraseña por defecto
         role: 'LIDER',
       };
       await api.createUser(liderData);
