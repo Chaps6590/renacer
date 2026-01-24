@@ -16,6 +16,7 @@ interface DataContextType {
   addCelula: (celula: Celula) => Promise<void>;
   updateCelula: (id: string, celula: Partial<Celula>) => Promise<void>;
   deleteCelula: (id: string) => Promise<void>;
+  recargarCelulas: () => Promise<void>;
   addMiembroToCelula: (celulaId: string, miembro: Miembro) => Promise<void>;
   removeMiembroFromCelula: (celulaId: string, miembroId: string) => Promise<void>;
   addColiderToCelula: (celulaId: string, colider: CoLider) => Promise<void>;
@@ -182,6 +183,34 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       setCelulas([...celulas, nuevaCelula]);
     } catch (error) {
       console.error('Error adding celula:', error);
+      throw error;
+    }
+  };
+
+  const recargarCelulas = async () => {
+    try {
+      if (user?.role === 'admin' || user?.role === 'pastor') {
+        const celulasData = await api.getCelulas() as any[];
+        const celulasTransformadas = celulasData.map((c: any) => ({
+          id: c.id,
+          name: c.nombre,
+          liderId: c.liderId,
+          liderName: c.lider?.name || '',
+          diaSemana: c.dia,
+          horario: c.horario,
+          colideres: c.coLider ? [{
+            id: c.coLider.id,
+            name: c.coLider.name,
+            email: c.coLider.email,
+            addedAt: new Date()
+          }] : [],
+          miembros: c.miembros || [],
+          createdAt: new Date(c.createdAt)
+        }));
+        setCelulas(celulasTransformadas);
+      }
+    } catch (error) {
+      console.error('Error reloading celulas:', error);
       throw error;
     }
   };
@@ -465,6 +494,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     addCelula,
     updateCelula,
     deleteCelula,
+    recargarCelulas,
     addMiembroToCelula,
     removeMiembroFromCelula,
     addColiderToCelula,

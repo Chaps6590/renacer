@@ -17,7 +17,7 @@ interface Lider extends User {
 }
 
 export const PastorDashboard: React.FC = () => {
-  const { celulas, asistencias, noticias, materiales, configuracionDonaciones } = useData();
+  const { celulas, asistencias, noticias, materiales, configuracionDonaciones, recargarCelulas } = useData();
   const [view, setView] = useState<'dashboard' | 'lideres' | 'celulas' | 'recursos'>('dashboard');
   
   // Estados para modales de recursos
@@ -30,20 +30,39 @@ export const PastorDashboard: React.FC = () => {
   const [lideres, setLideres] = useState<Lider[]>([]);
   const [loadingLideres, setLoadingLideres] = useState(false);
 
+  // Función para enriquecer líderes con información de células
+  const enrichLideresWithCelulas = async () => {
+    setLoadingLideres(true);
+    try {
+      // Obtener todos los usuarios y filtrar líderes
+      const users = await api.getUsers() as User[];
+      const lideresUsuarios = users.filter((u) => u.role && u.role.toLowerCase() === 'lider');
+      
+      // Enriquecer con información de células
+      const lideresEnriquecidos = lideresUsuarios.map(lider => {
+        // Buscar si este líder tiene una célula asignada
+        const celulaDelLider = celulas.find(c => c.liderId === lider.id);
+        if (celulaDelLider) {
+          return {
+            ...lider,
+            celulaAsignada: celulaDelLider.id,
+            nombreCelula: celulaDelLider.name
+          };
+        }
+        return lider;
+      });
+      
+      setLideres(lideresEnriquecidos);
+    } catch (e) {
+      setLideres([]);
+    }
+    setLoadingLideres(false);
+  };
+
+  // Cargar líderes cuando celulas cambie
   useEffect(() => {
-    const fetchLideres = async () => {
-      setLoadingLideres(true);
-      try {
-        // Obtener todos los usuarios y filtrar líderes
-        const users = await api.getUsers() as User[];
-        setLideres(users.filter((u) => u.role && u.role.toLowerCase() === 'lider'));
-      } catch (e) {
-        setLideres([]);
-      }
-      setLoadingLideres(false);
-    };
-    fetchLideres();
-  }, []);
+    enrichLideresWithCelulas();
+  }, [celulas]);
   const [showAddLider, setShowAddLider] = useState(false);
   const [newLider, setNewLider] = useState({ name: '', email: '' });
   
@@ -67,8 +86,7 @@ export const PastorDashboard: React.FC = () => {
       setNewLider({ name: '', email: '' });
       setShowAddLider(false);
       // Refrescar lista de líderes
-      const users = await api.getUsers() as User[];
-      setLideres(users.filter((u) => u.role && u.role.toLowerCase() === 'lider'));
+      await enrichLideresWithCelulas();
     } catch (error: any) {
       console.error('Error creando líder:', error);
       alert(error.message || 'Error al crear el líder');
@@ -88,12 +106,8 @@ export const PastorDashboard: React.FC = () => {
         coliderIds: newCelula.coliderIds
       });
       
-      // Actualizar líder con la célula asignada
-      setLideres(lideres.map(l => 
-        l.id === newCelula.liderId 
-          ? { ...l, celulaAsignada: Date.now().toString(), nombreCelula: newCelula.name }
-          : l
-      ));
+      // Recargar células desde el backend
+      await recargarCelulas();
       
       setNewCelula({ name: '', liderId: '', diaSemana: '', horario: '', coliderIds: [] });
       setShowAddCelula(false);
