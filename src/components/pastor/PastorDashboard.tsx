@@ -76,21 +76,33 @@ export const PastorDashboard: React.FC = () => {
   };
 
   // Función para crear célula
-  const handleAddCelula = () => {
+  const handleAddCelula = async () => {
     if (!newCelula.name.trim() || !newCelula.liderId || !newCelula.diaSemana || !newCelula.horario) return;
     
-    // Aquí se crearía la célula en el backend
-    console.log('Crear célula:', newCelula);
-    
-    // Actualizar líder con la célula asignada
-    setLideres(lideres.map(l => 
-      l.id === newCelula.liderId 
-        ? { ...l, celulaAsignada: Date.now().toString(), nombreCelula: newCelula.name }
-        : l
-    ));
-    
-    setNewCelula({ name: '', liderId: '', diaSemana: '', horario: '', coliderIds: [] });
-    setShowAddCelula(false);
+    try {
+      await api.crearCelula({
+        name: newCelula.name,
+        diaSemana: newCelula.diaSemana,
+        horario: newCelula.horario,
+        liderId: newCelula.liderId,
+        coliderIds: newCelula.coliderIds
+      });
+      
+      // Actualizar líder con la célula asignada
+      setLideres(lideres.map(l => 
+        l.id === newCelula.liderId 
+          ? { ...l, celulaAsignada: Date.now().toString(), nombreCelula: newCelula.name }
+          : l
+      ));
+      
+      setNewCelula({ name: '', liderId: '', diaSemana: '', horario: '', coliderIds: [] });
+      setShowAddCelula(false);
+      
+      alert('Célula creada exitosamente');
+    } catch (error: any) {
+      console.error('Error creando célula:', error);
+      alert(error.message || 'Error al crear la célula');
+    }
   };
 
   // Obtener líderes sin célula
