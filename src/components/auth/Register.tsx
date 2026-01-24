@@ -3,17 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Church, Search } from 'lucide-react';
 
-// Mock de líderes precargados - esto vendrá de la API
-const mockPreloadedLideres = [
-  { id: '2', name: 'Juan Pérez' },
-  { id: '3', name: 'María González' },
-  { id: '4', name: 'Carlos Rodríguez' },
-];
+
+
+
+import axios from 'axios';
 
 export const Register: React.FC = () => {
   const [step, setStep] = useState<'search' | 'validate' | 'form'>('search');
   const [searchName, setSearchName] = useState('');
-  const [foundLider, setFoundLider] = useState<typeof mockPreloadedLideres[0] | null>(null);
+  const [foundLider, setFoundLider] = useState<{ id: string; name: string } | null>(null);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -25,19 +23,25 @@ export const Register: React.FC = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
 
-  const handleSearch = () => {
-    // TODO: Buscar en la API
-    const lider = mockPreloadedLideres.find(
-      l => l.name.toLowerCase().includes(searchName.toLowerCase())
-    );
-
-    if (lider) {
-      setFoundLider(lider);
-      setStep('validate');
-      setError('');
-    } else {
-      setError('No se encontró un líder con ese nombre. Contacta al pastor.');
+  const handleSearch = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      // Buscar líderes precargados desde la API (ajusta la ruta según tu backend)
+      const res = await axios.get('/api/users?role=lider&isRegistered=false');
+      const lideres = res.data;
+      const lider = lideres.find((l: any) => l.name.toLowerCase().includes(searchName.toLowerCase()));
+      if (lider) {
+        setFoundLider({ id: lider.id, name: lider.name });
+        setStep('validate');
+        setError('');
+      } else {
+        setError('No se encontró un líder con ese nombre. Contacta al pastor.');
+      }
+    } catch (e) {
+      setError('Error al buscar líderes. Intenta más tarde.');
     }
+    setLoading(false);
   };
 
   const handleConfirmIdentity = () => {
