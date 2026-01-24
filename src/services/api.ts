@@ -141,6 +141,115 @@ class ApiService {
       method: 'GET',
     });
   }
+
+  // Noticias endpoints
+  async getNoticias() {
+    return this.request('/noticias', {
+      method: 'GET',
+    });
+  }
+
+  async crearNoticia(noticiaData: any) {
+    return this.request('/noticias', {
+      method: 'POST',
+      body: JSON.stringify(noticiaData),
+    });
+  }
+
+  async actualizarNoticia(id: string, noticiaData: any) {
+    return this.request(`/noticias/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(noticiaData),
+    });
+  }
+
+  async eliminarNoticia(id: string) {
+    return this.request(`/noticias/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Materiales endpoints
+  async getMateriales() {
+    return this.request('/materiales', {
+      method: 'GET',
+    });
+  }
+
+  async subirMaterial(materialData: any) {
+    return this.request('/materiales', {
+      method: 'POST',
+      body: JSON.stringify(materialData),
+    });
+  }
+
+  async eliminarMaterial(id: string) {
+    return this.request(`/materiales/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Donaciones endpoints
+  async getConfiguracionDonaciones() {
+    return this.request('/donaciones/configuracion', {
+      method: 'GET',
+    });
+  }
+
+  async actualizarConfiguracionDonaciones(config: any) {
+    return this.request('/donaciones/configuracion', {
+      method: 'PUT',
+      body: JSON.stringify(config),
+    });
+  }
+
+  // Celulas endpoints (para pastor/admin)
+  async crearCelula(celulaData: any) {
+    return this.request('/celulas', {
+      method: 'POST',
+      body: JSON.stringify(celulaData),
+    });
+  }
+
+  async actualizarCelula(id: string, celulaData: any) {
+    return this.request(`/celulas/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(celulaData),
+    });
+  }
+
+  async eliminarCelula(id: string) {
+    return this.request(`/celulas/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Users endpoints (para admin/pastor)
+  async getUsers() {
+    return this.request('/users', {
+      method: 'GET',
+    });
+  }
+
+  async createUser(userData: any) {
+    return this.request('/users', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async updateUser(id: string, userData: any) {
+    return this.request(`/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async deleteUser(id: string) {
+    return this.request(`/users/${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const api = new ApiService(API_BASE);
