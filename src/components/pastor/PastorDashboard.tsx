@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useData } from '../../contexts/DataContext';
 import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, CheckCircle2, XCircle, FileText, Newspaper, Heart, AlertCircle } from 'lucide-react';
 import { Navbar } from '../layout/Navbar';
@@ -27,10 +27,23 @@ export const PastorDashboard: React.FC = () => {
   const [showPeticiones, setShowPeticiones] = useState(false);
   
   // Estado para líderes
-  const [lideres, setLideres] = useState<Lider[]>([
-    { id: '3', name: 'Juan Pérez', email: 'lider@renacer.com', role: 'lider', celulaId: '1', celulaAsignada: '1', nombreCelula: 'Célula Jóvenes', isRegistered: true },
-    { id: '4', name: 'María González', email: 'colider@renacer.com', role: 'colider', celulaId: '1', celulaAsignada: '1', nombreCelula: 'Célula Jóvenes', isRegistered: true },
-  ]);
+  const [lideres, setLideres] = useState<Lider[]>([]);
+  const [loadingLideres, setLoadingLideres] = useState(false);
+
+  useEffect(() => {
+    const fetchLideres = async () => {
+      setLoadingLideres(true);
+      try {
+        // Obtener todos los usuarios y filtrar líderes
+        const users = await api.getUsers() as User[];
+        setLideres(users.filter((u) => u.role && u.role.toLowerCase() === 'lider'));
+      } catch (e) {
+        setLideres([]);
+      }
+      setLoadingLideres(false);
+    };
+    fetchLideres();
+  }, []);
   const [showAddLider, setShowAddLider] = useState(false);
   const [newLider, setNewLider] = useState({ name: '', email: '' });
   
@@ -43,7 +56,6 @@ export const PastorDashboard: React.FC = () => {
   // Función para agregar líder
   const handleAddLider = async () => {
     if (!newLider.name.trim()) return;
-    
     try {
       const liderData = {
         name: newLider.name,
@@ -51,20 +63,12 @@ export const PastorDashboard: React.FC = () => {
         password: 'renacer123', // Contraseña por defecto
         role: 'LIDER',
       };
-      
-      const response = await api.createLider(liderData) as any;
-      
-      const nuevoLider: Lider = {
-        id: response.user.id,
-        name: response.user.name,
-        email: response.user.email,
-        role: response.user.role.toLowerCase(),
-        isRegistered: true,
-      };
-      
-      setLideres([...lideres, nuevoLider]);
+      await api.createUser(liderData);
       setNewLider({ name: '', email: '' });
       setShowAddLider(false);
+      // Refrescar lista de líderes
+      const users = await api.getUsers() as User[];
+      setLideres(users.filter((u) => u.role && u.role.toLowerCase() === 'lider'));
     } catch (error: any) {
       console.error('Error creando líder:', error);
       alert(error.message || 'Error al crear el líder');
@@ -353,6 +357,7 @@ export const PastorDashboard: React.FC = () => {
         {/* Vista Líderes */}
         {view === 'lideres' && (
           <>
+            {loadingLideres && <div className="mb-4 text-blue-600">Cargando líderes...</div>}
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h3 className="text-xl font-bold text-gray-800">Gestión de Líderes</h3>
