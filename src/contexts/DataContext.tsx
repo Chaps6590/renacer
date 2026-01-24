@@ -87,23 +87,23 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       
       // Cargar células según el rol
       if (user?.role === 'admin' || user?.role === 'pastor') {
-        const celulasData = await api.getCelulas();
+        const celulasData = await api.getCelulas() as Celula[];
         setCelulas(celulasData);
       } else if (user?.role === 'lider' || user?.role === 'colider') {
-        const miCelula = await api.getMiCelula();
+        const miCelula = await api.getMiCelula() as Celula;
         setCelulas([miCelula]);
       }
 
       // Cargar noticias
-      const noticiasData = await api.getNoticias();
+      const noticiasData = await api.getNoticias() as Noticia[];
       setNoticias(noticiasData);
 
       // Cargar materiales
-      const materialesData = await api.getMateriales();
+      const materialesData = await api.getMateriales() as MaterialCelula[];
       setMateriales(materialesData);
 
       // Cargar configuración de donaciones
-      const donacionesConfig = await api.getConfiguracionDonaciones();
+      const donacionesConfig = await api.getConfiguracionDonaciones() as ConfiguracionDonaciones;
       setConfiguracionDonaciones(donacionesConfig);
 
     } catch (error) {
@@ -115,7 +115,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const addCelula = async (celula: Celula) => {
     try {
-      const nuevaCelula = await api.crearCelula(celula);
+      const nuevaCelula = await api.crearCelula(celula) as Celula;
       setCelulas([...celulas, nuevaCelula]);
     } catch (error) {
       console.error('Error adding celula:', error);
@@ -125,7 +125,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const updateCelula = async (id: string, updatedData: Partial<Celula>) => {
     try {
-      const celulaActualizada = await api.actualizarCelula(id, updatedData);
+      const celulaActualizada = await api.actualizarCelula(id, updatedData) as Celula;
       setCelulas(celulas.map(c => c.id === id ? celulaActualizada : c));
     } catch (error) {
       console.error('Error updating celula:', error);
@@ -145,7 +145,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const addMiembroToCelula = async (celulaId: string, miembro: Miembro) => {
     try {
-      const nuevoMiembro = await api.addMiembro(celulaId, miembro);
+      const nuevoMiembro = await api.addMiembro(celulaId, miembro) as Miembro;
       setCelulas(celulas.map(c => {
         if (c.id === celulaId) {
           return { ...c, miembros: [...c.miembros, nuevoMiembro] };
@@ -175,7 +175,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const addColiderToCelula = async (celulaId: string, colider: CoLider) => {
     try {
-      const nuevoColider = await api.addColider(celulaId, colider);
+      const nuevoColider = await api.addColider(celulaId, colider) as CoLider;
       setCelulas(celulas.map(c => {
         if (c.id === celulaId) {
           return { ...c, colideres: [...c.colideres, nuevoColider] };
@@ -225,7 +225,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const registrarAsistencia = async (asistencia: AsistenciaRecord) => {
     try {
-      const nuevaAsistencia = await api.registrarAsistencia(asistencia);
+      const nuevaAsistencia = await api.registrarAsistencia(asistencia) as AsistenciaRecord;
       setAsistencias([...asistencias, nuevaAsistencia]);
       
       // Crear pendientes para ausentes sin motivo
@@ -321,7 +321,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   // Funciones de noticias
   const agregarNoticia = async (noticia: Omit<Noticia, 'id' | 'fechaCreacion'>) => {
     try {
-      const nuevaNoticia = await api.crearNoticia(noticia);
+      const nuevaNoticia = await api.crearNoticia(noticia) as Noticia;
       setNoticias([...noticias, nuevaNoticia]);
     } catch (error) {
       console.error('Error adding noticia:', error);
@@ -331,7 +331,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   
   const actualizarNoticia = async (id: string, noticia: Partial<Noticia>) => {
     try {
-      const noticiaActualizada = await api.actualizarNoticia(id, noticia);
+      const noticiaActualizada = await api.actualizarNoticia(id, noticia) as Noticia;
       setNoticias(noticias.map(n => n.id === id ? noticiaActualizada : n));
     } catch (error) {
       console.error('Error updating noticia:', error);
@@ -352,7 +352,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   // Funciones de materiales
   const subirMaterial = async (material: Omit<MaterialCelula, 'id' | 'fechaSubida'>) => {
     try {
-      const nuevoMaterial = await api.subirMaterial(material);
+      const nuevoMaterial = await api.subirMaterial(material) as MaterialCelula;
       setMateriales([...materiales, nuevoMaterial]);
     } catch (error) {
       console.error('Error uploading material:', error);
@@ -373,7 +373,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   // Funciones de donaciones
   const actualizarConfiguracionDonaciones = async (config: Partial<ConfiguracionDonaciones>) => {
     try {
-      const configActualizada = await api.actualizarConfiguracionDonaciones(config);
+      const configActualizada = await api.actualizarConfiguracionDonaciones(config) as ConfiguracionDonaciones;
       setConfiguracionDonaciones(configActualizada);
     } catch (error) {
       console.error('Error updating donaciones config:', error);

@@ -7,6 +7,7 @@ import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
 import { PeticionesModal } from '../common/PeticionesModal';
 import { User } from '../../types';
+import api from '../../services/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -40,20 +41,34 @@ export const PastorDashboard: React.FC = () => {
   const [timeframe, setTimeframe] = useState<'semanal' | 'mensual' | 'anual'>('semanal');
 
   // Función para agregar líder
-  const handleAddLider = () => {
+  const handleAddLider = async () => {
     if (!newLider.name.trim()) return;
     
-    const nuevoLider: Lider = {
-      id: Date.now().toString(),
-      name: newLider.name,
-      email: newLider.email || `${newLider.name.toLowerCase().replace(/\s+/g, '.')}@renacer.com`,
-      role: 'lider',
-      isRegistered: false,
-    };
-    
-    setLideres([...lideres, nuevoLider]);
-    setNewLider({ name: '', email: '' });
-    setShowAddLider(false);
+    try {
+      const liderData = {
+        name: newLider.name,
+        email: newLider.email || `${newLider.name.toLowerCase().replace(/\s+/g, '.')}@renacer.com`,
+        password: 'renacer123', // Contraseña por defecto
+        role: 'LIDER',
+      };
+      
+      const response = await api.createLider(liderData) as any;
+      
+      const nuevoLider: Lider = {
+        id: response.user.id,
+        name: response.user.name,
+        email: response.user.email,
+        role: response.user.role.toLowerCase(),
+        isRegistered: true,
+      };
+      
+      setLideres([...lideres, nuevoLider]);
+      setNewLider({ name: '', email: '' });
+      setShowAddLider(false);
+    } catch (error: any) {
+      console.error('Error creando líder:', error);
+      alert(error.message || 'Error al crear el líder');
+    }
   };
 
   // Función para crear célula

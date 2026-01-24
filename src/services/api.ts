@@ -69,16 +69,16 @@ class ApiService {
     });
   }
 
-  // Pastor endpoints
+  // Pastor endpoints - Crear líder (ahora usa /users)
   async createLider(liderData: any) {
-    return this.request('/pastor/lideres', {
+    return this.request('/users', {
       method: 'POST',
       body: JSON.stringify(liderData),
     });
   }
 
   async getCelulas() {
-    return this.request('/pastor/celulas', {
+    return this.request('/celulas', {
       method: 'GET',
     });
   }
@@ -91,46 +91,50 @@ class ApiService {
 
   // Lider endpoints
   async getMiCelula() {
-    return this.request('/lider/mi-celula', {
+    // Los líderes usan el mismo endpoint /celulas
+    // El backend filtra automáticamente según el rol
+    const celulas = await this.request<any[]>('/celulas', {
       method: 'GET',
     });
+    // Retornar la primera célula (un líder solo tiene una)
+    return celulas[0];
   }
 
   async addMiembro(celulaId: string, miembroData: any) {
-    return this.request(`/lider/celulas/${celulaId}/miembros`, {
+    return this.request(`/celulas/${celulaId}/miembros`, {
       method: 'POST',
       body: JSON.stringify(miembroData),
     });
   }
 
   async removeMiembro(celulaId: string, miembroId: string) {
-    return this.request(`/lider/celulas/${celulaId}/miembros/${miembroId}`, {
+    return this.request(`/celulas/${celulaId}/miembros/${miembroId}`, {
       method: 'DELETE',
     });
   }
 
   async addColider(celulaId: string, coliderData: any) {
-    return this.request(`/lider/celulas/${celulaId}/colideres`, {
+    return this.request(`/celulas/${celulaId}/colideres`, {
       method: 'POST',
       body: JSON.stringify(coliderData),
     });
   }
 
   async removeColider(celulaId: string, coliderId: string) {
-    return this.request(`/lider/celulas/${celulaId}/colideres/${coliderId}`, {
+    return this.request(`/celulas/${celulaId}/colideres/${coliderId}`, {
       method: 'DELETE',
     });
   }
 
   async registrarAsistencia(asistenciaData: any) {
-    return this.request('/lider/asistencia', {
+    return this.request('/asistencias', {
       method: 'POST',
       body: JSON.stringify(asistenciaData),
     });
   }
 
   async getAsistencias(celulaId: string) {
-    return this.request(`/lider/celulas/${celulaId}/asistencias`, {
+    return this.request(`/celulas/${celulaId}/asistencias`, {
       method: 'GET',
     });
   }
