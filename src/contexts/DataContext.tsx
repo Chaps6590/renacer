@@ -87,24 +87,87 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       
       // Cargar células según el rol
       if (user?.role === 'admin' || user?.role === 'pastor') {
-        const celulasData = await api.getCelulas() as Celula[];
-        setCelulas(celulasData);
+        const celulasData = await api.getCelulas() as any[];
+        // Transformar datos de la API al formato esperado por el frontend
+        const celulasTransformadas = celulasData.map((c: any) => ({
+          id: c.id,
+          name: c.nombre,
+          liderId: c.liderId,
+          liderName: c.lider?.name || '',
+          diaSemana: c.dia,
+          horario: c.horario,
+          colideres: c.coLider ? [{
+            id: c.coLider.id,
+            name: c.coLider.name,
+            email: c.coLider.email,
+            addedAt: new Date()
+          }] : [],
+          miembros: c.miembros || [],
+          createdAt: new Date(c.createdAt)
+        }));
+        setCelulas(celulasTransformadas);
       } else if (user?.role === 'lider' || user?.role === 'colider') {
-        const miCelula = await api.getMiCelula() as Celula;
-        setCelulas([miCelula]);
+        const miCelula = await api.getMiCelula() as any;
+        if (miCelula) {
+          const celulaTransformada = {
+            id: miCelula.id,
+            name: miCelula.nombre,
+            liderId: miCelula.liderId,
+            liderName: miCelula.lider?.name || '',
+            diaSemana: miCelula.dia,
+            horario: miCelula.horario,
+            colideres: miCelula.coLider ? [{
+              id: miCelula.coLider.id,
+              name: miCelula.coLider.name,
+              email: miCelula.coLider.email,
+              addedAt: new Date()
+            }] : [],
+            miembros: miCelula.miembros || [],
+            createdAt: new Date(miCelula.createdAt)
+          };
+          setCelulas([celulaTransformada]);
+        }
       }
 
       // Cargar noticias
-      const noticiasData = await api.getNoticias() as Noticia[];
-      setNoticias(noticiasData);
+      const noticiasData = await api.getNoticias() as any[];
+      const noticiasTransformadas = noticiasData.map((n: any) => ({
+        id: n.id,
+        titulo: n.titulo,
+        contenido: n.contenido,
+        fechaCreacion: new Date(n.fechaPublicacion || n.createdAt),
+        fechaVencimiento: n.fechaVencimiento ? new Date(n.fechaVencimiento) : undefined,
+        importante: n.importante,
+        creadoPor: n.createdBy || n.creator?.id || '',
+        visible: n.activa
+      }));
+      setNoticias(noticiasTransformadas);
 
       // Cargar materiales
-      const materialesData = await api.getMateriales() as MaterialCelula[];
-      setMateriales(materialesData);
+      const materialesData = await api.getMateriales() as any[];
+      const materialesTransformados = materialesData.map((m: any) => ({
+        id: m.id,
+        titulo: m.titulo,
+        descripcion: m.descripcion,
+        archivoUrl: m.nombreArchivo,
+        nombreArchivo: m.nombreArchivo,
+        fechaSubida: new Date(m.fechaSubida),
+        subidoPor: m.subidoPorId || '',
+        activo: m.activo
+      }));
+      setMateriales(materialesTransformados);
 
       // Cargar configuración de donaciones
-      const donacionesConfig = await api.getConfiguracionDonaciones() as ConfiguracionDonaciones;
-      setConfiguracionDonaciones(donacionesConfig);
+      const donacionesConfig = await api.getConfiguracionDonaciones() as any;
+      if (donacionesConfig) {
+        setConfiguracionDonaciones({
+          aliasIglesia: donacionesConfig.aliasIglesia || '',
+          descripcion: donacionesConfig.cbuIglesia || '',
+          activo: donacionesConfig.activo || false,
+          fechaActualizacion: donacionesConfig.fechaCreacion ? new Date(donacionesConfig.fechaCreacion) : new Date(),
+          actualizadoPor: donacionesConfig.actualizadoPorId || ''
+        });
+      }
 
     } catch (error) {
       console.error('Error loading initial data:', error);
