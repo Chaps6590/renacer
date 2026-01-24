@@ -11,6 +11,7 @@ export interface User {
   role: UserRole;
   celulaId?: string; // Solo para líderes y colíderes
   isRegistered?: boolean; // Para líderes precargados que aún no se registraron
+  createdAt?: string; // Fecha de creación del usuario
 }
 
 export interface Celula {
