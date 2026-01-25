@@ -86,6 +86,7 @@ export const PastorDashboard: React.FC = () => {
   const [showEditCelula, setShowEditCelula] = useState(false);
   const [newCelula, setNewCelula] = useState({ name: '', liderId: '', diaSemana: '', horario: '', coliderIds: [] as string[] });
   const [editingCelula, setEditingCelula] = useState<{ id: string, name: string, liderId: string, diaSemana: string, horario: string, coliderIds: string[] } | null>(null);
+  const [coliderSearch, setColiderSearch] = useState(''); // Estado para búsqueda de colíderes
 
   const [timeframe, setTimeframe] = useState<'semanal' | 'mensual' | 'anual'>('semanal');
 
@@ -157,6 +158,7 @@ export const PastorDashboard: React.FC = () => {
 
       setNewCelula({ name: '', liderId: '', diaSemana: '', horario: '', coliderIds: [] });
       setShowAddCelula(false);
+      setColiderSearch('');
 
       alert('Célula creada exitosamente');
     } catch (error: any) {
@@ -175,6 +177,7 @@ export const PastorDashboard: React.FC = () => {
       horario: celula.horario,
       coliderIds: celula.colideres.map((c: any) => c.id)
     });
+    setColiderSearch('');
     setShowEditCelula(true);
   };
 
@@ -194,6 +197,7 @@ export const PastorDashboard: React.FC = () => {
       await recargarCelulas();
       setShowEditCelula(false);
       setEditingCelula(null);
+      setColiderSearch('');
       alert('Célula actualizada exitosamente');
     } catch (error: any) {
       console.error('Error actualizando célula:', error);
@@ -933,7 +937,7 @@ export const PastorDashboard: React.FC = () => {
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">Crear Nueva Célula</h3>
-                <button onClick={() => setShowAddCelula(false)} className="text-gray-400 hover:text-gray-600">
+                <button onClick={() => { setShowAddCelula(false); setColiderSearch(''); }} className="text-gray-400 hover:text-gray-600">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -1011,27 +1015,36 @@ export const PastorDashboard: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Colíderes (opcional)
                   </label>
+                  <input
+                    type="text"
+                    placeholder="Buscar colíder..."
+                    value={coliderSearch}
+                    onChange={(e) => setColiderSearch(e.target.value)}
+                    className="input mb-2 text-sm py-1"
+                  />
                   <div className="border rounded-lg p-3 max-h-40 overflow-y-auto space-y-2">
-                    {lideresDisponibles.filter(l => l.id !== newCelula.liderId).map(lider => (
-                      <label key={lider.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
-                        <input
-                          type="checkbox"
-                          checked={newCelula.coliderIds.includes(lider.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setNewCelula({ ...newCelula, coliderIds: [...newCelula.coliderIds, lider.id] });
-                            } else {
-                              setNewCelula({ ...newCelula, coliderIds: newCelula.coliderIds.filter(id => id !== lider.id) });
-                            }
-                          }}
-                          className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                        />
-                        <span className="text-sm text-gray-700">{lider.name}</span>
-                      </label>
-                    ))}
-                    {lideresDisponibles.filter(l => l.id !== newCelula.liderId).length === 0 && (
+                    {lideresDisponibles
+                      .filter(l => l.id !== newCelula.liderId && l.name.toLowerCase().includes(coliderSearch.toLowerCase()))
+                      .map(lider => (
+                        <label key={lider.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                          <input
+                            type="checkbox"
+                            checked={newCelula.coliderIds.includes(lider.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setNewCelula({ ...newCelula, coliderIds: [...newCelula.coliderIds, lider.id] });
+                              } else {
+                                setNewCelula({ ...newCelula, coliderIds: newCelula.coliderIds.filter(id => id !== lider.id) });
+                              }
+                            }}
+                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                          />
+                          <span className="text-sm text-gray-700">{lider.name}</span>
+                        </label>
+                      ))}
+                    {lideresDisponibles.filter(l => l.id !== newCelula.liderId && l.name.toLowerCase().includes(coliderSearch.toLowerCase())).length === 0 && (
                       <p className="text-xs text-gray-500 text-center py-2">
-                        No hay más líderes disponibles para agregar como colíderes
+                        No se encontraron líderes disponibles
                       </p>
                     )}
                   </div>
@@ -1050,7 +1063,7 @@ export const PastorDashboard: React.FC = () => {
                   Crear Célula
                 </button>
                 <button
-                  onClick={() => setShowAddCelula(false)}
+                  onClick={() => { setShowAddCelula(false); setColiderSearch(''); }}
                   className="btn btn-secondary flex-1"
                 >
                   Cancelar
@@ -1066,7 +1079,7 @@ export const PastorDashboard: React.FC = () => {
             <div className="bg-white rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">Editar Célula</h3>
-                <button onClick={() => setShowEditCelula(false)} className="text-gray-400 hover:text-gray-600">
+                <button onClick={() => { setShowEditCelula(false); setColiderSearch(''); }} className="text-gray-400 hover:text-gray-600">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -1141,31 +1154,40 @@ export const PastorDashboard: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Colíderes
                   </label>
+                  <input
+                    type="text"
+                    placeholder="Buscar colíder..."
+                    value={coliderSearch}
+                    onChange={(e) => setColiderSearch(e.target.value)}
+                    className="input mb-2 text-sm py-1"
+                  />
                   <div className="border rounded-lg p-3 max-h-40 overflow-y-auto space-y-2">
-                    {lideres.filter(l => l.id !== editingCelula.liderId).map(lider => (
-                      <label
-                        key={lider.id}
-                        className={`flex items-center gap-2 cursor-pointer p-2 rounded ${!!lider.celulaAsignada && !editingCelula.coliderIds.includes(lider.id) ? 'opacity-50' : 'hover:bg-gray-50'
-                          }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={editingCelula.coliderIds.includes(lider.id)}
-                          disabled={!!lider.celulaAsignada && !editingCelula.coliderIds.includes(lider.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setEditingCelula({ ...editingCelula, coliderIds: [...editingCelula.coliderIds, lider.id] });
-                            } else {
-                              setEditingCelula({ ...editingCelula, coliderIds: editingCelula.coliderIds.filter(id => id !== lider.id) });
-                            }
-                          }}
-                          className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                        />
-                        <span className="text-sm text-gray-700">
-                          {lider.name} {!!lider.celulaAsignada && !editingCelula.coliderIds.includes(lider.id) ? '(Ocupado)' : ''}
-                        </span>
-                      </label>
-                    ))}
+                    {lideres
+                      .filter(l => l.id !== editingCelula.liderId && l.name.toLowerCase().includes(coliderSearch.toLowerCase()))
+                      .map(lider => (
+                        <label
+                          key={lider.id}
+                          className={`flex items-center gap-2 cursor-pointer p-2 rounded ${!!lider.celulaAsignada && !editingCelula.coliderIds.includes(lider.id) ? 'opacity-50' : 'hover:bg-gray-50'
+                            }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={editingCelula.coliderIds.includes(lider.id)}
+                            disabled={!!lider.celulaAsignada && !editingCelula.coliderIds.includes(lider.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setEditingCelula({ ...editingCelula, coliderIds: [...editingCelula.coliderIds, lider.id] });
+                              } else {
+                                setEditingCelula({ ...editingCelula, coliderIds: editingCelula.coliderIds.filter(id => id !== lider.id) });
+                              }
+                            }}
+                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                          />
+                          <span className="text-sm text-gray-700">
+                            {lider.name} {!!lider.celulaAsignada && !editingCelula.coliderIds.includes(lider.id) ? '(Ocupado)' : ''}
+                          </span>
+                        </label>
+                      ))}
                   </div>
                 </div>
               </div>
@@ -1178,7 +1200,7 @@ export const PastorDashboard: React.FC = () => {
                   Guardar Cambios
                 </button>
                 <button
-                  onClick={() => setShowEditCelula(false)}
+                  onClick={() => { setShowEditCelula(false); setColiderSearch(''); }}
                   className="btn btn-secondary flex-1"
                 >
                   Cancelar
