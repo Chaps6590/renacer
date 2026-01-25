@@ -174,6 +174,13 @@ class ApiService {
     });
   }
 
+  async updateAccionPastoral(asistenciaId: string, data: { miembroId: string; accionPastoral: string; resuelta: boolean }) {
+    return this.request(`/asistencias/${asistenciaId}/accion-pastoral`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
   async getPendientesAsistencia() {
     return this.request('/asistencias/pendientes', {
       method: 'GET',

@@ -57,7 +57,12 @@ export interface MiembroAsistencia {
   motivoPersonalizado?: string; // Para cuando motivoFalta es 'otro'
   anotacionEspecial?: string; // Para presentes: oración, necesidades, etc.
   prioridadAnotacion?: PrioridadAnotacion;
-  motivoCompletado: boolean; // Si ya se completó el motivo de la falta
+  motivoCompletado?: boolean; // Si ya se completó el motivo de la falta
+  // Acciones pastorales
+  accionPastoral?: string;
+  resuelta?: boolean;
+  fechaResolucion?: string;
+  resueltaPorId?: string;
 }
 
 export interface AsistenciaRecord {

@@ -26,6 +26,7 @@ interface DataContextType {
   // Funciones de asistencia
   registrarAsistencia: (asistencia: AsistenciaRecord) => Promise<void>;
   actualizarMotivoFalta: (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string, anotacionEspecial?: string) => Promise<void>;
+  registrarAccionPastoral: (asistenciaId: string, miembroId: string, accion: string, resuelta: boolean) => Promise<void>;
   marcarAsistenciaCompletada: (asistenciaId: string) => Promise<void>;
   getHistorialAsistencias: (celulaId: string) => Promise<any[]>;
 
@@ -314,13 +315,57 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     try {
       const res = await api.registrarAsistencia(asistencia) as any;
       const nuevaAsistencia = res.asistencia || res;
-      setAsistencias([...asistencias, nuevaAsistencia]);
+
+      setAsistencias(prev => {
+        const index = prev.findIndex(a => a.id === nuevaAsistencia.id);
+        if (index !== -1) {
+          const updated = [...prev];
+          updated[index] = nuevaAsistencia;
+          return updated;
+        }
+        return [...prev, nuevaAsistencia];
+      });
 
       // Recargar pendientes después de registrar
       const dataPendientes = await api.getPendientesAsistencia() as any[];
       setPendientesAsistencia(dataPendientes);
     } catch (error) {
       console.error('Error registering asistencia:', error);
+      throw error;
+    }
+  };
+
+  const registrarAccionPastoral = async (asistenciaId: string, miembroId: string, accionPastoral: string, resuelta: boolean) => {
+    try {
+      await api.updateAccionPastoral(asistenciaId, {
+        miembroId,
+        accionPastoral,
+        resuelta
+      });
+
+      // Actualizar estado local
+      setAsistencias(prev => prev.map(a => {
+        if (a.id === asistenciaId) {
+          return {
+            ...a,
+            miembros: a.miembros.map(m => {
+              if (m.miembroId === miembroId) {
+                return {
+                  ...m,
+                  accionPastoral,
+                  resuelta,
+                  fechaResolucion: resuelta ? new Date().toISOString() : undefined,
+                  resueltaPorId: resuelta ? user?.id : undefined
+                };
+              }
+              return m;
+            })
+          };
+        }
+        return a;
+      }));
+    } catch (error) {
+      console.error('Error updating pastoral action:', error);
       throw error;
     }
   };
@@ -532,6 +577,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     updateMiembroRol,
     registrarAsistencia,
     actualizarMotivoFalta,
+    registrarAccionPastoral,
     marcarAsistenciaCompletada,
     agregarNoticia,
     actualizarNoticia,
