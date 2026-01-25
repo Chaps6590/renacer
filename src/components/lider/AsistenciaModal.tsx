@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Celula, AsistenciaRecord, MiembroAsistencia, PrioridadAnotacion, MotivoFalta } from '../../types';
 import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { Check, X, Save, AlertCircle, MessageCircle, Flag } from 'lucide-react';
+import { Check, X, Save, MessageCircle, Flag } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface AsistenciaModalProps {

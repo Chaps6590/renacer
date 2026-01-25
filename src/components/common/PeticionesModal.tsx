@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useData } from '../../contexts/DataContext';
-import { AlertCircle, Clock, Heart, X, Eye, MessageSquare } from 'lucide-react';
+import { AlertCircle, Heart, X, Eye, MessageSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { PrioridadAnotacion, MotivoFalta } from '../../types';
@@ -13,7 +13,7 @@ interface PeticionesModalProps {
 export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClose }) => {
   const { celulas, asistencias, registrarAccionPastoral } = useData();
   const [filtroActivo, setFiltroActivo] = useState<'todas' | 'alta' | 'media' | 'baja'>('todas');
-  const [tipoFiltro, setTipoFiltro] = useState<'todas' | 'presentes' | 'ausentes'>('todas');
+
   const [resolucionFiltro, setResolucionFiltro] = useState<'pendiente' | 'resuelta' | 'todas'>('pendiente');
   const [editandoAccion, setEditandoAccion] = useState<{ id: string, texto: string } | null>(null);
 
@@ -126,17 +126,13 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
 
   // Aplicar filtros
   const anotacionesFiltradas = anotaciones.filter(anotacion => {
-    const cumpleFiltroTipo = tipoFiltro === 'todas' ||
-      (tipoFiltro === 'presentes' && anotacion.presente) ||
-      (tipoFiltro === 'ausentes' && !anotacion.presente);
-
     const cumplePrioridad = filtroActivo === 'todas' || anotacion.prioridad === filtroActivo;
 
     const cumpleResolucion = resolucionFiltro === 'todas' ||
       (resolucionFiltro === 'resuelta' && anotacion.resuelta) ||
       (resolucionFiltro === 'pendiente' && !anotacion.resuelta);
 
-    return cumpleFiltroTipo && cumplePrioridad && cumpleResolucion;
+    return cumplePrioridad && cumpleResolucion;
   });
 
   const handleGuardarAccion = async (anotacion: any) => {
@@ -154,14 +150,6 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
       case 'alta': return 'bg-red-100 text-red-800 border-red-300';
       case 'media': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
       case 'baja': return 'bg-green-100 text-green-800 border-green-300';
-    }
-  };
-
-  const getPrioridadIcon = (prioridad: PrioridadAnotacion) => {
-    switch (prioridad) {
-      case 'alta': return <AlertCircle className="w-4 h-4" />;
-      case 'media': return <Clock className="w-4 h-4" />;
-      case 'baja': return <Heart className="w-4 h-4" />;
     }
   };
 
