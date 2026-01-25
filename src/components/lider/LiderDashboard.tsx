@@ -249,8 +249,8 @@ const LiderDashboard: React.FC = () => {
     ).sort((a, b) => {
       // Orden por nivel: Timoteo > Miembro > Nuevo
       const priority: Record<string, number> = { TIMOTEO: 1, MIEMBRO: 2, NUEVO: 3 };
-      const pA = priority[a.rolCelula.toUpperCase()] || 4;
-      const pB = priority[b.rolCelula.toUpperCase()] || 4;
+      const pA = priority[(a.rolCelula || 'nuevo').toUpperCase()] || 4;
+      const pB = priority[(b.rolCelula || 'nuevo').toUpperCase()] || 4;
       return pA - pB;
     })
   ].filter(Boolean) : [];
