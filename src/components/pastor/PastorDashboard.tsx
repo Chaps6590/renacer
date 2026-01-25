@@ -544,40 +544,7 @@ export const PastorDashboard: React.FC = () => {
               </button>
             </div>
 
-            {/* Líderes sin célula */}
-            {lideresDisponibles.length > 0 && (
-              <div className="card mb-6 bg-amber-50 border-amber-200">
-                <div className="flex items-center gap-2 mb-3">
-                  <Users className="w-5 h-5 text-amber-600" />
-                  <h4 className="font-semibold text-amber-900">Líderes sin célula asignada ({lideresDisponibles.length})</h4>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {lideresDisponibles.map(lider => (
-                    <div key={lider.id} className="bg-white p-4 rounded-lg border border-amber-200">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium text-gray-900">{lider.name}</p>
-                          <p className="text-sm text-gray-600">{lider.email}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {lider.isRegistered ? (
-                              <span className="flex items-center gap-1 text-green-600">
-                                <CheckCircle2 className="w-3 h-3" />
-                                Registrado
-                              </span>
-                            ) : (
-                              <span className="flex items-center gap-1 text-gray-500">
-                                <XCircle className="w-3 h-3" />
-                                Pendiente registro
-                              </span>
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+
 
             {/* Tabla de líderes */}
             <div className="card">
