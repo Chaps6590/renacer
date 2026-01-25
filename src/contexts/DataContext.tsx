@@ -98,7 +98,11 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           diaSemana: c.dia,
           horario: c.horario,
           coLideres: c.coLideres || [],
-          miembros: c.miembros || [],
+          miembros: (c.miembros || []).map((m: any) => ({
+            ...m,
+            name: m.nombre,
+            phone: m.telefono
+          })),
           createdAt: new Date(c.createdAt)
         }));
         setCelulas(celulasTransformadas);
@@ -113,7 +117,11 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
             diaSemana: miCelula.dia,
             horario: miCelula.horario,
             coLideres: miCelula.coLideres || [],
-            miembros: miCelula.miembros || [],
+            miembros: (miCelula.miembros || []).map((m: any) => ({
+              ...m,
+              name: m.nombre,
+              phone: m.telefono
+            })),
             createdAt: new Date(miCelula.createdAt)
           };
           setCelulas([celulaTransformada]);
@@ -222,7 +230,12 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const addMiembroToCelula = async (celulaId: string, miembro: Miembro) => {
     try {
-      const nuevoMiembro = await api.addMiembro(celulaId, miembro) as Miembro;
+      const res = await api.addMiembro(celulaId, miembro) as any;
+      const nuevoMiembro = {
+        ...res,
+        name: res.nombre,
+        phone: res.telefono
+      } as Miembro;
       setCelulas(celulas.map(c => {
         if (c.id === celulaId) {
           return { ...c, miembros: [...c.miembros, nuevoMiembro] };
