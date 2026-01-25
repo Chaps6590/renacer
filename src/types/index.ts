@@ -33,7 +33,7 @@ export interface CoLider {
   addedAt: Date;
 }
 
-export type RolCelula = 'lider' | 'colider' | 'miembro' | 'nuevo';
+export type RolCelula = 'lider' | 'colider' | 'timoteo' | 'miembro' | 'nuevo';
 
 export interface Miembro {
   id: string;

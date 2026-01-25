@@ -209,6 +209,7 @@ const LiderDashboard: React.FC = () => {
     const roles = {
       lider: 'Líder',
       colider: 'Colíder',
+      timoteo: 'Timoteo',
       miembro: 'Miembro',
       nuevo: 'Nuevo'
     };
@@ -219,6 +220,7 @@ const LiderDashboard: React.FC = () => {
     const colors = {
       lider: 'bg-purple-100 text-purple-800 border-purple-300',
       colider: 'bg-blue-100 text-blue-800 border-blue-300',
+      timoteo: 'bg-orange-100 text-orange-800 border-orange-300',
       miembro: 'bg-green-100 text-green-800 border-green-300',
       nuevo: 'bg-yellow-100 text-yellow-800 border-yellow-300'
     };
@@ -238,8 +240,10 @@ const LiderDashboard: React.FC = () => {
       ...colider,
       rolCelula: 'colider' as const
     })),
+    // Timoteos
+    ...miCelula.miembros.filter(m => m.rolCelula === 'timoteo'),
     // Miembros y nuevos
-    ...miCelula.miembros
+    ...miCelula.miembros.filter(m => m.rolCelula !== 'timoteo')
   ].filter(Boolean) : [];
 
   const handleAddMiembro = (miembroData: { name: string; phone?: string; email?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean }) => {
@@ -701,6 +705,19 @@ const LiderDashboard: React.FC = () => {
                         Colíder <Star className="w-4 h-4 text-blue-500" />
                       </div>
                       <div className="text-sm text-gray-600">Ayudante del líder de célula</div>
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => confirmChangeRole('timoteo')}
+                  className="w-full p-4 text-left border-2 border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition duration-200 group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 bg-orange-500 rounded-full group-hover:scale-110 transition duration-200"></div>
+                    <div>
+                      <div className="font-semibold text-gray-900">Timoteo</div>
+                      <div className="text-sm text-gray-600">Ayudante en formación</div>
                     </div>
                   </div>
                 </button>

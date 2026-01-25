@@ -11,7 +11,7 @@ interface DataContextType {
   configuracionDonaciones: ConfiguracionDonaciones;
   pendientesAsistencia: PendienteAsistencia[];
   loading: boolean;
-  
+
   // Funciones de células
   addCelula: (celula: Celula) => Promise<void>;
   updateCelula: (id: string, celula: Partial<Celula>) => Promise<void>;
@@ -21,25 +21,25 @@ interface DataContextType {
   removeMiembroFromCelula: (celulaId: string, miembroId: string) => Promise<void>;
   addColiderToCelula: (celulaId: string, colider: CoLider) => Promise<void>;
   removeColiderFromCelula: (celulaId: string, coliderId: string) => Promise<void>;
-  updateMiembroRol: (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo') => Promise<void>;
-  
+  updateMiembroRol: (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo' | 'timoteo') => Promise<void>;
+
   // Funciones de asistencia
   registrarAsistencia: (asistencia: AsistenciaRecord) => Promise<void>;
   actualizarMotivoFalta: (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string) => Promise<void>;
   marcarAsistenciaCompletada: (asistenciaId: string) => Promise<void>;
-  
+
   // Funciones de noticias
   agregarNoticia: (noticia: Omit<Noticia, 'id' | 'fechaCreacion'>) => Promise<void>;
   actualizarNoticia: (id: string, noticia: Partial<Noticia>) => Promise<void>;
   eliminarNoticia: (id: string) => Promise<void>;
-  
+
   // Funciones de materiales
   subirMaterial: (material: Omit<MaterialCelula, 'id' | 'fechaSubida'>) => Promise<void>;
   eliminarMaterial: (id: string) => Promise<void>;
-  
+
   // Funciones de donaciones
   actualizarConfiguracionDonaciones: (config: Partial<ConfiguracionDonaciones>) => Promise<void>;
-  
+
   // Utilidades
   getCelulaById: (id: string) => Celula | undefined;
   getPendientesAsistencia: (liderId: string) => PendienteAsistencia[];
@@ -85,7 +85,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const loadInitialData = async () => {
     try {
       setLoading(true);
-      
+
       // Cargar células según el rol
       if (user?.role === 'admin' || user?.role === 'pastor') {
         const celulasData = await api.getCelulas() as any[];
@@ -295,7 +295,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     }
   };
 
-  const updateMiembroRol = async (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo') => {
+  const updateMiembroRol = async (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo' | 'timoteo') => {
     try {
       // TODO: Implementar endpoint en API para actualizar rol de miembro
       setCelulas(celulas.map(c => {
@@ -319,7 +319,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     try {
       const nuevaAsistencia = await api.registrarAsistencia(asistencia) as AsistenciaRecord;
       setAsistencias([...asistencias, nuevaAsistencia]);
-      
+
       // Crear pendientes para ausentes sin motivo
       const miembrosSinMotivo = asistencia.miembros
         .filter(m => !m.presente && !m.motivoCompletado)
@@ -330,7 +330,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
             miembroNombre: miembro?.name || 'Desconocido'
           };
         });
-      
+
       if (miembrosSinMotivo.length > 0) {
         const celula = getCelulaById(asistencia.celulaId);
         const pendiente: PendienteAsistencia = {
@@ -348,7 +348,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       throw error;
     }
   };
-  
+
   const actualizarMotivoFalta = async (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string) => {
     try {
       // TODO: Implementar endpoint en API
@@ -365,10 +365,10 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
             }
             return m;
           });
-          
+
           const pendientesCompletar = miembrosActualizados.filter(m => !m.presente && !m.motivoCompletado).length;
           const completado = pendientesCompletar === 0;
-          
+
           return {
             ...a,
             miembros: miembrosActualizados,
@@ -378,7 +378,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         }
         return a;
       }));
-      
+
       // Actualizar pendientes
       setPendientesAsistencia(pendientesAsistencia.map(p => {
         if (p.asistenciaId === asistenciaId) {
@@ -396,11 +396,11 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       throw error;
     }
   };
-  
+
   const marcarAsistenciaCompletada = async (asistenciaId: string) => {
     try {
       // TODO: Implementar endpoint en API
-      setAsistencias(asistencias.map(a => 
+      setAsistencias(asistencias.map(a =>
         a.id === asistenciaId ? { ...a, completado: true } : a
       ));
       setPendientesAsistencia(pendientesAsistencia.filter(p => p.asistenciaId !== asistenciaId));
@@ -409,7 +409,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       throw error;
     }
   };
-  
+
   // Funciones de noticias
   const agregarNoticia = async (noticia: Omit<Noticia, 'id' | 'fechaCreacion'>) => {
     try {
@@ -420,7 +420,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       throw error;
     }
   };
-  
+
   const actualizarNoticia = async (id: string, noticia: Partial<Noticia>) => {
     try {
       const noticiaActualizada = await api.actualizarNoticia(id, noticia) as Noticia;
@@ -430,7 +430,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       throw error;
     }
   };
-  
+
   const eliminarNoticia = async (id: string) => {
     try {
       await api.eliminarNoticia(id);
@@ -440,7 +440,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       throw error;
     }
   };
-  
+
   // Funciones de materiales
   const subirMaterial = async (material: Omit<MaterialCelula, 'id' | 'fechaSubida'>) => {
     try {
@@ -451,7 +451,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       throw error;
     }
   };
-  
+
   const eliminarMaterial = async (id: string) => {
     try {
       await api.eliminarMaterial(id);
@@ -461,7 +461,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       throw error;
     }
   };
-  
+
   // Funciones de donaciones
   const actualizarConfiguracionDonaciones = async (config: Partial<ConfiguracionDonaciones>) => {
     try {
