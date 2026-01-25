@@ -18,7 +18,7 @@ interface Lider extends User {
 
 export const PastorDashboard: React.FC = () => {
   const { celulas, asistencias, noticias, materiales, configuracionDonaciones, recargarCelulas } = useData();
-  const [view, setView] = useState<'dashboard' | 'lideres' | 'celulas' | 'recursos'>('dashboard');
+  const [view, setView] = useState<'dashboard' | 'lideres' | 'celulas' | 'recursos' | 'cumpleanos'>('dashboard');
 
   // Estados para modales de recursos
   const [showMateriales, setShowMateriales] = useState(false);
@@ -204,6 +204,67 @@ export const PastorDashboard: React.FC = () => {
   // Obtener líderes sin célula
   const lideresDisponibles = lideres.filter(l => !l.celulaAsignada);
 
+  // Lógica de cumpleaños
+  const getUpcomingBirthdays = () => {
+    const today = new Date();
+    const nextWeek = new Date();
+    nextWeek.setDate(today.getDate() + 7);
+
+    const isBirthdayUpcoming = (dateString?: string) => {
+      if (!dateString) return false;
+      const dob = new Date(dateString);
+      const currentYear = today.getFullYear();
+
+      // Crear fechas de cumpleaños para este año y el próximo (por si es fin de año)
+      const dobThisYear = new Date(currentYear, dob.getMonth(), dob.getDate());
+      const dobNextYear = new Date(currentYear + 1, dob.getMonth(), dob.getDate()); // No usado simplificado, usamos lógica simple semanal
+
+      // Ajuste simple: Verificar si el día y mes caen en los próximos 7 días
+      // Normalizamos todo a timestamps para comparar rangos de días del año
+
+      // Mejor enfoque: Iterar los próximos 7 días y ver si matchea día y mes
+      for (let i = 0; i <= 7; i++) {
+        const checkDate = new Date();
+        checkDate.setDate(today.getDate() + i);
+        if (checkDate.getMonth() === dob.getMonth() && checkDate.getDate() === dob.getDate()) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    const upcomingMembers = celulas.flatMap(c =>
+      c.miembros
+        .filter(m => isBirthdayUpcoming(m.fechaNacimiento))
+        .map(m => ({ ...m, type: 'Miembro', celulaName: c.name, liderName: c.liderName }))
+    );
+
+    const upcomingLeaders = lideres
+      .filter(l => isBirthdayUpcoming(l.fechaNacimiento))
+      .map(l => ({ ...l, type: 'Líder', celulaName: l.nombreCelula || 'Sin asignar' }));
+
+    // Unir y ordenar por fecha próxima
+    const allBirthdays = [...upcomingMembers, ...upcomingLeaders].sort((a, b) => {
+      const dateA = new Date(a.fechaNacimiento!);
+      const dateB = new Date(b.fechaNacimiento!);
+
+      // Obtener fecha de cumpleaños en este año para ordenar
+      const currentYear = today.getFullYear();
+      const birthdayA = new Date(currentYear, dateA.getMonth(), dateA.getDate());
+      const birthdayB = new Date(currentYear, dateB.getMonth(), dateB.getDate());
+
+      // Si ya pasó este año (ej: ayer), asumimos que es el próximo año (aunque filtro de 7 días elimina esto, pero por robustez)
+      if (birthdayA < new Date(today.setHours(0, 0, 0, 0))) birthdayA.setFullYear(currentYear + 1);
+      if (birthdayB < new Date(today.setHours(0, 0, 0, 0))) birthdayB.setFullYear(currentYear + 1);
+
+      return birthdayA.getTime() - birthdayB.getTime();
+    });
+
+    return allBirthdays;
+  };
+
+  const birthdays = getUpcomingBirthdays();
+
   const getEstadisticas = () => {
     return celulas.map(celula => {
       const celasAsistencias = asistencias.filter(a => a.celulaId === celula.id);
@@ -316,6 +377,15 @@ export const PastorDashboard: React.FC = () => {
               }`}
           >
             Recursos
+          </button>
+          <button
+            onClick={() => setView('cumpleanos')}
+            className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'cumpleanos'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-600 hover:text-gray-800'
+              }`}
+          >
+            Cumpleaños
           </button>
         </div>
 
