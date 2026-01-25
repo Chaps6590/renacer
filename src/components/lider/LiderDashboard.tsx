@@ -174,7 +174,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
 const LiderDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { celulas, addMiembroToCelula, updateMiembroRol, getPendientesAsistencia, noticias } = useData();
+  const { celulas, addMiembroToCelula, removeMiembroFromCelula, updateMiembroRol, getPendientesAsistencia, noticias } = useData();
   const [showAsistencia, setShowAsistencia] = useState(false);
   const [showAddMiembro, setShowAddMiembro] = useState(false);
   const [showPendientes, setShowPendientes] = useState(false);
@@ -273,8 +273,7 @@ const LiderDashboard: React.FC = () => {
 
   const confirmDeleteMiembro = () => {
     if (selectedMiembro && miCelula && isLider) {
-      // TODO: Implementar eliminación en el contexto
-      console.log('Eliminar miembro:', selectedMiembro.name);
+      removeMiembroFromCelula(miCelula.id, selectedMiembro.id);
     }
     setShowDeleteConfirm(false);
     setSelectedMiembro(null);

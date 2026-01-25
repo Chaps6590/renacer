@@ -295,14 +295,18 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const updateMiembroRol = async (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo' | 'timoteo') => {
     try {
-      // TODO: Implementar endpoint en API para actualizar rol de miembro
+      const res = await api.updateMiembro(celulaId, miembroId, { rolCelula: nuevoRol }) as any;
+      const miembroActualizado = {
+        ...res,
+        name: res.nombre,
+        phone: res.telefono
+      } as Miembro;
+
       setCelulas(celulas.map(c => {
         if (c.id === celulaId) {
           return {
             ...c,
-            miembros: c.miembros.map(m =>
-              m.id === miembroId ? { ...m, rolCelula: nuevoRol } : m
-            ),
+            miembros: c.miembros.map(m => m.id === miembroId ? miembroActualizado : m)
           };
         }
         return c;

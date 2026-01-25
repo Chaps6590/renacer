@@ -23,7 +23,7 @@ class ApiService {
     options: RequestOptions = {}
   ): Promise<T> {
     const token = localStorage.getItem('token');
-    
+
     const config: RequestOptions = {
       ...options,
       headers: {
@@ -36,15 +36,15 @@ class ApiService {
     try {
       const url = `${this.baseUrl}${endpoint}`;
       console.log('Making API request to:', url);
-      
+
       const response = await fetch(url, config);
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error('API error response:', errorData);
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log('API response:', data);
       return data;
@@ -131,6 +131,13 @@ class ApiService {
   async removeMiembro(celulaId: string, miembroId: string) {
     return this.request(`/celulas/${celulaId}/miembros/${miembroId}`, {
       method: 'DELETE',
+    });
+  }
+
+  async updateMiembro(celulaId: string, miembroId: string, miembroData: any) {
+    return this.request(`/celulas/${celulaId}/miembros/${miembroId}`, {
+      method: 'PUT',
+      body: JSON.stringify(miembroData),
     });
   }
 
