@@ -4,10 +4,11 @@ import { useData } from '../../contexts/DataContext';
 import { Navbar } from '../layout/Navbar';
 import { AsistenciaModal } from './AsistenciaModal';
 import { PendientesModal } from './PendientesModal';
+import { HistorialAsistenciasModal } from './HistorialAsistenciasModal';
 import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
-import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart } from 'lucide-react';
+import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart, History } from 'lucide-react';
 
 interface AddMiembroModalProps {
   isOpen: boolean;
@@ -180,6 +181,7 @@ const LiderDashboard: React.FC = () => {
   const [showMateriales, setShowMateriales] = useState(false);
   const [showNoticias, setShowNoticias] = useState(false);
   const [showDonaciones, setShowDonaciones] = useState(false);
+  const [showHistorial, setShowHistorial] = useState(false);
 
   // Estados para modales de confirmación y acciones
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -350,16 +352,29 @@ const LiderDashboard: React.FC = () => {
           </div>
 
           <div className="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-            <button
-              onClick={() => setShowAsistencia(true)}
-              className="w-full h-full flex items-center justify-between text-left hover:opacity-90 transition-opacity"
-            >
-              <div>
-                <p className="text-purple-100 text-sm mb-1">Tomar Asistencia</p>
-                <p className="text-lg font-semibold">Registrar</p>
-              </div>
-              <Calendar className="w-12 h-12 text-purple-200" />
-            </button>
+            <div className="h-full flex flex-col md:flex-row gap-2 p-1">
+              <button
+                onClick={() => setShowAsistencia(true)}
+                className="flex-1 flex items-center justify-between p-4 text-left hover:bg-white/10 rounded-xl transition-colors"
+              >
+                <div>
+                  <p className="text-purple-100 text-sm mb-1">Tomar Asistencia</p>
+                  <p className="text-lg font-semibold">Registrar</p>
+                </div>
+                <Calendar className="w-10 h-10 text-purple-200" />
+              </button>
+              <div className="w-px bg-purple-400/30 hidden md:block my-2"></div>
+              <button
+                onClick={() => setShowHistorial(true)}
+                className="flex-1 flex items-center justify-between p-4 text-left hover:bg-white/10 rounded-xl transition-colors border-t md:border-t-0 border-purple-400/30"
+              >
+                <div>
+                  <p className="text-purple-100 text-sm mb-1">Ver Reportes</p>
+                  <p className="text-lg font-semibold">Historial</p>
+                </div>
+                <History className="w-10 h-10 text-purple-200" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -763,6 +778,15 @@ const LiderDashboard: React.FC = () => {
           isOpen={showPendientes}
           onClose={() => setShowPendientes(false)}
         />
+
+        {/* Modal de historial de asistencia */}
+        {miCelula && (
+          <HistorialAsistenciasModal
+            celulaId={miCelula.id}
+            isOpen={showHistorial}
+            onClose={() => setShowHistorial(false)}
+          />
+        )}
 
         {/* Modal de materiales */}
         <MaterialesModal

@@ -13,8 +13,15 @@ interface PendientesModalProps {
 
 export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
-  const { asistencias, actualizarMotivoFalta, getPendientesAsistencia } = useData();
-  const [motivosSeleccionados, setMotivosSeleccionados] = useState<{ [key: string]: { motivo: MotivoFalta; personalizado?: string } }>({});
+  const { actualizarMotivoFalta, getPendientesAsistencia } = useData();
+  const [motivosSeleccionados, setMotivosSeleccionados] = useState<{
+    [key: string]: {
+      motivo?: MotivoFalta;
+      personalizado?: string;
+      anotacionEspecial?: string;
+      prioridad?: string;
+    }
+  }>({});
 
   if (!isOpen) return null;
 
@@ -29,6 +36,17 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
     { value: 'sin-motivo', label: 'Sin motivo' },
     { value: 'otro', label: 'Otro (especificar)' }
   ];
+
+  const handleMotivoChange = (asistenciaId: string, miembroId: string, motivo: MotivoFalta) => {
+    const key = `${asistenciaId}-${miembroId}`;
+    setMotivosSeleccionados({
+      ...motivosSeleccionados,
+      [key]: {
+        ...motivosSeleccionados[key],
+        motivo
+      }
+    });
+  };
 
   const handleAnotacionChange = (asistenciaId: string, miembroId: string, anotacionEspecial: string) => {
     const key = `${asistenciaId}-${miembroId}`;
@@ -152,8 +170,8 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
                               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                 {motivosFalta.map((motivo) => (
                                   <label key={motivo.value} className={`flex items-center justify-center p-2 rounded-lg border cursor-pointer transition-all ${motivoSeleccionado?.motivo === motivo.value
-                                      ? 'bg-blue-600 border-blue-600 text-white shadow-md'
-                                      : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                                    ? 'bg-blue-600 border-blue-600 text-white shadow-md'
+                                    : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
                                     }`}>
                                     <input
                                       type="radio"
@@ -185,10 +203,10 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
                                 <span className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Prioridad:</span>
                                 {(['alta', 'media', 'baja']).map(prioridad => (
                                   <label key={prioridad} className={`flex items-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer transition-all ${motivoSeleccionado?.prioridad === prioridad
-                                      ? (prioridad === 'alta' ? 'bg-red-500 border-red-500 text-white' :
-                                        prioridad === 'media' ? 'bg-yellow-500 border-yellow-500 text-white' :
-                                          'bg-green-500 border-green-500 text-white')
-                                      : 'bg-gray-100 border-gray-200 text-gray-600'
+                                    ? (prioridad === 'alta' ? 'bg-red-500 border-red-500 text-white' :
+                                      prioridad === 'media' ? 'bg-yellow-500 border-yellow-500 text-white' :
+                                        'bg-green-500 border-green-500 text-white')
+                                    : 'bg-gray-100 border-gray-200 text-gray-600'
                                     }`}>
                                     <input
                                       type="radio"
@@ -234,18 +252,5 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
         </div>
       </div>
     </div>
-  );
-};}
-
-<div className="flex justify-end mt-6">
-  <button
-    onClick={onClose}
-    className="btn btn-secondary"
-  >
-    Cerrar
-  </button>
-</div>
-      </div >
-    </div >
   );
 };

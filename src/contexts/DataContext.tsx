@@ -158,16 +158,14 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       }));
       setMateriales(materialesTransformados);
 
-      // Cargar configuración de donaciones (aliasIglesia, descripcion)
-      const res = await api.getConfiguracionDonaciones() as any;
-      if (res) {
-        setConfiguracionDonaciones({
-          aliasIglesia: res.alias || res.aliasIglesia || '',
-          descripcion: res.descripcion || '',
-          activo: res.activo !== undefined ? res.activo : true,
-          fechaActualizacion: new Date(res.fechaCreacion || res.updatedAt || new Date()),
-          actualizadoPor: res.actualizadoPorId || ''
-        });
+      // Cargar pendientes de asistencia si es líder o colíder
+      if (user?.role === 'lider' || user?.role === 'colider') {
+        try {
+          const dataPendientes = await api.getPendientesAsistencia() as any[];
+          setPendientesAsistencia(dataPendientes);
+        } catch (err) {
+          console.error('Error fetching pendings:', err);
+        }
       }
 
     } catch (error) {
