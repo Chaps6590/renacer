@@ -22,7 +22,7 @@ export interface Celula {
   liderName: string;
   diaSemana: string;
   horario: string;
-  colideres: CoLider[];
+  coLideres: CoLider[];
   miembros: Miembro[];
   createdAt: Date;
 }

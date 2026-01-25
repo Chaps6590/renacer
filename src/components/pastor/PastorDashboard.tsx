@@ -52,7 +52,7 @@ export const PastorDashboard: React.FC = () => {
 
         // Buscar si este líder es colíder de alguna célula
         const celulaComoColider = celulas.find(c =>
-          c.colideres.some(col => col.id === lider.id)
+          c.coLideres.some(col => col.id === lider.id)
         );
         if (celulaComoColider) {
           return {
@@ -175,7 +175,7 @@ export const PastorDashboard: React.FC = () => {
       liderId: celula.liderId,
       diaSemana: celula.diaSemana,
       horario: celula.horario,
-      coliderIds: celula.colideres.map((c: any) => c.id)
+      coliderIds: celula.coLideres.map((c: any) => c.id)
     });
     setColiderSearch('');
     setShowEditCelula(true);
@@ -666,7 +666,7 @@ export const PastorDashboard: React.FC = () => {
                     <div className="flex justify-between items-center bg-gray-50 p-2 rounded">
                       <span className="text-gray-700 text-sm font-medium">Colíderes:</span>
                       <span className="bg-white px-2 py-1 rounded text-gray-900 font-bold shadow-sm border border-gray-200">
-                        {celula.colideres.length}
+                        {celula.coLideres.length}
                       </span>
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t border-gray-100">
