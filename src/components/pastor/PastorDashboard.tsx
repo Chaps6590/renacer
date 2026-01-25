@@ -83,7 +83,9 @@ export const PastorDashboard: React.FC = () => {
 
   // Estado para células
   const [showAddCelula, setShowAddCelula] = useState(false);
+  const [showEditCelula, setShowEditCelula] = useState(false);
   const [newCelula, setNewCelula] = useState({ name: '', liderId: '', diaSemana: '', horario: '', coliderIds: [] as string[] });
+  const [editingCelula, setEditingCelula] = useState<{ id: string, name: string, liderId: string, diaSemana: string, horario: string, coliderIds: string[] } | null>(null);
 
   const [timeframe, setTimeframe] = useState<'semanal' | 'mensual' | 'anual'>('semanal');
 
@@ -160,6 +162,42 @@ export const PastorDashboard: React.FC = () => {
     } catch (error: any) {
       console.error('Error creando célula:', error);
       alert(error.message || 'Error al crear la célula');
+    }
+  };
+
+  // Función para abrir modal de edición de célula
+  const openEditCelula = (celula: any) => {
+    setEditingCelula({
+      id: celula.id,
+      name: celula.name,
+      liderId: celula.liderId,
+      diaSemana: celula.diaSemana,
+      horario: celula.horario,
+      coliderIds: celula.colideres.map((c: any) => c.id)
+    });
+    setShowEditCelula(true);
+  };
+
+  // Función para guardar cambios de célula
+  const handleEditCelula = async () => {
+    if (!editingCelula || !editingCelula.name.trim()) return;
+
+    try {
+      await api.actualizarCelula(editingCelula.id, {
+        name: editingCelula.name,
+        diaSemana: editingCelula.diaSemana,
+        horario: editingCelula.horario,
+        liderId: editingCelula.liderId,
+        coliderIds: editingCelula.coliderIds
+      });
+
+      await recargarCelulas();
+      setShowEditCelula(false);
+      setEditingCelula(null);
+      alert('Célula actualizada exitosamente');
+    } catch (error: any) {
+      console.error('Error actualizando célula:', error);
+      alert(error.message || 'Error al actualizar la célula');
     }
   };
 
@@ -246,8 +284,8 @@ export const PastorDashboard: React.FC = () => {
           <button
             onClick={() => setView('dashboard')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'dashboard'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-800'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-800'
               }`}
           >
             Dashboard
@@ -255,8 +293,8 @@ export const PastorDashboard: React.FC = () => {
           <button
             onClick={() => setView('lideres')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'lideres'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-800'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-800'
               }`}
           >
             Líderes
@@ -264,8 +302,8 @@ export const PastorDashboard: React.FC = () => {
           <button
             onClick={() => setView('celulas')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'celulas'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-800'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-800'
               }`}
           >
             Células
@@ -273,8 +311,8 @@ export const PastorDashboard: React.FC = () => {
           <button
             onClick={() => setView('recursos')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'recursos'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-800'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-800'
               }`}
           >
             Recursos
@@ -404,8 +442,8 @@ export const PastorDashboard: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${est.promedioAsistencia >= 80 ? 'bg-green-100 text-green-800' :
-                              est.promedioAsistencia >= 60 ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-red-100 text-red-800'
+                            est.promedioAsistencia >= 60 ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-red-100 text-red-800'
                             }`}>
                             {est.promedioAsistencia}%
                           </span>
@@ -574,21 +612,28 @@ export const PastorDashboard: React.FC = () => {
                         {celula.diaSemana} - {celula.horario}
                       </p>
                     </div>
-                    <button className="text-gray-400 hover:text-gray-600">
+                    <button
+                      onClick={() => openEditCelula(celula)}
+                      className="text-blue-500 hover:text-blue-700 bg-blue-50 p-2 rounded-full hover:bg-blue-100 transition-colors"
+                    >
                       <Edit2 className="w-5 h-5" />
                     </button>
                   </div>
 
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Miembros:</span>
-                      <span className="font-semibold">{celula.miembros.length}</span>
+                    <div className="flex justify-between items-center bg-gray-50 p-2 rounded">
+                      <span className="text-gray-700 text-sm font-medium">Miembros:</span>
+                      <span className="bg-white px-2 py-1 rounded text-gray-900 font-bold shadow-sm border border-gray-200">
+                        {celula.miembros.length}
+                      </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Colíderes:</span>
-                      <span className="font-semibold">{celula.colideres.length}</span>
+                    <div className="flex justify-between items-center bg-gray-50 p-2 rounded">
+                      <span className="text-gray-700 text-sm font-medium">Colíderes:</span>
+                      <span className="bg-white px-2 py-1 rounded text-gray-900 font-bold shadow-sm border border-gray-200">
+                        {celula.colideres.length}
+                      </span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center pt-2 border-t border-gray-100">
                       <span className="text-gray-600">Creada:</span>
                       <span className="font-semibold">
                         {new Date(celula.createdAt).toLocaleDateString('es-AR')}
@@ -875,6 +920,134 @@ export const PastorDashboard: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setShowAddCelula(false)}
+                  className="btn btn-secondary flex-1"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Editar Célula */}
+        {showEditCelula && editingCelula && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">Editar Célula</h3>
+                <button onClick={() => setShowEditCelula(false)} className="text-gray-400 hover:text-gray-600">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre de la Célula
+                  </label>
+                  <input
+                    type="text"
+                    value={editingCelula.name}
+                    onChange={(e) => setEditingCelula({ ...editingCelula, name: e.target.value })}
+                    className="input"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Día de la Semana
+                  </label>
+                  <select
+                    value={editingCelula.diaSemana}
+                    onChange={(e) => setEditingCelula({ ...editingCelula, diaSemana: e.target.value })}
+                    className="input"
+                  >
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miércoles">Miércoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sábado">Sábado</option>
+                    <option value="Domingo">Domingo</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Horario
+                  </label>
+                  <input
+                    type="time"
+                    value={editingCelula.horario}
+                    onChange={(e) => setEditingCelula({ ...editingCelula, horario: e.target.value })}
+                    className="input"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Líder Principal
+                  </label>
+                  <select
+                    value={editingCelula.liderId}
+                    onChange={(e) => setEditingCelula({ ...editingCelula, liderId: e.target.value })}
+                    className="input"
+                  >
+                    {/* Incluir el líder actual aunque tenga célula asignada */}
+                    {lideres.map(lider => (
+                      <option
+                        key={lider.id}
+                        value={lider.id}
+                        disabled={!!lider.celulaAsignada && lider.id !== editingCelula.liderId}
+                      >
+                        {lider.name} {lider.celulaAsignada && lider.id !== editingCelula.liderId ? '(Ocupado)' : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Colíderes
+                  </label>
+                  <div className="border rounded-lg p-3 max-h-40 overflow-y-auto space-y-2">
+                    {lideres.filter(l => l.id !== editingCelula.liderId).map(lider => (
+                      <label
+                        key={lider.id}
+                        className={`flex items-center gap-2 cursor-pointer p-2 rounded ${!!lider.celulaAsignada && !editingCelula.coliderIds.includes(lider.id) ? 'opacity-50' : 'hover:bg-gray-50'
+                          }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={editingCelula.coliderIds.includes(lider.id)}
+                          disabled={!!lider.celulaAsignada && !editingCelula.coliderIds.includes(lider.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setEditingCelula({ ...editingCelula, coliderIds: [...editingCelula.coliderIds, lider.id] });
+                            } else {
+                              setEditingCelula({ ...editingCelula, coliderIds: editingCelula.coliderIds.filter(id => id !== lider.id) });
+                            }
+                          }}
+                          className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                        />
+                        <span className="text-sm text-gray-700">
+                          {lider.name} {!!lider.celulaAsignada && !editingCelula.coliderIds.includes(lider.id) ? '(Ocupado)' : ''}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4 mt-6">
+                <button
+                  onClick={handleEditCelula}
+                  className="btn btn-primary flex-1"
+                >
+                  Guardar Cambios
+                </button>
+                <button
+                  onClick={() => setShowEditCelula(false)}
                   className="btn btn-secondary flex-1"
                 >
                   Cancelar
