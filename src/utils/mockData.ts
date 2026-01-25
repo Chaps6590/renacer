@@ -89,6 +89,7 @@ export const mockCelulas: Celula[] = [
         rolCelula: 'miembro',
         isBautizado: true,
         tieneDiscipulado: false,
+        isRegistered: true,
       },
       {
         id: 'm3',
@@ -143,12 +144,12 @@ export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, 
 // Mock de login
 export const mockLogin = async (email: string, _password: string) => {
   await delay(500);
-  
+
   const user = mockUsers.find(u => u.email === email);
   if (!user) {
     throw new Error('Usuario no encontrado');
   }
-  
+
   // En producción, verificar password hasheado
   return {
     user,
@@ -159,7 +160,7 @@ export const mockLogin = async (email: string, _password: string) => {
 // Mock de registro
 export const mockRegister = async (userData: Partial<User> & { password: string }) => {
   await delay(500);
-  
+
   const newUser: User = {
     id: Date.now().toString(),
     name: userData.name || '',
@@ -168,9 +169,9 @@ export const mockRegister = async (userData: Partial<User> & { password: string 
     celulaId: userData.celulaId,
     isRegistered: true,
   };
-  
+
   mockUsers.push(newUser);
-  
+
   return {
     user: newUser,
     token: 'mock-jwt-token-' + newUser.id,
