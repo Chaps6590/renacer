@@ -178,7 +178,8 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const addCelula = async (celula: Celula) => {
     try {
-      const nuevaCelula = await api.crearCelula(celula) as Celula;
+      const res = await api.crearCelula(celula) as any;
+      const nuevaCelula = res.celula || res;
       setCelulas([...celulas, nuevaCelula]);
     } catch (error) {
       console.error('Error adding celula:', error);
@@ -189,29 +190,18 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const recargarCelulas = async () => {
     try {
       if (user?.role === 'admin' || user?.role === 'pastor') {
-        const celulasData = await api.getCelulas() as any[];
-        const celulasTransformadas = celulasData.map((c: any) => ({
-          id: c.id,
-          name: c.nombre,
-          liderId: c.liderId,
-          liderName: c.lider?.name || '',
-          diaSemana: c.dia,
-          horario: c.horario,
-          coLideres: c.coLideres || [],
-          miembros: c.miembros || [],
-          createdAt: new Date(c.createdAt)
-        }));
-        setCelulas(celulasTransformadas);
+        const data = await api.getCelulas() as Celula[];
+        setCelulas(data);
       }
     } catch (error) {
-      console.error('Error reloading celulas:', error);
-      throw error;
+      console.error('Error refreshing celulas:', error);
     }
   };
 
   const updateCelula = async (id: string, updatedData: Partial<Celula>) => {
     try {
-      const celulaActualizada = await api.actualizarCelula(id, updatedData) as Celula;
+      const res = await api.actualizarCelula(id, updatedData) as any;
+      const celulaActualizada = res.celula || res;
       setCelulas(celulas.map(c => c.id === id ? celulaActualizada : c));
     } catch (error) {
       console.error('Error updating celula:', error);
@@ -232,11 +222,12 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const addMiembroToCelula = async (celulaId: string, miembro: Miembro) => {
     try {
       const res = await api.addMiembro(celulaId, miembro) as any;
-      const nuevoMiembro = {
-        ...res,
-        name: res.nombre,
-        phone: res.telefono
-      } as Miembro;
+      const m = res.miembro || res;
+      const nuevoMiembro: Miembro = {
+        ...m,
+        name: m.nombre,
+        phone: m.telefono
+      };
       setCelulas(celulas.map(c => {
         if (c.id === celulaId) {
           return { ...c, miembros: [...c.miembros, nuevoMiembro] };
@@ -266,7 +257,8 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const addColiderToCelula = async (celulaId: string, colider: CoLider) => {
     try {
-      const nuevoColider = await api.addColider(celulaId, colider) as CoLider;
+      const res = await api.addColider(celulaId, colider) as any;
+      const nuevoColider = res.colider || res;
       setCelulas(celulas.map(c => {
         if (c.id === celulaId) {
           return { ...c, coLideres: [...c.coLideres, nuevoColider] };
@@ -297,17 +289,18 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const updateMiembroRol = async (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo' | 'timoteo') => {
     try {
       const res = await api.updateMiembro(celulaId, miembroId, { rolCelula: nuevoRol }) as any;
-      const miembroActualizado = {
-        ...res,
-        name: res.nombre,
-        phone: res.telefono
-      } as Miembro;
+      const m = res.miembro || res;
+      const miembroActualizado: Miembro = {
+        ...m,
+        name: m.nombre,
+        phone: m.telefono
+      };
 
       setCelulas(celulas.map(c => {
         if (c.id === celulaId) {
           return {
             ...c,
-            miembros: c.miembros.map(m => m.id === miembroId ? miembroActualizado : m)
+            miembros: c.miembros.map(miembro => miembro.id === miembroId ? miembroActualizado : miembro)
           };
         }
         return c;
