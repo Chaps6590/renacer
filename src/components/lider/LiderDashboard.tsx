@@ -205,45 +205,53 @@ const LiderDashboard: React.FC = () => {
   // Verificar si el usuario es el líder principal
   const isLider = miCelula?.liderId === user?.id;
 
-  const getRolDisplay = (rol: RolCelula) => {
-    const roles = {
+  const getRolDisplay = (rol: string) => {
+    const roles: Record<string, string> = {
       lider: 'Líder',
       colider: 'Colíder',
       timoteo: 'Timoteo',
       miembro: 'Miembro',
       nuevo: 'Nuevo'
     };
-    return roles[rol];
+    return roles[rol.toLowerCase()] || rol;
   };
 
-  const getRolColor = (rol: RolCelula) => {
-    const colors = {
+  const getRolColor = (rol: string) => {
+    const colors: Record<string, string> = {
       lider: 'bg-purple-100 text-purple-800 border-purple-300',
       colider: 'bg-blue-100 text-blue-800 border-blue-300',
       timoteo: 'bg-orange-100 text-orange-800 border-orange-300',
       miembro: 'bg-green-100 text-green-800 border-green-300',
       nuevo: 'bg-yellow-100 text-yellow-800 border-yellow-300'
     };
-    return colors[rol];
+    return colors[rol.toLowerCase()] || 'bg-gray-100 text-gray-800 border-gray-300';
   };
 
   // Ordenar miembros: Líder principal, Colíderes, Miembros, Nuevos
+  // Evitamos duplicados si un miembro tiene rol 'colider' o 'lider' pero ya está arriba
   const miembrosOrdenados = miCelula ? [
     // Líder principal
     {
       id: miCelula.liderId,
       name: miCelula.liderName,
-      rolCelula: 'lider' as const
+      rolCelula: 'lider'
     },
-    // Colíderes
+    // Colíderes (Usuarios)
     ...miCelula.coLideres.map(colider => ({
       ...colider,
-      rolCelula: 'colider' as const
+      rolCelula: 'colider'
     })),
-    // Timoteos
-    ...miCelula.miembros.filter(m => m.rolCelula === 'timoteo'),
-    // Miembros y nuevos
-    ...miCelula.miembros.filter(m => m.rolCelula !== 'timoteo')
+    // Otros miembros que no sean el líder ni los colíderes arriba
+    ...miCelula.miembros.filter(m =>
+      m.id !== miCelula.liderId &&
+      !miCelula.coLideres.some(col => col.id === m.id)
+    ).sort((a, b) => {
+      // Orden por nivel: Timoteo > Miembro > Nuevo
+      const priority: Record<string, number> = { TIMOTEO: 1, MIEMBRO: 2, NUEVO: 3 };
+      const pA = priority[a.rolCelula.toUpperCase()] || 4;
+      const pB = priority[b.rolCelula.toUpperCase()] || 4;
+      return pA - pB;
+    })
   ].filter(Boolean) : [];
 
   const handleAddMiembro = (miembroData: { name: string; phone?: string; email?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean }) => {
