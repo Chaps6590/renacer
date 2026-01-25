@@ -79,6 +79,7 @@ export const mockCelulas: Celula[] = [
         rolCelula: 'miembro',
         isBautizado: true,
         tieneDiscipulado: true,
+        isRegistered: true,
       },
       {
         id: 'm2',
@@ -100,6 +101,7 @@ export const mockCelulas: Celula[] = [
         rolCelula: 'miembro',
         isBautizado: false,
         tieneDiscipulado: false,
+        isRegistered: false,
       },
     ],
     createdAt: new Date('2024-01-01'),
@@ -132,6 +134,7 @@ export const mockCelulas: Celula[] = [
         rolCelula: 'miembro',
         isBautizado: false,
         tieneDiscipulado: false,
+        isRegistered: false,
       },
     ],
     createdAt: new Date('2024-02-01'),
