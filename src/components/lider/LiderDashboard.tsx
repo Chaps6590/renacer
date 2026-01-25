@@ -13,7 +13,7 @@ import type { RolCelula } from '../../types';
 interface AddMiembroModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (miembro: { name: string; phone?: string; email?: string; isBautizado: boolean; tieneDiscipulado: boolean }) => void;
+  onAdd: (miembro: { name: string; phone?: string; email?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean }) => void;
 }
 
 const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAdd }) => {
@@ -22,7 +22,9 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
     phone: '',
     email: '',
     isBautizado: false,
-    tieneDiscipulado: false
+    tieneDiscipulado: false,
+    fechaNacimiento: '',
+    isRegistered: false
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,9 +35,11 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
         phone: formData.phone.trim() || undefined,
         email: formData.email.trim() || undefined,
         isBautizado: formData.isBautizado,
-        tieneDiscipulado: formData.tieneDiscipulado
+        tieneDiscipulado: formData.tieneDiscipulado,
+        fechaNacimiento: formData.fechaNacimiento || undefined,
+        isRegistered: formData.isRegistered
       });
-      setFormData({ name: '', phone: '', email: '', isBautizado: false, tieneDiscipulado: false });
+      setFormData({ name: '', phone: '', email: '', isBautizado: false, tieneDiscipulado: false, fechaNacimiento: '', isRegistered: false });
       onClose();
     }
   };
@@ -82,6 +86,18 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Fecha de Nacimiento
+            </label>
+            <input
+              type="date"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white text-gray-900 placeholder-gray-500"
+              value={formData.fechaNacimiento}
+              onChange={(e) => setFormData({ ...formData, fechaNacimiento: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Correo Electrónico
             </label>
             <input
@@ -107,7 +123,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
                 ¿Está bautizado?
               </label>
             </div>
-            
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -118,6 +134,18 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
               />
               <label htmlFor="tieneDiscipulado" className="ml-3 text-sm font-medium text-gray-700">
                 ¿Tiene discipulado?
+              </label>
+            </div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="isRegistered"
+                checked={formData.isRegistered}
+                onChange={(e) => setFormData({ ...formData, isRegistered: e.target.checked })}
+                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+              />
+              <label htmlFor="isRegistered" className="ml-3 text-sm font-medium text-gray-700">
+                ¿Está registrado?
               </label>
             </div>
           </div>
@@ -153,7 +181,7 @@ const LiderDashboard: React.FC = () => {
   const [showMateriales, setShowMateriales] = useState(false);
   const [showNoticias, setShowNoticias] = useState(false);
   const [showDonaciones, setShowDonaciones] = useState(false);
-  
+
   // Estados para modales de confirmación y acciones
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
@@ -164,13 +192,13 @@ const LiderDashboard: React.FC = () => {
   const totalPendientes = pendientesAsistencia.reduce((sum, p) => sum + p.cantidadPendientes, 0);
 
   // Obtener noticias importantes
-  const noticiasImportantes = noticias.filter(n => 
+  const noticiasImportantes = noticias.filter(n =>
     n.visible && n.importante && (!n.fechaVencimiento || new Date(n.fechaVencimiento) > new Date())
   ).length;
 
   // Encontrar la célula donde el usuario es líder o colíder
-  const miCelula = celulas.find(c => 
-    c.liderId === user?.id || 
+  const miCelula = celulas.find(c =>
+    c.liderId === user?.id ||
     c.colideres.some(col => col.id === user?.id)
   );
 
@@ -200,7 +228,7 @@ const LiderDashboard: React.FC = () => {
   // Ordenar miembros: Líder principal, Colíderes, Miembros, Nuevos
   const miembrosOrdenados = miCelula ? [
     // Líder principal
-    { 
+    {
       id: miCelula.liderId,
       name: miCelula.liderName,
       rolCelula: 'lider' as const
@@ -214,7 +242,7 @@ const LiderDashboard: React.FC = () => {
     ...miCelula.miembros
   ].filter(Boolean) : [];
 
-  const handleAddMiembro = (miembroData: { name: string; phone?: string; email?: string; isBautizado: boolean; tieneDiscipulado: boolean }) => {
+  const handleAddMiembro = (miembroData: { name: string; phone?: string; email?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean }) => {
     if (miCelula) {
       const nuevoMiembro = {
         id: `member-${Date.now()}`,
@@ -224,9 +252,11 @@ const LiderDashboard: React.FC = () => {
         addedAt: new Date(),
         rolCelula: 'nuevo' as const,
         isBautizado: miembroData.isBautizado,
-        tieneDiscipulado: miembroData.tieneDiscipulado
+        tieneDiscipulado: miembroData.tieneDiscipulado,
+        fechaNacimiento: miembroData.fechaNacimiento,
+        isRegistered: miembroData.isRegistered
       };
-      
+
       addMiembroToCelula(miCelula.id, nuevoMiembro);
     }
   };
@@ -263,7 +293,7 @@ const LiderDashboard: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
             <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -280,7 +310,7 @@ const LiderDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">Mi Célula: {miCelula.name}</h2>
@@ -330,14 +360,13 @@ const LiderDashboard: React.FC = () => {
             <UserPlus className="w-5 h-5 group-hover:scale-110 transition duration-300" />
             <span>Agregar Nueva Persona</span>
           </button>
-          
+
           <button
             onClick={() => setShowPendientes(true)}
-            className={`group inline-flex items-center gap-3 px-6 py-3 font-semibold rounded-xl transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${
-              totalPendientes > 0 
-                ? 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white' 
-                : 'bg-gradient-to-r from-gray-400 to-gray-500 text-white cursor-not-allowed'
-            }`}
+            className={`group inline-flex items-center gap-3 px-6 py-3 font-semibold rounded-xl transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ${totalPendientes > 0
+              ? 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white'
+              : 'bg-gradient-to-r from-gray-400 to-gray-500 text-white cursor-not-allowed'
+              }`}
             disabled={totalPendientes === 0}
           >
             <Bell className="w-5 h-5 group-hover:scale-110 transition duration-300" />
@@ -348,7 +377,7 @@ const LiderDashboard: React.FC = () => {
               </span>
             )}
           </button>
-          
+
           {!isLider && (
             <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded-lg flex items-center gap-2">
               <span className="text-sm">Eres Colíder - No puedes cambiar roles</span>
@@ -421,7 +450,7 @@ const LiderDashboard: React.FC = () => {
           <div className="px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-medium text-gray-900">Miembros de la Célula</h3>
           </div>
-          
+
           {miembrosOrdenados.length === 0 ? (
             <p className="text-gray-600 text-center py-8">
               No hay miembros registrados. Agrega el primer miembro.
@@ -543,7 +572,7 @@ const LiderDashboard: React.FC = () => {
                               </span>
                             )}
                           </td>
-                          
+
                           {/* Columna Eliminar */}
                           <td className="px-6 py-4 whitespace-nowrap text-center">
                             {miembro.rolCelula !== 'lider' ? (

@@ -40,10 +40,12 @@ export interface Miembro {
   name: string;
   phone?: string;
   email?: string;
+  fechaNacimiento?: string; // Fecha de nacimiento opcional
   rolCelula: RolCelula;
   addedAt: Date;
   isBautizado: boolean;
   tieneDiscipulado: boolean;
+  isRegistered: boolean; // Identifica si el miembro está registrado
 }
 
 export interface MiembroAsistencia {
