@@ -213,11 +213,7 @@ export const PastorDashboard: React.FC = () => {
     const isBirthdayUpcoming = (dateString?: string) => {
       if (!dateString) return false;
       const dob = new Date(dateString);
-      const currentYear = today.getFullYear();
-
-      // Crear fechas de cumpleaños para este año y el próximo (por si es fin de año)
-      const dobThisYear = new Date(currentYear, dob.getMonth(), dob.getDate());
-      const dobNextYear = new Date(currentYear + 1, dob.getMonth(), dob.getDate()); // No usado simplificado, usamos lógica simple semanal
+      const dob = new Date(dateString);
 
       // Ajuste simple: Verificar si el día y mes caen en los próximos 7 días
       // Normalizamos todo a timestamps para comparar rangos de días del año
@@ -381,8 +377,8 @@ export const PastorDashboard: React.FC = () => {
           <button
             onClick={() => setView('cumpleanos')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'cumpleanos'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-800'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-800'
               }`}
           >
             Cumpleaños
@@ -795,6 +791,72 @@ export const PastorDashboard: React.FC = () => {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Vista Cumpleaños */}
+        {view === 'cumpleanos' && (
+          <div className="card">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-pink-100 p-2 rounded-full">
+                <Heart className="w-6 h-6 text-pink-500" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Cumpleaños de la Semana</h3>
+                <p className="text-gray-600">Próximos 7 días</p>
+              </div>
+            </div>
+
+            {birthdays.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {birthdays.map((person: any) => {
+                  const dob = new Date(person.fechaNacimiento);
+                  const today = new Date();
+                  const isToday = dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
+
+                  return (
+                    <div key={person.id} className={`p-4 rounded-lg border ${isToday ? 'bg-pink-50 border-pink-200' : 'bg-white border-gray-200'
+                      }`}>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-bold text-gray-900">{person.name}</h4>
+                          <p className="text-sm text-gray-600">{person.type}</p>
+                          {person.celulaName && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              {person.type === 'Miembro' ? `Célula: ${person.celulaName}` : person.celulaName}
+                            </p>
+                          )}
+                        </div>
+                        <div className="text-center">
+                          <span className={`block text-lg font-bold ${isToday ? 'text-pink-600' : 'text-gray-700'
+                            }`}>
+                            {dob.getDate()}
+                          </span>
+                          <span className="text-xs uppercase text-gray-500">
+                            {dob.toLocaleDateString('es-AR', { month: 'short' })}
+                          </span>
+                        </div>
+                      </div>
+                      {isToday && (
+                        <div className="mt-3 text-center">
+                          <span className="inline-block px-3 py-1 bg-pink-500 text-white text-xs font-bold rounded-full animate-pulse">
+                            ¡Es hoy!
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <Heart className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900">No hay cumpleaños cercanos</h3>
+                <p className="text-gray-500">No se encontraron cumpleaños en los próximos 7 días.</p>
+              </div>
+            )}
           </div>
         )}
 
