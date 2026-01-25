@@ -19,13 +19,13 @@ interface Lider extends User {
 export const PastorDashboard: React.FC = () => {
   const { celulas, asistencias, noticias, materiales, configuracionDonaciones, recargarCelulas } = useData();
   const [view, setView] = useState<'dashboard' | 'lideres' | 'celulas' | 'recursos'>('dashboard');
-  
+
   // Estados para modales de recursos
   const [showMateriales, setShowMateriales] = useState(false);
   const [showNoticias, setShowNoticias] = useState(false);
   const [showDonaciones, setShowDonaciones] = useState(false);
   const [showPeticiones, setShowPeticiones] = useState(false);
-  
+
   // Estado para líderes
   const [lideres, setLideres] = useState<Lider[]>([]);
   const [loadingLideres, setLoadingLideres] = useState(false);
@@ -37,7 +37,7 @@ export const PastorDashboard: React.FC = () => {
       // Obtener todos los usuarios y filtrar líderes
       const users = await api.getUsers() as User[];
       const lideresUsuarios = users.filter((u) => u.role && u.role.toLowerCase() === 'lider');
-      
+
       // Enriquecer con información de células
       const lideresEnriquecidos = lideresUsuarios.map(lider => {
         // Buscar si este líder es el líder principal de una célula
@@ -49,9 +49,9 @@ export const PastorDashboard: React.FC = () => {
             nombreCelula: `${celulaDelLider.name} (Líder)`
           };
         }
-        
+
         // Buscar si este líder es colíder de alguna célula
-        const celulaComoColider = celulas.find(c => 
+        const celulaComoColider = celulas.find(c =>
           c.colideres.some(col => col.id === lider.id)
         );
         if (celulaComoColider) {
@@ -61,10 +61,10 @@ export const PastorDashboard: React.FC = () => {
             nombreCelula: `${celulaComoColider.name} (Colíder)`
           };
         }
-        
+
         return lider;
       });
-      
+
       setLideres(lideresEnriquecidos);
     } catch (e) {
       setLideres([]);
@@ -77,12 +77,14 @@ export const PastorDashboard: React.FC = () => {
     enrichLideresWithCelulas();
   }, [celulas]);
   const [showAddLider, setShowAddLider] = useState(false);
-  const [newLider, setNewLider] = useState({ name: '', email: '' });
-  
+  const [showEditLider, setShowEditLider] = useState(false);
+  const [newLider, setNewLider] = useState({ name: '', email: '', fechaNacimiento: '' });
+  const [editingLider, setEditingLider] = useState<Lider | null>(null);
+
   // Estado para células
   const [showAddCelula, setShowAddCelula] = useState(false);
   const [newCelula, setNewCelula] = useState({ name: '', liderId: '', diaSemana: '', horario: '', coliderIds: [] as string[] });
-  
+
   const [timeframe, setTimeframe] = useState<'semanal' | 'mensual' | 'anual'>('semanal');
 
   // Función para agregar líder
@@ -94,9 +96,10 @@ export const PastorDashboard: React.FC = () => {
         email: newLider.email || `${newLider.name.toLowerCase().replace(/\s+/g, '.')}@renacer.com`,
         password: 'Renacer', // Contraseña por defecto
         role: 'LIDER',
+        fechaNacimiento: newLider.fechaNacimiento || undefined
       };
       await api.createUser(liderData);
-      setNewLider({ name: '', email: '' });
+      setNewLider({ name: '', email: '', fechaNacimiento: '' });
       setShowAddLider(false);
       // Refrescar lista de líderes
       await enrichLideresWithCelulas();
@@ -106,10 +109,38 @@ export const PastorDashboard: React.FC = () => {
     }
   };
 
+  // Función para editar líder
+  const handleEditLider = async () => {
+    if (!editingLider || !editingLider.name.trim()) return;
+    try {
+      await api.updateUser(editingLider.id, {
+        name: editingLider.name,
+        email: editingLider.email,
+        fechaNacimiento: editingLider.fechaNacimiento
+      });
+      setEditingLider(null);
+      setShowEditLider(false);
+      // Refrescar lista de líderes
+      await enrichLideresWithCelulas();
+    } catch (error: any) {
+      console.error('Error actualizando líder:', error);
+      alert(error.message || 'Error al actualizar el líder');
+    }
+  };
+
+  // Función para abrir modal de edición
+  const openEditLider = (lider: Lider) => {
+    setEditingLider({
+      ...lider,
+      fechaNacimiento: lider.fechaNacimiento ? new Date(lider.fechaNacimiento).toISOString().split('T')[0] : ''
+    });
+    setShowEditLider(true);
+  };
+
   // Función para crear célula
   const handleAddCelula = async () => {
     if (!newCelula.name.trim() || !newCelula.liderId || !newCelula.diaSemana || !newCelula.horario) return;
-    
+
     try {
       await api.crearCelula({
         name: newCelula.name,
@@ -118,13 +149,13 @@ export const PastorDashboard: React.FC = () => {
         liderId: newCelula.liderId,
         coliderIds: newCelula.coliderIds
       });
-      
+
       // Recargar células desde el backend
       await recargarCelulas();
-      
+
       setNewCelula({ name: '', liderId: '', diaSemana: '', horario: '', coliderIds: [] });
       setShowAddCelula(false);
-      
+
       alert('Célula creada exitosamente');
     } catch (error: any) {
       console.error('Error creando célula:', error);
@@ -139,9 +170,9 @@ export const PastorDashboard: React.FC = () => {
     return celulas.map(celula => {
       const celasAsistencias = asistencias.filter(a => a.celulaId === celula.id);
       const totalMiembros = celula.miembros.length;
-      
+
       const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
-      const promedioAsistencia = celasAsistencias.length > 0 
+      const promedioAsistencia = celasAsistencias.length > 0
         ? Math.round((totalPresentes / celasAsistencias.length / totalMiembros) * 100)
         : 0;
 
@@ -162,7 +193,7 @@ export const PastorDashboard: React.FC = () => {
 
     doc.setFontSize(18);
     doc.text('Reporte de Células - Iglesia Renacer', 14, 20);
-    
+
     doc.setFontSize(12);
     doc.text(`Período: ${timeframe.charAt(0).toUpperCase() + timeframe.slice(1)}`, 14, 30);
     doc.text(`Fecha: ${new Date().toLocaleDateString('es-AR')}`, 14, 37);
@@ -203,7 +234,7 @@ export const PastorDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">Dashboard del Pastor</h2>
@@ -214,41 +245,37 @@ export const PastorDashboard: React.FC = () => {
         <div className="flex gap-2 mb-6 border-b border-gray-200">
           <button
             onClick={() => setView('dashboard')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-              view === 'dashboard' 
-                ? 'border-blue-500 text-blue-600' 
+            className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'dashboard'
+                ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-600 hover:text-gray-800'
-            }`}
+              }`}
           >
             Dashboard
           </button>
           <button
             onClick={() => setView('lideres')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-              view === 'lideres' 
-                ? 'border-blue-500 text-blue-600' 
+            className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'lideres'
+                ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-600 hover:text-gray-800'
-            }`}
+              }`}
           >
             Líderes
           </button>
           <button
             onClick={() => setView('celulas')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-              view === 'celulas' 
-                ? 'border-blue-500 text-blue-600' 
+            className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'celulas'
+                ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-600 hover:text-gray-800'
-            }`}
+              }`}
           >
             Células
           </button>
           <button
             onClick={() => setView('recursos')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${
-              view === 'recursos' 
-                ? 'border-blue-500 text-blue-600' 
+            className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'recursos'
+                ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-600 hover:text-gray-800'
-            }`}
+              }`}
           >
             Recursos
           </button>
@@ -289,7 +316,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div 
+              <div
                 className="card bg-gradient-to-br from-orange-500 to-red-600 text-white cursor-pointer hover:shadow-lg transition-shadow"
                 onClick={() => setShowPeticiones(true)}
               >
@@ -298,8 +325,8 @@ export const PastorDashboard: React.FC = () => {
                     <p className="text-orange-100 text-sm mb-1">Peticiones Altas</p>
                     <p className="text-4xl font-bold">
                       {asistencias.reduce((count, asistencia) => {
-                        return count + asistencia.miembros.filter(m => 
-                          m.prioridadAnotacion === 'alta' && 
+                        return count + asistencia.miembros.filter(m =>
+                          m.prioridadAnotacion === 'alta' &&
                           (m.anotacionEspecial || m.motivoFalta)
                         ).length;
                       }, 0)}
@@ -338,7 +365,7 @@ export const PastorDashboard: React.FC = () => {
             {/* Lista de Células */}
             <div className="card">
               <h3 className="text-xl font-bold mb-4">Células y Estadísticas</h3>
-              
+
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -376,11 +403,10 @@ export const PastorDashboard: React.FC = () => {
                           <div className="text-sm text-gray-900">{est.cantidadAsistencias}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            est.promedioAsistencia >= 80 ? 'bg-green-100 text-green-800' :
-                            est.promedioAsistencia >= 60 ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800'
-                          }`}>
+                          <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${est.promedioAsistencia >= 80 ? 'bg-green-100 text-green-800' :
+                              est.promedioAsistencia >= 60 ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-red-100 text-red-800'
+                            }`}>
                             {est.promedioAsistencia}%
                           </span>
                         </td>
@@ -468,6 +494,9 @@ export const PastorDashboard: React.FC = () => {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                         Contraseña
                       </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                        Acciones
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -499,6 +528,14 @@ export const PastorDashboard: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <code className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-700">Renacer</code>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <button
+                            onClick={() => openEditLider(lider)}
+                            className="text-blue-600 hover:text-blue-900"
+                          >
+                            <Edit2 className="w-5 h-5" />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -541,7 +578,7 @@ export const PastorDashboard: React.FC = () => {
                       <Edit2 className="w-5 h-5" />
                     </button>
                   </div>
-                  
+
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Miembros:</span>
@@ -574,7 +611,7 @@ export const PastorDashboard: React.FC = () => {
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -603,6 +640,18 @@ export const PastorDashboard: React.FC = () => {
                   <p className="text-xs text-gray-500 mt-1">
                     Si no se ingresa, se generará automáticamente
                   </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Fecha de Nacimiento
+                  </label>
+                  <input
+                    type="date"
+                    value={newLider.fechaNacimiento}
+                    onChange={(e) => setNewLider({ ...newLider, fechaNacimiento: e.target.value })}
+                    className="input"
+                  />
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -634,6 +683,74 @@ export const PastorDashboard: React.FC = () => {
           </div>
         )}
 
+        {/* Modal Editar Líder */}
+        {showEditLider && editingLider && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">Editar Líder</h3>
+                <button onClick={() => setShowEditLider(false)} className="text-gray-400 hover:text-gray-600">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre Completo *
+                  </label>
+                  <input
+                    type="text"
+                    value={editingLider.name}
+                    onChange={(e) => setEditingLider({ ...editingLider, name: e.target.value })}
+                    className="input"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={editingLider.email}
+                    onChange={(e) => setEditingLider({ ...editingLider, email: e.target.value })}
+                    className="input"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Fecha de Nacimiento
+                  </label>
+                  <input
+                    type="date"
+                    value={editingLider.fechaNacimiento || ''}
+                    onChange={(e) => setEditingLider({ ...editingLider, fechaNacimiento: e.target.value })}
+                    className="input"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-4 mt-6">
+                <button
+                  onClick={handleEditLider}
+                  className="btn btn-primary flex-1"
+                  disabled={!editingLider.name.trim()}
+                >
+                  Guardar Cambios
+                </button>
+                <button
+                  onClick={() => setShowEditLider(false)}
+                  className="btn btn-secondary flex-1"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Modal Crear Célula */}
         {showAddCelula && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -644,7 +761,7 @@ export const PastorDashboard: React.FC = () => {
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -867,16 +984,16 @@ export const PastorDashboard: React.FC = () => {
                     <div className="bg-orange-50 p-3 rounded-lg">
                       <div className="text-sm text-orange-800 font-medium">
                         {asistencias.reduce((count, asistencia) => {
-                          return count + asistencia.miembros.filter(m => 
-                            m.prioridadAnotacion === 'alta' && 
+                          return count + asistencia.miembros.filter(m =>
+                            m.prioridadAnotacion === 'alta' &&
                             (m.anotacionEspecial || m.motivoFalta)
                           ).length;
                         }, 0)} prioridad alta
                       </div>
                       <div className="text-sm text-orange-700">
                         {asistencias.reduce((count, asistencia) => {
-                          return count + asistencia.miembros.filter(m => 
-                            m.prioridadAnotacion && 
+                          return count + asistencia.miembros.filter(m =>
+                            m.prioridadAnotacion &&
                             (m.anotacionEspecial || m.motivoFalta)
                           ).length;
                         }, 0)} total
