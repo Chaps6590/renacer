@@ -191,16 +191,16 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
                         <select
                           value={asistencia.motivoFalta || ''}
                           onChange={(e) => handleAnotacionEspecial(miembro.id, asistencia.anotacionEspecial || '', asistencia.prioridadAnotacion!, e.target.value as MotivoFalta)}
-                          className="text-sm font-bold p-2 border-2 border-gray-200 rounded-xl bg-white outline-none focus:border-blue-500"
+                          className="text-sm font-bold p-2 border-2 border-gray-200 rounded-xl bg-white text-gray-900 outline-none focus:border-blue-500 min-w-[150px]"
                         >
-                          <option value="">Seleccione motivo...</option>
-                          <option value="vacaciones">Vacaciones</option>
-                          <option value="trabajo">Trabajo</option>
-                          <option value="enfermedad">Enfermedad</option>
-                          <option value="familia">Asunto Familiar</option>
-                          <option value="viaje">Viaje</option>
-                          <option value="otro">Otro Motivo</option>
-                          <option value="sin-motivo">Sin motivo específico</option>
+                          <option value="" className="text-gray-900">Seleccione motivo...</option>
+                          <option value="vacaciones" className="text-gray-900">Vacaciones</option>
+                          <option value="trabajo" className="text-gray-900">Trabajo</option>
+                          <option value="enfermedad" className="text-gray-900">Enfermedad</option>
+                          <option value="familia" className="text-gray-900">Asunto Familiar</option>
+                          <option value="viaje" className="text-gray-900">Viaje</option>
+                          <option value="otro" className="text-gray-900">Otro Motivo</option>
+                          <option value="sin-motivo" className="text-gray-900">Sin motivo específico</option>
                         </select>
                       )}
                     </div>
@@ -212,7 +212,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
                         placeholder={asistencia.presente
                           ? "Ej: Pidió oración por salud, agradecimiento, etc."
                           : "Escribe un comentario sobre su ausencia..."}
-                        className={`w-full p-3 bg-white border-2 rounded-2xl resize-none outline-none transition-all text-sm font-medium ${!asistencia.presente && !asistencia.motivoCompletado ? 'border-red-200 focus:border-red-400' : 'border-gray-100 focus:border-blue-400'
+                        className={`w-full p-3 bg-white border-2 rounded-2xl resize-none outline-none transition-all text-sm font-medium text-gray-900 placeholder-gray-400 ${!asistencia.presente && !asistencia.motivoCompletado ? 'border-red-200 focus:border-red-400' : 'border-gray-200 focus:border-blue-400'
                           }`}
                         rows={2}
                       />

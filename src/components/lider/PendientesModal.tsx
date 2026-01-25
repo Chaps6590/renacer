@@ -194,7 +194,7 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
                                   value={motivoSeleccionado?.anotacionEspecial || ''}
                                   onChange={(e) => handleAnotacionChange(pendiente.asistenciaId, miembro.miembroId, e.target.value)}
                                   placeholder="¿Pudiste hablar con el hermano? ¿Necesita oración por algo?"
-                                  className="w-full p-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:ring-0 transition-all text-sm"
+                                  className="w-full p-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:ring-0 transition-all text-sm text-gray-900 font-bold placeholder-gray-400 bg-white"
                                   rows={2}
                                 />
                               </div>

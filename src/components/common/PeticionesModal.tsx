@@ -325,7 +325,7 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
                                   value={editandoAccion.texto}
                                   onChange={(e) => setEditandoAccion({ ...editandoAccion, texto: e.target.value })}
                                   placeholder="Ej: Se visitó y se oró por..."
-                                  className="w-full text-xs font-bold p-3 border-2 border-orange-200 rounded-xl focus:border-orange-500 outline-none h-24 resize-none transition-all"
+                                  className="w-full text-xs font-black p-3 border-2 border-orange-200 rounded-xl focus:border-orange-500 outline-none h-24 resize-none transition-all text-gray-900 bg-white placeholder-orange-300 shadow-inner"
                                 />
                                 <div className="flex gap-2">
                                   <button
