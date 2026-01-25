@@ -14,7 +14,6 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
   const [mostrandoConfiguracion, setMostrandoConfiguracion] = useState(false);
   const [nuevaConfiguracion, setNuevaConfiguracion] = useState({
     aliasIglesia: configuracionDonaciones.aliasIglesia,
-    cbu: configuracionDonaciones.cbu || '',
     descripcion: configuracionDonaciones.descripcion
   });
   const [copiado, setCopiado] = useState(false);
@@ -49,7 +48,6 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
 
     actualizarConfiguracionDonaciones({
       aliasIglesia: nuevaConfiguracion.aliasIglesia.trim(),
-      cbu: nuevaConfiguracion.cbu.trim() || undefined,
       descripcion: nuevaConfiguracion.descripcion.trim(),
       actualizadoPor: user?.id || ''
     });
@@ -61,7 +59,6 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
   const cancelarConfiguracion = () => {
     setNuevaConfiguracion({
       aliasIglesia: configuracionDonaciones.aliasIglesia,
-      cbu: configuracionDonaciones.cbu || '',
       descripcion: configuracionDonaciones.descripcion
     });
     setMostrandoConfiguracion(false);
@@ -109,20 +106,6 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                   onChange={(e) => setNuevaConfiguracion({ ...nuevaConfiguracion, aliasIglesia: e.target.value })}
                   placeholder="Ej: IGLESIA.RENACER.MP"
                   className="w-full p-3 border border-gray-300 rounded-lg font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  CBU (opcional)
-                </label>
-                <input
-                  type="text"
-                  value={nuevaConfiguracion.cbu}
-                  onChange={(e) => setNuevaConfiguracion({ ...nuevaConfiguracion, cbu: e.target.value })}
-                  placeholder="Ej: 0000003100010000000001"
-                  className="w-full p-3 border border-gray-300 rounded-lg font-mono"
-                  maxLength={22}
                 />
               </div>
 
@@ -178,8 +161,8 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                   <button
                     onClick={copiarAlias}
                     className={`btn btn-sm transition-all duration-200 ${copiado
-                        ? 'btn-success'
-                        : 'btn-primary'
+                      ? 'btn-success'
+                      : 'btn-primary'
                       }`}
                   >
                     {copiado ? (
@@ -203,15 +186,6 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                 </div>
               </div>
             </div>
-
-            {configuracionDonaciones.cbu && (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                <div className="text-sm text-gray-600 mb-1 font-semibold uppercase tracking-wider">CBU / CVU:</div>
-                <div className="font-mono text-sm text-gray-800 break-all">
-                  {configuracionDonaciones.cbu}
-                </div>
-              </div>
-            )}
           </div>
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">

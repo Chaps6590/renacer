@@ -86,6 +86,7 @@ export interface Noticia {
   id: string;
   titulo: string;
   contenido: string;
+  imageUrl?: string;
   fechaCreacion: Date;
   fechaVencimiento?: Date;
   importante: boolean;

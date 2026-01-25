@@ -19,11 +19,32 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
   const [nuevaNoticia, setNuevaNoticia] = useState({
     titulo: '',
     contenido: '',
+    imageUrl: '',
     fechaVencimiento: '',
     importante: false
   });
+  const [cargandoImagen, setCargandoImagen] = useState(false);
 
   if (!isOpen) return null;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validar tamaño (máximo 1MB para Base64 eficiente)
+    if (file.size > 1024 * 1024) {
+      alert('La imagen es demasiado grande. Máximo 1MB.');
+      return;
+    }
+
+    setCargandoImagen(true);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setNuevaNoticia({ ...nuevaNoticia, imageUrl: reader.result as string });
+      setCargandoImagen(false);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const esPastor = user?.role === 'pastor' || user?.role === 'admin';
 
@@ -46,6 +67,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
     const noticia: Omit<Noticia, 'id' | 'fechaCreacion'> = {
       titulo: nuevaNoticia.titulo.trim(),
       contenido: nuevaNoticia.contenido.trim(),
+      imageUrl: nuevaNoticia.imageUrl,
       fechaVencimiento: nuevaNoticia.fechaVencimiento ? new Date(nuevaNoticia.fechaVencimiento) : undefined,
       importante: nuevaNoticia.importante,
       creadoPor: user?.id || '',
@@ -55,7 +77,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
     agregarNoticia(noticia);
 
     // Limpiar formulario
-    setNuevaNoticia({ titulo: '', contenido: '', fechaVencimiento: '', importante: false });
+    setNuevaNoticia({ titulo: '', contenido: '', imageUrl: '', fechaVencimiento: '', importante: false });
     setMostrandoCrear(false);
     alert('Noticia creada exitosamente');
   };
@@ -65,6 +87,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
     setNuevaNoticia({
       titulo: noticia.titulo,
       contenido: noticia.contenido,
+      imageUrl: noticia.imageUrl || '',
       fechaVencimiento: noticia.fechaVencimiento ? format(noticia.fechaVencimiento, 'yyyy-MM-dd') : '',
       importante: noticia.importante
     });
@@ -80,12 +103,13 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
     actualizarNoticia(editandoNoticia.id, {
       titulo: nuevaNoticia.titulo.trim(),
       contenido: nuevaNoticia.contenido.trim(),
+      imageUrl: nuevaNoticia.imageUrl,
       fechaVencimiento: nuevaNoticia.fechaVencimiento ? new Date(nuevaNoticia.fechaVencimiento) : undefined,
       importante: nuevaNoticia.importante
     });
 
     // Limpiar formulario
-    setNuevaNoticia({ titulo: '', contenido: '', fechaVencimiento: '', importante: false });
+    setNuevaNoticia({ titulo: '', contenido: '', imageUrl: '', fechaVencimiento: '', importante: false });
     setEditandoNoticia(null);
     setMostrandoCrear(false);
     alert('Noticia actualizada exitosamente');
@@ -94,7 +118,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
   const cancelarEdicion = () => {
     setMostrandoCrear(false);
     setEditandoNoticia(null);
-    setNuevaNoticia({ titulo: '', contenido: '', fechaVencimiento: '', importante: false });
+    setNuevaNoticia({ titulo: '', contenido: '', imageUrl: '', fechaVencimiento: '', importante: false });
   };
 
   return (
@@ -143,7 +167,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                   className="w-full p-3 border border-gray-300 rounded-lg"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Contenido *
@@ -156,7 +180,49 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                   rows={4}
                 />
               </div>
-              
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Imagen (opcional)
+                </label>
+                <div className="flex items-center gap-4">
+                  <div className={`w-24 h-24 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50`}>
+                    {nuevaNoticia.imageUrl ? (
+                      <img src={nuevaNoticia.imageUrl} alt="Vista previa" className="w-full h-full object-cover" />
+                    ) : (
+                      <Newspaper className="w-8 h-8 text-gray-400" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                      id="news-image-upload"
+                    />
+                    <label
+                      htmlFor="news-image-upload"
+                      className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
+                    >
+                      {cargandoImagen ? 'Procesando...' : (nuevaNoticia.imageUrl ? 'Cambiar Imagen' : 'Subir Imagen')}
+                    </label>
+                    {nuevaNoticia.imageUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setNuevaNoticia({ ...nuevaNoticia, imageUrl: '' })}
+                        className="ml-2 text-red-600 text-sm hover:text-red-700"
+                      >
+                        Quitar
+                      </button>
+                    )}
+                    <p className="text-xs text-gray-500 mt-2">
+                      Sube una imagen pequeña (formato cuadrado recomendado, máx 1MB).
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Fecha de vencimiento (opcional)
@@ -171,7 +237,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                   Si se establece, la noticia se ocultará automáticamente después de esta fecha
                 </p>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -184,7 +250,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                   Marcar como importante
                 </label>
               </div>
-              
+
               <div className="flex gap-3">
                 <button
                   onClick={editandoNoticia ? handleActualizarNoticia : handleCrearNoticia}
@@ -212,20 +278,19 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                 No hay noticias disponibles
               </h4>
               <p className="text-gray-500">
-                {esPastor 
+                {esPastor
                   ? 'Crea la primera noticia para compartir información con los líderes.'
                   : 'Las noticias aparecerán aquí cuando el pastor las publique.'}
               </p>
             </div>
           ) : (
             noticiasVisibles.map((noticia) => (
-              <div 
-                key={noticia.id} 
-                className={`border rounded-lg p-4 ${
-                  noticia.importante 
-                    ? 'border-red-300 bg-red-50' 
-                    : 'border-gray-200 bg-white hover:bg-gray-50'
-                } transition-colors`}
+              <div
+                key={noticia.id}
+                className={`border rounded-lg p-4 ${noticia.importante
+                  ? 'border-red-300 bg-red-50'
+                  : 'border-gray-200 bg-white hover:bg-gray-50'
+                  } transition-colors`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -240,9 +305,9 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                         </span>
                       )}
                     </div>
-                    
+
                     <p className="text-gray-700 mb-3 whitespace-pre-wrap">{noticia.contenido}</p>
-                    
+
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
@@ -256,7 +321,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                       )}
                     </div>
                   </div>
-                  
+
                   {esPastor && (
                     <div className="flex items-center gap-2 ml-4">
                       <button
@@ -266,7 +331,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                       >
                         <Edit className="w-4 h-4" />
                       </button>
-                      
+
                       <button
                         onClick={() => {
                           actualizarNoticia(noticia.id, { visible: !noticia.visible });
@@ -276,7 +341,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                       >
                         {noticia.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                       </button>
-                      
+
                       <button
                         onClick={() => {
                           if (confirm(`¿Eliminar "${noticia.titulo}"?`)) {

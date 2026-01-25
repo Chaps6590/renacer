@@ -134,6 +134,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         id: n.id,
         titulo: n.titulo,
         contenido: n.contenido,
+        imageUrl: n.imageUrl,
         fechaCreacion: new Date(n.fechaPublicacion || n.createdAt),
         fechaVencimiento: n.fechaVencimiento ? new Date(n.fechaVencimiento) : undefined,
         importante: n.importante,
@@ -156,12 +157,11 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       }));
       setMateriales(materialesTransformados);
 
-      // Cargar configuración de donaciones (alias, cbu, descripcion)
+      // Cargar configuración de donaciones (aliasIglesia, descripcion)
       const res = await api.getConfiguracionDonaciones() as any;
       if (res) {
         setConfiguracionDonaciones({
           aliasIglesia: res.alias || res.aliasIglesia || '',
-          cbu: res.cbu || res.cbuIglesia || '',
           descripcion: res.descripcion || '',
           activo: res.activo !== undefined ? res.activo : true,
           fechaActualizacion: new Date(res.fechaCreacion || res.updatedAt || new Date()),
@@ -416,7 +416,18 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   // Funciones de noticias
   const agregarNoticia = async (noticia: Omit<Noticia, 'id' | 'fechaCreacion'>) => {
     try {
-      const nuevaNoticia = await api.crearNoticia(noticia) as Noticia;
+      const n = await api.crearNoticia(noticia) as any;
+      const nuevaNoticia: Noticia = {
+        id: n.id,
+        titulo: n.titulo,
+        contenido: n.contenido,
+        imageUrl: n.imageUrl,
+        fechaCreacion: new Date(n.fechaPublicacion || n.createdAt),
+        fechaVencimiento: n.fechaVencimiento ? new Date(n.fechaVencimiento) : undefined,
+        importante: n.importante,
+        creadoPor: n.createdBy || '',
+        visible: n.activa
+      };
       setNoticias([...noticias, nuevaNoticia]);
     } catch (error) {
       console.error('Error adding noticia:', error);
@@ -426,8 +437,19 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const actualizarNoticia = async (id: string, noticia: Partial<Noticia>) => {
     try {
-      const noticiaActualizada = await api.actualizarNoticia(id, noticia) as Noticia;
-      setNoticias(noticias.map(n => n.id === id ? noticiaActualizada : n));
+      const n = await api.actualizarNoticia(id, noticia) as any;
+      const noticiaActualizada: Noticia = {
+        id: n.id,
+        titulo: n.titulo,
+        contenido: n.contenido,
+        imageUrl: n.imageUrl,
+        fechaCreacion: new Date(n.fechaPublicacion || n.createdAt),
+        fechaVencimiento: n.fechaVencimiento ? new Date(n.fechaVencimiento) : undefined,
+        importante: n.importante,
+        creadoPor: n.createdBy || '',
+        visible: n.activa
+      };
+      setNoticias(noticias.map(item => item.id === id ? noticiaActualizada : item));
     } catch (error) {
       console.error('Error updating noticia:', error);
       throw error;
