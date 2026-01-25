@@ -162,7 +162,26 @@ class ApiService {
   }
 
   async getAsistencias(celulaId: string) {
-    return this.request(`/celulas/${celulaId}/asistencias`, {
+    return this.request(`/asistencias/celula/${celulaId}`, {
+      method: 'GET',
+    });
+  }
+
+  async updateMotivoAsistencia(asistenciaId: string, data: any) {
+    return this.request(`/asistencias/${asistenciaId}/motivo`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getPendientesAsistencia() {
+    return this.request('/asistencias/pendientes', {
+      method: 'GET',
+    });
+  }
+
+  async getEstadisticasAsistencia() {
+    return this.request('/asistencias/estadisticas', {
       method: 'GET',
     });
   }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Celula, AsistenciaRecord, MiembroAsistencia, PrioridadAnotacion } from '../../types';
+import { Celula, AsistenciaRecord, MiembroAsistencia, PrioridadAnotacion, MotivoFalta } from '../../types';
 import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Check, X, Save, AlertCircle, MessageCircle, Flag } from 'lucide-react';
@@ -29,25 +29,27 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
   const [mostrandoDetalles, setMostrandoDetalles] = useState<string | null>(null);
 
   const handleToggleAsistencia = (miembroId: string) => {
+    const isPresent = !miembrosAsistencia[miembroId].presente;
     setMiembrosAsistencia({
       ...miembrosAsistencia,
       [miembroId]: {
         ...miembrosAsistencia[miembroId],
-        presente: !miembrosAsistencia[miembroId].presente,
-        motivoCompletado: !miembrosAsistencia[miembroId].presente ? false : true,
-        motivoFalta: undefined,
-        motivoPersonalizado: undefined
+        presente: isPresent,
+        // Un presente siempre está completado. Un ausente solo si tiene anotación o motivo.
+        motivoCompletado: isPresent ? true : !!(miembrosAsistencia[miembroId].anotacionEspecial || miembrosAsistencia[miembroId].motivoFalta),
       }
     });
   };
-  
-  const handleAnotacionEspecial = (miembroId: string, anotacion: string, prioridad: PrioridadAnotacion) => {
+
+  const handleAnotacionEspecial = (miembroId: string, anotacion: string, prioridad: PrioridadAnotacion, motivoFalta?: MotivoFalta) => {
     setMiembrosAsistencia({
       ...miembrosAsistencia,
       [miembroId]: {
         ...miembrosAsistencia[miembroId],
         anotacionEspecial: anotacion,
-        prioridadAnotacion: prioridad
+        prioridadAnotacion: prioridad,
+        motivoFalta: motivoFalta,
+        motivoCompletado: miembrosAsistencia[miembroId].presente ? true : !!(anotacion || motivoFalta)
       }
     });
   };
@@ -73,7 +75,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
 
     registrarAsistencia(record);
     onClose();
-    alert(pendientesCompletar > 0 
+    alert(pendientesCompletar > 0
       ? `¡Asistencia registrada! Quedan ${pendientesCompletar} motivos de falta pendientes por completar.`
       : '¡Asistencia registrada exitosamente!');
   };
@@ -86,7 +88,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="bg-white rounded-lg p-6 max-w-2xl w-full my-8">
         <h3 className="text-2xl font-bold mb-6">Registrar Asistencia</h3>
-        
+
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Fecha de la Reunión
@@ -126,11 +128,10 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
                 {/* Fila principal */}
                 <div
                   onClick={() => handleToggleAsistencia(miembro.id)}
-                  className={`flex items-center justify-between p-4 cursor-pointer transition-colors ${
-                    asistencia.presente
-                      ? 'bg-green-50 border-green-300'
-                      : 'bg-red-50 border-red-300'
-                  }`}
+                  className={`flex items-center justify-between p-4 cursor-pointer transition-colors ${asistencia.presente
+                    ? 'bg-green-50 border-green-300'
+                    : 'bg-red-50 border-red-300'
+                    }`}
                 >
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">{miembro.name}</p>
@@ -139,73 +140,97 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
                     )}
                     {asistencia.anotacionEspecial && (
                       <p className="text-sm text-blue-600 font-medium mt-1">
-                        <Flag className={`w-3 h-3 inline mr-1 ${
-                          asistencia.prioridadAnotacion === 'alta' ? 'text-red-500' :
+                        <Flag className={`w-3 h-3 inline mr-1 ${asistencia.prioridadAnotacion === 'alta' ? 'text-red-500' :
                           asistencia.prioridadAnotacion === 'media' ? 'text-yellow-500' : 'text-green-500'
-                        }`} />
+                          }`} />
                         {asistencia.anotacionEspecial}
                       </p>
                     )}
                   </div>
-                  
+
                   <div className="flex items-center gap-3">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMostrandoDetalles(mostrandoDetalles === miembro.id ? null : miembro.id);
+                      }}
+                      className={`p-1 rounded transition-colors ${(asistencia.anotacionEspecial || asistencia.motivoFalta)
+                        ? 'text-blue-600 bg-blue-100'
+                        : 'text-gray-400 hover:bg-gray-100'
+                        }`}
+                      title="Agregar detalles o motivo"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                    </button>
+
                     {asistencia.presente ? (
-                      <>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setMostrandoDetalles(mostrandoDetalles === miembro.id ? null : miembro.id);
-                          }}
-                          className="p-1 text-blue-600 hover:bg-blue-100 rounded"
-                        >
-                          <MessageCircle className="w-4 h-4" />
-                        </button>
-                        <div className="flex items-center gap-2">
-                          <Check className="w-6 h-6 text-green-600" />
-                          <span className="text-sm font-medium text-green-700">Presente</span>
-                        </div>
-                      </>
+                      <div className="flex items-center gap-2">
+                        <Check className="w-6 h-6 text-green-600" />
+                        <span className="text-sm font-medium text-green-700">Presente</span>
+                      </div>
                     ) : (
-                      <>
+                      <div className="flex items-center gap-2">
                         {!asistencia.motivoCompletado && (
-                          <AlertCircle className="w-5 h-5 text-yellow-600" />
+                          <AlertCircle className="w-5 h-5 text-yellow-600 animate-pulse" />
                         )}
-                        <div className="flex items-center gap-2">
-                          <X className="w-6 h-6 text-red-600" />
-                          <span className="text-sm font-medium text-red-700">Ausente</span>
-                        </div>
-                      </>
+                        <X className="w-6 h-6 text-red-600" />
+                        <span className="text-sm font-medium text-red-700">Ausente</span>
+                      </div>
                     )}
                   </div>
                 </div>
-                
+
                 {/* Panel de detalles expandible */}
-                {mostrandoDetalles === miembro.id && asistencia.presente && (
-                  <div className="p-4 bg-blue-50 border-t">
-                    <h4 className="font-medium text-gray-900 mb-3">Anotación Especial</h4>
+                {(mostrandoDetalles === miembro.id || (!asistencia.presente && !asistencia.motivoCompletado)) && (
+                  <div className={`p-4 border-t ${asistencia.presente ? 'bg-blue-50' : 'bg-red-50'}`}>
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="font-medium text-gray-900">
+                        {asistencia.presente ? 'Anotación del Presente' : 'Motivo de la Ausencia'}
+                        {!asistencia.presente && <span className="text-red-600 ml-1">* Obligatorio</span>}
+                      </h4>
+                      {!asistencia.presente && (
+                        <select
+                          value={asistencia.motivoFalta || ''}
+                          onChange={(e) => handleAnotacionEspecial(miembro.id, asistencia.anotacionEspecial || '', asistencia.prioridadAnotacion!, e.target.value as MotivoFalta)}
+                          className="text-sm p-1 border rounded bg-white"
+                        >
+                          <option value="">Seleccione motivo...</option>
+                          <option value="vacaciones">Vacaciones</option>
+                          <option value="trabajo">Trabajo</option>
+                          <option value="enfermedad">Enfermedad</option>
+                          <option value="familia">Familia</option>
+                          <option value="viaje">Viaje</option>
+                          <option value="otro">Otro</option>
+                          <option value="sin-motivo">Sin motivo específico</option>
+                        </select>
+                      )}
+                    </div>
+
                     <div className="space-y-3">
                       <textarea
                         value={asistencia.anotacionEspecial || ''}
-                        onChange={(e) => handleAnotacionEspecial(miembro.id, e.target.value, asistencia.prioridadAnotacion!)}
-                        placeholder="Ej: Necesita oración por familiar internado, petición especial, etc."
-                        className="w-full p-2 border rounded-lg resize-none"
+                        onChange={(e) => handleAnotacionEspecial(miembro.id, e.target.value, asistencia.prioridadAnotacion!, asistencia.motivoFalta)}
+                        placeholder={asistencia.presente
+                          ? "Ej: Necesita oración por familiar internado, petición especial, etc."
+                          : "Comentario obligatorio sobre la ausencia..."}
+                        className={`w-full p-2 border rounded-lg resize-none bg-white ${!asistencia.presente && !asistencia.anotacionEspecial && !asistencia.motivoFalta ? 'border-red-300' : ''
+                          }`}
                         rows={2}
                       />
                       <div className="flex gap-2">
-                        <label className="text-sm font-medium text-gray-700">Prioridad:</label>
+                        <label className="text-sm font-medium text-gray-700">Prioridad de seguimiento:</label>
                         {(['alta', 'media', 'baja'] as PrioridadAnotacion[]).map(prioridad => (
-                          <label key={prioridad} className="flex items-center gap-1 text-sm">
+                          <label key={prioridad} className="flex items-center gap-1 text-sm cursor-pointer">
                             <input
                               type="radio"
                               name={`prioridad-${miembro.id}`}
                               checked={asistencia.prioridadAnotacion === prioridad}
-                              onChange={() => handleAnotacionEspecial(miembro.id, asistencia.anotacionEspecial || '', prioridad)}
+                              onChange={() => handleAnotacionEspecial(miembro.id, asistencia.anotacionEspecial || '', prioridad, asistencia.motivoFalta)}
                               className="w-3 h-3"
                             />
-                            <span className={`capitalize ${
-                              prioridad === 'alta' ? 'text-red-600' :
+                            <span className={`capitalize ${prioridad === 'alta' ? 'text-red-600 font-bold' :
                               prioridad === 'media' ? 'text-yellow-600' : 'text-green-600'
-                            }`}>
+                              }`}>
                               {prioridad}
                             </span>
                           </label>

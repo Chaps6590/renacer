@@ -30,21 +30,24 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
     { value: 'otro', label: 'Otro (especificar)' }
   ];
 
-  const handleMotivoChange = (asistenciaId: string, miembroId: string, motivo: MotivoFalta) => {
-    const key = `${asistenciaId}-${miembroId}`;
-    setMotivosSeleccionados({
-      ...motivosSeleccionados,
-      [key]: { motivo }
-    });
-  };
-
-  const handleMotivoPersonalizadoChange = (asistenciaId: string, miembroId: string, personalizado: string) => {
+  const handleAnotacionChange = (asistenciaId: string, miembroId: string, anotacionEspecial: string) => {
     const key = `${asistenciaId}-${miembroId}`;
     setMotivosSeleccionados({
       ...motivosSeleccionados,
       [key]: {
         ...motivosSeleccionados[key],
-        personalizado
+        anotacionEspecial
+      }
+    });
+  };
+
+  const handlePrioridadChange = (asistenciaId: string, miembroId: string, prioridad: string) => {
+    const key = `${asistenciaId}-${miembroId}`;
+    setMotivosSeleccionados({
+      ...motivosSeleccionados,
+      [key]: {
+        ...motivosSeleccionados[key],
+        prioridad
       }
     });
   };
@@ -52,14 +55,15 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
   const guardarMotivo = (asistenciaId: string, miembroId: string) => {
     const key = `${asistenciaId}-${miembroId}`;
     const motivoData = motivosSeleccionados[key];
-    
-    if (!motivoData) return;
+
+    if (!motivoData || !motivoData.motivo) return;
 
     actualizarMotivoFalta(
       asistenciaId,
       miembroId,
       motivoData.motivo,
-      motivoData.personalizado
+      motivoData.personalizado,
+      motivoData.anotacionEspecial
     );
 
     // Limpiar el motivo guardado
@@ -72,128 +76,176 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg p-6 max-w-4xl w-full my-8">
+      <div className="bg-white rounded-lg p-6 max-w-4xl w-full my-8 border border-gray-200">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-bold flex items-center gap-2">
             <AlertCircle className="w-6 h-6 text-yellow-600" />
-            Faltas Pendientes de Completar
+            Faltas Pendientes de Seguimiento
           </h3>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {totalPendientes === 0 ? (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Users className="w-8 h-8 text-green-600" />
+          <div className="text-center py-12">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="w-10 h-10 text-green-600" />
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">
-              ¡No hay pendientes!
+            <h4 className="text-xl font-bold text-gray-900 mb-2">
+              ¡Célula al día!
             </h4>
             <p className="text-gray-600">
-              Todas las faltas han sido completadas con sus respectivos motivos.
+              No tienes motivos de falta pendientes por completar.
             </p>
           </div>
         ) : (
           <div className="space-y-6">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-              <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="w-5 h-5 text-yellow-600" />
-                <h4 className="font-semibold text-yellow-800">
-                  {totalPendientes} {totalPendientes === 1 ? 'motivo pendiente' : 'motivos pendientes'}
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-4 mb-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-2">
+                <AlertCircle className="w-6 h-6 text-yellow-600" />
+                <h4 className="font-bold text-yellow-800 text-lg">
+                  {totalPendientes} Seguimientos pendientes
                 </h4>
               </div>
-              <p className="text-yellow-700 text-sm">
-                Completa los motivos de las faltas para tener un registro detallado de la asistencia.
+              <p className="text-yellow-700">
+                Es fundamental completar el motivo por el cual los hermanos no pudieron asistir para brindarles el cuidado necesario.
               </p>
             </div>
 
-            {pendientesLider.map((pendiente) => {
-              const asistencia = asistencias.find(a => a.id === pendiente.asistenciaId);
-              if (!asistencia) return null;
-
-              return (
-                <div key={pendiente.asistenciaId} className="border rounded-lg p-4">
-                  <div className="flex items-center gap-3 mb-4">
+            {pendientesLider.map((pendiente) => (
+              <div key={pendiente.asistenciaId} className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                <div className="bg-gray-50 px-4 py-3 border-b flex items-center justify-between">
+                  <div className="flex items-center gap-3">
                     <Calendar className="w-5 h-5 text-blue-600" />
                     <div>
-                      <h4 className="font-semibold text-gray-900">{pendiente.celulaNombre}</h4>
-                      <p className="text-sm text-gray-600">
-                        {format(pendiente.fecha, 'EEEE, d MMMM yyyy', { locale: es })}
-                      </p>
+                      <span className="font-bold text-gray-900">{pendiente.celulaNombre}</span>
+                      <span className="mx-2 text-gray-400">|</span>
+                      <span className="text-sm text-gray-600 capitalize">
+                        {format(new Date(pendiente.fecha), 'EEEE, d MMMM yyyy', { locale: es })}
+                      </span>
                     </div>
                   </div>
+                </div>
 
-                  <div className="space-y-4">
-                    {pendiente.miembrosPendientes.map((miembro) => {
-                      const key = `${pendiente.asistenciaId}-${miembro.miembroId}`;
-                      const motivoSeleccionado = motivosSeleccionados[key];
+                <div className="p-4 space-y-4">
+                  {pendiente.miembrosPendientes.map((miembro) => {
+                    const key = `${pendiente.asistenciaId}-${miembro.miembroId}`;
+                    const motivoSeleccionado = motivosSeleccionados[key];
 
-                      return (
-                        <div key={miembro.miembroId} className="bg-red-50 border border-red-200 rounded-lg p-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <h5 className="font-medium text-gray-900 mb-3">{miembro.miembroNombre}</h5>
-                              
-                              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+                    return (
+                      <div key={miembro.miembroId} className="bg-white border-2 border-red-100 rounded-xl p-5 hover:border-red-200 transition-colors">
+                        <div className="flex flex-col lg:flex-row gap-6">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-4">
+                              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold">
+                                {miembro.miembroNombre.charAt(0)}
+                              </div>
+                              <h5 className="font-bold text-gray-900 text-lg">{miembro.miembroNombre}</h5>
+                            </div>
+
+                            <div className="mb-4">
+                              <p className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">¿Por qué faltó?</p>
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                 {motivosFalta.map((motivo) => (
-                                  <label key={motivo.value} className="flex items-center gap-2 text-sm">
+                                  <label key={motivo.value} className={`flex items-center justify-center p-2 rounded-lg border cursor-pointer transition-all ${motivoSeleccionado?.motivo === motivo.value
+                                      ? 'bg-blue-600 border-blue-600 text-white shadow-md'
+                                      : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                                    }`}>
                                     <input
                                       type="radio"
                                       name={`motivo-${key}`}
                                       value={motivo.value}
                                       checked={motivoSeleccionado?.motivo === motivo.value}
                                       onChange={() => handleMotivoChange(pendiente.asistenciaId, miembro.miembroId, motivo.value)}
-                                      className="w-4 h-4 text-blue-600"
+                                      className="sr-only"
                                     />
-                                    <span className="text-gray-700">{motivo.label}</span>
+                                    <span className="text-xs font-bold leading-tight text-center">{motivo.label}</span>
                                   </label>
                                 ))}
                               </div>
-
-                              {motivoSeleccionado?.motivo === 'otro' && (
-                                <textarea
-                                  value={motivoSeleccionado.personalizado || ''}
-                                  onChange={(e) => handleMotivoPersonalizadoChange(pendiente.asistenciaId, miembro.miembroId, e.target.value)}
-                                  placeholder="Especifica el motivo..."
-                                  className="w-full p-2 border border-gray-300 rounded-lg resize-none mb-3"
-                                  rows={2}
-                                />
-                              )}
                             </div>
 
+                            <div className="space-y-4">
+                              <div>
+                                <p className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">Anotación / Comentario</p>
+                                <textarea
+                                  value={motivoSeleccionado?.anotacionEspecial || ''}
+                                  onChange={(e) => handleAnotacionChange(pendiente.asistenciaId, miembro.miembroId, e.target.value)}
+                                  placeholder="¿Pudiste hablar con el hermano? ¿Necesita oración por algo?"
+                                  className="w-full p-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:ring-0 transition-all text-sm"
+                                  rows={2}
+                                />
+                              </div>
+
+                              <div className="flex flex-wrap items-center gap-4">
+                                <span className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Prioridad:</span>
+                                {(['alta', 'media', 'baja']).map(prioridad => (
+                                  <label key={prioridad} className={`flex items-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer transition-all ${motivoSeleccionado?.prioridad === prioridad
+                                      ? (prioridad === 'alta' ? 'bg-red-500 border-red-500 text-white' :
+                                        prioridad === 'media' ? 'bg-yellow-500 border-yellow-500 text-white' :
+                                          'bg-green-500 border-green-500 text-white')
+                                      : 'bg-gray-100 border-gray-200 text-gray-600'
+                                    }`}>
+                                    <input
+                                      type="radio"
+                                      name={`prioridad-${key}`}
+                                      checked={motivoSeleccionado?.prioridad === prioridad}
+                                      onChange={() => handlePrioridadChange(pendiente.asistenciaId, miembro.miembroId, prioridad)}
+                                      className="sr-only"
+                                    />
+                                    <span className="text-xs font-bold capitalize">{prioridad}</span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex lg:flex-col items-center justify-center lg:border-l lg:pl-6 border-gray-100">
                             <button
                               onClick={() => guardarMotivo(pendiente.asistenciaId, miembro.miembroId)}
-                              disabled={!motivoSeleccionado || (motivoSeleccionado.motivo === 'otro' && !motivoSeleccionado.personalizado?.trim())}
-                              className="ml-4 btn btn-primary btn-sm flex items-center gap-2"
+                              disabled={!motivoSeleccionado?.motivo || !motivoSeleccionado?.anotacionEspecial?.trim()}
+                              className="w-full lg:w-32 group inline-flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold rounded-xl transition duration-300 shadow-md hover:shadow-lg disabled:from-gray-400 disabled:to-gray-500"
                             >
-                              <Save className="w-4 h-4" />
-                              Guardar
+                              <Save className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                              Continuar
                             </button>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )}
 
-        <div className="flex justify-end mt-6">
+        <div className="flex justify-end mt-8">
           <button
             onClick={onClose}
-            className="btn btn-secondary"
+            className="px-6 py-2 text-gray-600 font-bold hover:text-gray-900 transition-colors"
           >
             Cerrar
           </button>
         </div>
       </div>
     </div>
+  );
+};}
+
+<div className="flex justify-end mt-6">
+  <button
+    onClick={onClose}
+    className="btn btn-secondary"
+  >
+    Cerrar
+  </button>
+</div>
+      </div >
+    </div >
   );
 };

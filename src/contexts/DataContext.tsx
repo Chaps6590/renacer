@@ -25,8 +25,9 @@ interface DataContextType {
 
   // Funciones de asistencia
   registrarAsistencia: (asistencia: AsistenciaRecord) => Promise<void>;
-  actualizarMotivoFalta: (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string) => Promise<void>;
+  actualizarMotivoFalta: (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string, anotacionEspecial?: string) => Promise<void>;
   marcarAsistenciaCompletada: (asistenciaId: string) => Promise<void>;
+  getHistorialAsistencias: (celulaId: string) => Promise<any[]>;
 
   // Funciones de noticias
   agregarNoticia: (noticia: Omit<Noticia, 'id' | 'fechaCreacion'>) => Promise<void>;
@@ -313,41 +314,29 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
   const registrarAsistencia = async (asistencia: AsistenciaRecord) => {
     try {
-      const nuevaAsistencia = await api.registrarAsistencia(asistencia) as AsistenciaRecord;
+      const res = await api.registrarAsistencia(asistencia) as any;
+      const nuevaAsistencia = res.asistencia || res;
       setAsistencias([...asistencias, nuevaAsistencia]);
 
-      // Crear pendientes para ausentes sin motivo
-      const miembrosSinMotivo = asistencia.miembros
-        .filter(m => !m.presente && !m.motivoCompletado)
-        .map(m => {
-          const miembro = getCelulaById(asistencia.celulaId)?.miembros.find(mb => mb.id === m.miembroId);
-          return {
-            miembroId: m.miembroId,
-            miembroNombre: miembro?.name || 'Desconocido'
-          };
-        });
-
-      if (miembrosSinMotivo.length > 0) {
-        const celula = getCelulaById(asistencia.celulaId);
-        const pendiente: PendienteAsistencia = {
-          asistenciaId: asistencia.id,
-          celulaId: asistencia.celulaId,
-          celulaNombre: celula?.name || 'Desconocida',
-          fecha: asistencia.date,
-          miembrosPendientes: miembrosSinMotivo,
-          cantidadPendientes: miembrosSinMotivo.length
-        };
-        setPendientesAsistencia([...pendientesAsistencia, pendiente]);
-      }
+      // Recargar pendientes después de registrar
+      const dataPendientes = await api.getPendientesAsistencia() as any[];
+      setPendientesAsistencia(dataPendientes);
     } catch (error) {
       console.error('Error registering asistencia:', error);
       throw error;
     }
   };
 
-  const actualizarMotivoFalta = async (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string) => {
+  const actualizarMotivoFalta = async (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string, anotacionEspecial?: string) => {
     try {
-      // TODO: Implementar endpoint en API
+      await api.updateMotivoAsistencia(asistenciaId, {
+        miembroId,
+        motivoFalta: motivo,
+        motivoPersonalizado,
+        anotacionEspecial
+      });
+
+      // Actualizar estado local de asistencias
       setAsistencias(asistencias.map(a => {
         if (a.id === asistenciaId) {
           const miembrosActualizados = a.miembros.map(m => {
@@ -356,37 +345,28 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
                 ...m,
                 motivoFalta: motivo,
                 motivoPersonalizado,
+                anotacionEspecial,
                 motivoCompletado: true
               };
             }
             return m;
           });
 
-          const pendientesCompletar = miembrosActualizados.filter(m => !m.presente && !m.motivoCompletado).length;
-          const completado = pendientesCompletar === 0;
+          const pendientesCount = miembrosActualizados.filter(m => !m.presente && !m.motivoCompletado).length;
 
           return {
             ...a,
             miembros: miembrosActualizados,
-            pendientesCompletar,
-            completado
+            pendientesCompletar: pendientesCount,
+            completado: pendientesCount === 0
           };
         }
         return a;
       }));
 
       // Actualizar pendientes
-      setPendientesAsistencia(pendientesAsistencia.map(p => {
-        if (p.asistenciaId === asistenciaId) {
-          const miembrosPendientes = p.miembrosPendientes.filter(mp => mp.miembroId !== miembroId);
-          return {
-            ...p,
-            miembrosPendientes,
-            cantidadPendientes: miembrosPendientes.length
-          };
-        }
-        return p;
-      }).filter(p => p.cantidadPendientes > 0));
+      const dataPendientes = await api.getPendientesAsistencia() as any[];
+      setPendientesAsistencia(dataPendientes);
     } catch (error) {
       console.error('Error updating motivo falta:', error);
       throw error;
@@ -394,15 +374,20 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   };
 
   const marcarAsistenciaCompletada = async (asistenciaId: string) => {
+    // Esta función podría no ser necesaria si se hace automáticamente en el backend
+    // pero la mantenemos por si acaso para forzar el estado
+    setAsistencias(asistencias.map(a =>
+      a.id === asistenciaId ? { ...a, completado: true, pendientesCompletar: 0 } : a
+    ));
+  };
+
+  const getHistorialAsistencias = async (celulaId: string) => {
     try {
-      // TODO: Implementar endpoint en API
-      setAsistencias(asistencias.map(a =>
-        a.id === asistenciaId ? { ...a, completado: true } : a
-      ));
-      setPendientesAsistencia(pendientesAsistencia.filter(p => p.asistenciaId !== asistenciaId));
+      const data = await api.getAsistencias(celulaId) as any[];
+      return data;
     } catch (error) {
-      console.error('Error marking asistencia as completed:', error);
-      throw error;
+      console.error('Error getting historial:', error);
+      return [];
     }
   };
 
@@ -558,6 +543,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     actualizarConfiguracionDonaciones,
     getCelulaById,
     getPendientesAsistencia,
+    getHistorialAsistencias,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
