@@ -213,7 +213,6 @@ export const PastorDashboard: React.FC = () => {
     const isBirthdayUpcoming = (dateString?: string) => {
       if (!dateString) return false;
       const dob = new Date(dateString);
-      const dob = new Date(dateString);
 
       // Ajuste simple: Verificar si el día y mes caen en los próximos 7 días
       // Normalizamos todo a timestamps para comparar rangos de días del año
