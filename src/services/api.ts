@@ -221,6 +221,12 @@ class ApiService {
     });
   }
 
+  async descargarMaterial(id: string) {
+    return this.request(`/materiales/${id}/download`, {
+      method: 'GET',
+    });
+  }
+
   // Donaciones endpoints
   async getConfiguracionDonaciones() {
     return this.request('/donaciones/info', {

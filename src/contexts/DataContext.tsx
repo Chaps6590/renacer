@@ -469,7 +469,18 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   // Funciones de materiales
   const subirMaterial = async (material: Omit<MaterialCelula, 'id' | 'fechaSubida'>) => {
     try {
-      const nuevoMaterial = await api.subirMaterial(material) as MaterialCelula;
+      const res = await api.subirMaterial(material) as any;
+      const m = res.material || res;
+      const nuevoMaterial: MaterialCelula = {
+        id: m.id,
+        titulo: m.titulo,
+        descripcion: m.descripcion,
+        archivoUrl: m.nombreArchivo,
+        nombreArchivo: m.nombreArchivo,
+        fechaSubida: new Date(m.fechaSubida),
+        subidoPor: m.subidoPorId || '',
+        activo: m.activo
+      };
       setMateriales([...materiales, nuevoMaterial]);
     } catch (error) {
       console.error('Error uploading material:', error);
