@@ -171,9 +171,23 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                                         <MessageSquare className={`w-4 h-4 shrink-0 mt-0.5 ${m.presente ? 'text-blue-600' : 'text-amber-600'}`} />
                                                                         <div>
                                                                             {m.motivoFalta && (
-                                                                                <p className="text-[10px] font-black text-amber-700 uppercase mb-1">Motivo: {m.motivoFalta}</p>
+                                                                                <p className="text-[10px] font-black text-amber-700 uppercase mb-1">
+                                                                                    Motivo: {
+                                                                                        {
+                                                                                            'trabajo': 'Trabajo',
+                                                                                            'enfermedad': 'Enfermedad',
+                                                                                            'vacaciones': 'Vacaciones',
+                                                                                            'familia': 'Asunto Familiar',
+                                                                                            'viaje': 'Viaje',
+                                                                                            'sin-motivo': 'Sin motivo específico',
+                                                                                            'otro': 'Otro'
+                                                                                        }[m.motivoFalta] || m.motivoFalta
+                                                                                    }
+                                                                                </p>
                                                                             )}
-                                                                            <p className="text-sm text-gray-700 font-medium italic">"{m.anotacionEspecial || 'Sin comentario detallado'}"</p>
+                                                                            <p className="text-sm text-gray-700 font-medium italic">
+                                                                                {m.anotacionEspecial ? `"${m.anotacionEspecial}"` : 'Sin comentario detallado'}
+                                                                            </p>
                                                                             {m.prioridadAnotacion && (
                                                                                 <div className="flex items-center gap-1 mt-2">
                                                                                     <Flag className={`w-3 h-3 ${m.prioridadAnotacion === 'alta' ? 'text-red-600' :
@@ -185,8 +199,7 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            )}
-                                                        </div>
+                                                            )}                                        </div>
                                                     ))}
                                                 </div>
                                             </div>

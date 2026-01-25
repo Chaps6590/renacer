@@ -29,29 +29,30 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
   const [mostrandoDetalles, setMostrandoDetalles] = useState<string | null>(null);
 
   const handleToggleAsistencia = (miembroId: string) => {
-    const isPresent = !miembrosAsistencia[miembroId].presente;
-    setMiembrosAsistencia({
-      ...miembrosAsistencia,
-      [miembroId]: {
-        ...miembrosAsistencia[miembroId],
-        presente: isPresent,
-        // Un presente siempre está completado. Un ausente solo si tiene anotación o motivo.
-        motivoCompletado: isPresent ? true : !!(miembrosAsistencia[miembroId].anotacionEspecial || miembrosAsistencia[miembroId].motivoFalta),
-      }
+    setMiembrosAsistencia(prev => {
+      const isPresent = !prev[miembroId].presente;
+      return {
+        ...prev,
+        [miembroId]: {
+          ...prev[miembroId],
+          presente: isPresent,
+          motivoCompletado: isPresent ? true : !!(prev[miembroId].anotacionEspecial || prev[miembroId].motivoFalta),
+        }
+      };
     });
   };
 
   const handleAnotacionEspecial = (miembroId: string, anotacion: string, prioridad: PrioridadAnotacion, motivoFalta?: MotivoFalta) => {
-    setMiembrosAsistencia({
-      ...miembrosAsistencia,
+    setMiembrosAsistencia(prev => ({
+      ...prev,
       [miembroId]: {
-        ...miembrosAsistencia[miembroId],
+        ...prev[miembroId],
         anotacionEspecial: anotacion,
         prioridadAnotacion: prioridad,
         motivoFalta: motivoFalta,
-        motivoCompletado: miembrosAsistencia[miembroId].presente ? true : !!(anotacion || motivoFalta)
+        motivoCompletado: prev[miembroId].presente ? true : !!(anotacion || motivoFalta)
       }
-    });
+    }));
   };
 
   const handleGuardar = () => {
@@ -85,67 +86,76 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
   const pendientesMotivo = Object.values(miembrosAsistencia).filter(m => !m.presente && !m.motivoCompletado).length;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg p-6 max-w-2xl w-full my-8">
-        <h3 className="text-2xl font-bold mb-6">Registrar Asistencia</h3>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Fecha de la Reunión
-          </label>
-          <input
-            type="date"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-            className="input max-w-xs"
-          />
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto font-sans">
+      <div className="bg-white rounded-2xl p-6 max-w-2xl w-full my-8 shadow-2xl border border-gray-100">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-2xl font-black text-gray-900 tracking-tight">Registrar Asistencia</h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <X className="w-5 h-5 text-gray-400" />
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="card bg-primary-50 border border-primary-200">
-            <p className="text-sm text-gray-600 mb-1">Total Miembros</p>
-            <p className="text-2xl font-bold text-primary-700">{celula.miembros.length}</p>
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4 bg-gray-50 p-4 rounded-xl">
+          <div className="flex-1">
+            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1.5">
+              Fecha de la Reunión
+            </label>
+            <input
+              type="date"
+              value={fecha}
+              onChange={(e) => setFecha(e.target.value)}
+              className="w-full bg-white border-2 border-gray-200 rounded-xl px-4 py-2 font-bold text-gray-700 focus:border-blue-500 focus:ring-0 transition-all"
+            />
           </div>
-          <div className="card bg-green-50 border border-green-200">
-            <p className="text-sm text-gray-600 mb-1">Presentes</p>
-            <p className="text-2xl font-bold text-green-700">{totalPresentes}</p>
-          </div>
-          <div className="card bg-red-50 border border-red-200">
-            <p className="text-sm text-gray-600 mb-1">Ausentes</p>
-            <p className="text-2xl font-bold text-red-700">{totalAusentes}</p>
-          </div>
-          <div className="card bg-yellow-50 border border-yellow-200">
-            <p className="text-sm text-gray-600 mb-1">Pendientes</p>
-            <p className="text-2xl font-bold text-yellow-700">{pendientesMotivo}</p>
+          <div className="hidden sm:block h-10 w-px bg-gray-200 mx-2"></div>
+          <div className="flex gap-4">
+            <div className="text-center">
+              <p className="text-[10px] font-black text-gray-400 uppercase">Miembros</p>
+              <p className="text-xl font-black text-gray-900">{celula.miembros.length}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-[10px] font-black text-green-400 uppercase">Presentes</p>
+              <p className="text-xl font-black text-green-600">{totalPresentes}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-[10px] font-black text-red-400 uppercase">Ausentes</p>
+              <p className="text-xl font-black text-red-600">{totalAusentes}</p>
+            </div>
           </div>
         </div>
 
-        <div className="space-y-2 mb-6 max-h-96 overflow-y-auto">
+        <div className="space-y-3 mb-6 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
           {celula.miembros.map((miembro) => {
             const asistencia = miembrosAsistencia[miembro.id];
+            // El panel se mantiene abierto si el usuario lo abrió manualmente (mostrandoDetalles)
+            // O si es ausente. Esto evita que se cierre al empezar a escribir.
+            const panelVisible = mostrandoDetalles === miembro.id || !asistencia.presente;
+
             return (
-              <div key={miembro.id} className="border rounded-lg overflow-hidden">
+              <div key={miembro.id} className={`rounded-2xl border-2 transition-all duration-300 ${asistencia.presente
+                ? 'border-green-100 bg-white'
+                : 'border-red-100 bg-white shadow-sm'
+                }`}>
                 {/* Fila principal */}
                 <div
                   onClick={() => handleToggleAsistencia(miembro.id)}
-                  className={`flex items-center justify-between p-4 cursor-pointer transition-colors ${asistencia.presente
-                    ? 'bg-green-50 border-green-300'
-                    : 'bg-red-50 border-red-300'
-                    }`}
+                  className="flex items-center justify-between p-4 cursor-pointer"
                 >
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">{miembro.name}</p>
-                    {miembro.phone && (
-                      <p className="text-sm text-gray-600">{miembro.phone}</p>
-                    )}
-                    {asistencia.anotacionEspecial && (
-                      <p className="text-sm text-blue-600 font-medium mt-1">
-                        <Flag className={`w-3 h-3 inline mr-1 ${asistencia.prioridadAnotacion === 'alta' ? 'text-red-500' :
-                          asistencia.prioridadAnotacion === 'media' ? 'text-yellow-500' : 'text-green-500'
-                          }`} />
-                        {asistencia.anotacionEspecial}
-                      </p>
-                    )}
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg transition-colors ${asistencia.presente ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                      {miembro.name.charAt(0)}
+                    </div>
+                    <div className="flex-1">
+                      <p className={`font-bold transition-colors ${asistencia.presente ? 'text-gray-900' : 'text-red-900'}`}>{miembro.name}</p>
+                      {asistencia.anotacionEspecial && (
+                        <div className="flex items-center gap-2 mt-1">
+                          <Flag className={`w-3 h-3 ${asistencia.prioridadAnotacion === 'alta' ? 'text-red-500' :
+                            asistencia.prioridadAnotacion === 'media' ? 'text-yellow-500' : 'text-green-500'
+                            }`} />
+                          <p className="text-xs text-blue-600 font-bold truncate max-w-[200px]">{asistencia.anotacionEspecial}</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -154,87 +164,80 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
                         e.stopPropagation();
                         setMostrandoDetalles(mostrandoDetalles === miembro.id ? null : miembro.id);
                       }}
-                      className={`p-1 rounded transition-colors ${(asistencia.anotacionEspecial || asistencia.motivoFalta)
-                        ? 'text-blue-600 bg-blue-100'
-                        : 'text-gray-400 hover:bg-gray-100'
+                      className={`p-2 rounded-xl transition-all ${(asistencia.anotacionEspecial || asistencia.motivoFalta)
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
                         }`}
-                      title="Agregar detalles o motivo"
                     >
-                      <MessageCircle className="w-4 h-4" />
+                      <MessageCircle className="w-5 h-5" />
                     </button>
 
-                    {asistencia.presente ? (
-                      <div className="flex items-center gap-2">
-                        <Check className="w-6 h-6 text-green-600" />
-                        <span className="text-sm font-medium text-green-700">Presente</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        {!asistencia.motivoCompletado && (
-                          <AlertCircle className="w-5 h-5 text-yellow-600 animate-pulse" />
-                        )}
-                        <X className="w-6 h-6 text-red-600" />
-                        <span className="text-sm font-medium text-red-700">Ausente</span>
-                      </div>
-                    )}
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-wider ${asistencia.presente ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      {asistencia.presente ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
+                      {asistencia.presente ? 'Presente' : 'Ausente'}
+                    </div>
                   </div>
                 </div>
 
                 {/* Panel de detalles expandible */}
-                {(mostrandoDetalles === miembro.id || (!asistencia.presente && !asistencia.motivoCompletado)) && (
-                  <div className={`p-4 border-t ${asistencia.presente ? 'bg-blue-50' : 'bg-red-50'}`}>
-                    <div className="flex justify-between items-center mb-3">
-                      <h4 className="font-medium text-gray-900">
-                        {asistencia.presente ? 'Anotación del Presente' : 'Motivo de la Ausencia'}
-                        {!asistencia.presente && <span className="text-red-600 ml-1">* Obligatorio</span>}
+                {panelVisible && (
+                  <div className={`p-4 border-t-2 animate-in slide-in-from-top-2 duration-300 ${asistencia.presente ? 'bg-blue-50/50 border-blue-50' : 'bg-red-50/30 border-red-50'}`}>
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
+                      <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                        {asistencia.presente ? 'Notas Especiales / Oración' : 'Motivo de la Ausencia'}
+                        {!asistencia.presente && !asistencia.motivoCompletado && <span className="text-red-500 ml-2 animate-pulse">• Pendiente</span>}
                       </h4>
                       {!asistencia.presente && (
                         <select
                           value={asistencia.motivoFalta || ''}
                           onChange={(e) => handleAnotacionEspecial(miembro.id, asistencia.anotacionEspecial || '', asistencia.prioridadAnotacion!, e.target.value as MotivoFalta)}
-                          className="text-sm p-1 border rounded bg-white"
+                          className="text-sm font-bold p-2 border-2 border-gray-200 rounded-xl bg-white outline-none focus:border-blue-500"
                         >
                           <option value="">Seleccione motivo...</option>
                           <option value="vacaciones">Vacaciones</option>
                           <option value="trabajo">Trabajo</option>
                           <option value="enfermedad">Enfermedad</option>
-                          <option value="familia">Familia</option>
+                          <option value="familia">Asunto Familiar</option>
                           <option value="viaje">Viaje</option>
-                          <option value="otro">Otro</option>
+                          <option value="otro">Otro Motivo</option>
                           <option value="sin-motivo">Sin motivo específico</option>
                         </select>
                       )}
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <textarea
                         value={asistencia.anotacionEspecial || ''}
                         onChange={(e) => handleAnotacionEspecial(miembro.id, e.target.value, asistencia.prioridadAnotacion!, asistencia.motivoFalta)}
                         placeholder={asistencia.presente
-                          ? "Ej: Necesita oración por familiar internado, petición especial, etc."
-                          : "Comentario obligatorio sobre la ausencia..."}
-                        className={`w-full p-2 border rounded-lg resize-none bg-white ${!asistencia.presente && !asistencia.anotacionEspecial && !asistencia.motivoFalta ? 'border-red-300' : ''
+                          ? "Ej: Pidió oración por salud, agradecimiento, etc."
+                          : "Escribe un comentario sobre su ausencia..."}
+                        className={`w-full p-3 bg-white border-2 rounded-2xl resize-none outline-none transition-all text-sm font-medium ${!asistencia.presente && !asistencia.motivoCompletado ? 'border-red-200 focus:border-red-400' : 'border-gray-100 focus:border-blue-400'
                           }`}
                         rows={2}
                       />
-                      <div className="flex gap-2">
-                        <label className="text-sm font-medium text-gray-700">Prioridad de seguimiento:</label>
-                        {(['alta', 'media', 'baja'] as PrioridadAnotacion[]).map(prioridad => (
-                          <label key={prioridad} className="flex items-center gap-1 text-sm cursor-pointer">
-                            <input
-                              type="radio"
-                              name={`prioridad-${miembro.id}`}
-                              checked={asistencia.prioridadAnotacion === prioridad}
-                              onChange={() => handleAnotacionEspecial(miembro.id, asistencia.anotacionEspecial || '', prioridad, asistencia.motivoFalta)}
-                              className="w-3 h-3"
-                            />
-                            <span className={`capitalize ${prioridad === 'alta' ? 'text-red-600 font-bold' :
-                              prioridad === 'media' ? 'text-yellow-600' : 'text-green-600'
+
+                      <div className="flex flex-wrap items-center gap-4">
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Prioridad de Cuidado:</span>
+                        <div className="flex gap-2">
+                          {(['alta', 'media', 'baja'] as PrioridadAnotacion[]).map(prioridad => (
+                            <label key={prioridad} className={`flex items-center gap-2 px-3 py-1 rounded-full border-2 cursor-pointer transition-all ${asistencia.prioridadAnotacion === prioridad
+                              ? (prioridad === 'alta' ? 'bg-red-500 border-red-500 text-white' :
+                                prioridad === 'media' ? 'bg-yellow-500 border-yellow-500 text-white' :
+                                  'bg-green-500 border-green-500 text-white')
+                              : 'bg-white border-gray-100 text-gray-400 hover:border-gray-200'
                               }`}>
-                              {prioridad}
-                            </span>
-                          </label>
-                        ))}
+                              <input
+                                type="radio"
+                                name={`prioridad-${miembro.id}`}
+                                checked={asistencia.prioridadAnotacion === prioridad}
+                                onChange={() => handleAnotacionEspecial(miembro.id, asistencia.anotacionEspecial || '', prioridad, asistencia.motivoFalta)}
+                                className="sr-only"
+                              />
+                              <span className="text-[10px] font-black uppercase">{prioridad}</span>
+                            </label>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>

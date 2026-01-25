@@ -39,35 +39,35 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
 
   const handleMotivoChange = (asistenciaId: string, miembroId: string, motivo: MotivoFalta) => {
     const key = `${asistenciaId}-${miembroId}`;
-    setMotivosSeleccionados({
-      ...motivosSeleccionados,
+    setMotivosSeleccionados(prev => ({
+      ...prev,
       [key]: {
-        ...motivosSeleccionados[key],
+        ...prev[key],
         motivo
       }
-    });
+    }));
   };
 
   const handleAnotacionChange = (asistenciaId: string, miembroId: string, anotacionEspecial: string) => {
     const key = `${asistenciaId}-${miembroId}`;
-    setMotivosSeleccionados({
-      ...motivosSeleccionados,
+    setMotivosSeleccionados(prev => ({
+      ...prev,
       [key]: {
-        ...motivosSeleccionados[key],
+        ...prev[key],
         anotacionEspecial
       }
-    });
+    }));
   };
 
   const handlePrioridadChange = (asistenciaId: string, miembroId: string, prioridad: string) => {
     const key = `${asistenciaId}-${miembroId}`;
-    setMotivosSeleccionados({
-      ...motivosSeleccionados,
+    setMotivosSeleccionados(prev => ({
+      ...prev,
       [key]: {
-        ...motivosSeleccionados[key],
+        ...prev[key],
         prioridad
       }
-    });
+    }));
   };
 
   const guardarMotivo = (asistenciaId: string, miembroId: string) => {
