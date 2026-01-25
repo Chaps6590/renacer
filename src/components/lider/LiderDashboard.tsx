@@ -199,7 +199,7 @@ const LiderDashboard: React.FC = () => {
   // Encontrar la célula donde el usuario es líder o colíder
   const miCelula = celulas.find(c =>
     c.liderId === user?.id ||
-    c.colideres.some(col => col.id === user?.id)
+    c.coLideres.some(col => col.id === user?.id)
   );
 
   // Verificar si el usuario es el líder principal
@@ -236,7 +236,7 @@ const LiderDashboard: React.FC = () => {
       rolCelula: 'lider' as const
     },
     // Colíderes
-    ...miCelula.colideres.map(colider => ({
+    ...miCelula.coLideres.map(colider => ({
       ...colider,
       rolCelula: 'colider' as const
     })),

@@ -97,12 +97,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           liderName: c.lider?.name || '',
           diaSemana: c.dia,
           horario: c.horario,
-          colideres: c.coLider ? [{
-            id: c.coLider.id,
-            name: c.coLider.name,
-            email: c.coLider.email,
-            addedAt: new Date()
-          }] : [],
+          coLideres: c.coLideres || [],
           miembros: c.miembros || [],
           createdAt: new Date(c.createdAt)
         }));
@@ -117,12 +112,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
             liderName: miCelula.lider?.name || '',
             diaSemana: miCelula.dia,
             horario: miCelula.horario,
-            colideres: miCelula.coLider ? [{
-              id: miCelula.coLider.id,
-              name: miCelula.coLider.name,
-              email: miCelula.coLider.email,
-              addedAt: new Date()
-            }] : [],
+            coLideres: miCelula.coLideres || [],
             miembros: miCelula.miembros || [],
             createdAt: new Date(miCelula.createdAt)
           };
@@ -198,12 +188,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           liderName: c.lider?.name || '',
           diaSemana: c.dia,
           horario: c.horario,
-          colideres: c.coLider ? [{
-            id: c.coLider.id,
-            name: c.coLider.name,
-            email: c.coLider.email,
-            addedAt: new Date()
-          }] : [],
+          coLideres: c.coLideres || [],
           miembros: c.miembros || [],
           createdAt: new Date(c.createdAt)
         }));
@@ -270,7 +255,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       const nuevoColider = await api.addColider(celulaId, colider) as CoLider;
       setCelulas(celulas.map(c => {
         if (c.id === celulaId) {
-          return { ...c, colideres: [...c.colideres, nuevoColider] };
+          return { ...c, coLideres: [...c.coLideres, nuevoColider] };
         }
         return c;
       }));
@@ -285,7 +270,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       await api.removeColider(celulaId, coliderId);
       setCelulas(celulas.map(c => {
         if (c.id === celulaId) {
-          return { ...c, colideres: c.colideres.filter(col => col.id !== coliderId) };
+          return { ...c, coLideres: c.coLideres.filter(col => col.id !== coliderId) };
         }
         return c;
       }));
@@ -478,7 +463,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   };
 
   const getPendientesAsistencia = (liderId: string) => {
-    const celulasLider = celulas.filter(c => c.liderId === liderId || c.colideres.some(col => col.id === liderId));
+    const celulasLider = celulas.filter(c => c.liderId === liderId || c.coLideres.some(col => col.id === liderId));
     const idscelulas = celulasLider.map(c => c.id);
     return pendientesAsistencia.filter(p => idscelulas.includes(p.celulaId));
   };
