@@ -5,7 +5,7 @@ import { User } from '../../types';
 
 const PastoresAdmin: React.FC = () => {
   const [pastores, setPastores] = useState<User[]>([]);
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: '', telefono: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -40,7 +40,7 @@ const PastoresAdmin: React.FC = () => {
     try {
       await api.createUser({ ...form, role: 'PASTOR' });
       setSuccess('Pastor creado exitosamente');
-      setForm({ name: '', email: '', password: '' });
+      setForm({ name: '', email: '', password: '', telefono: '' });
       fetchPastores();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
@@ -83,7 +83,7 @@ const PastoresAdmin: React.FC = () => {
           <UserPlus className="w-6 h-6 text-primary-600" />
           <h3 className="text-xl font-bold text-gray-800">Agregar Nuevo Pastor</h3>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
@@ -146,6 +146,21 @@ const PastoresAdmin: React.FC = () => {
             </p>
           </div>
 
+          <div>
+            <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-2">
+              Teléfono
+            </label>
+            <input
+              id="telefono"
+              type="tel"
+              name="telefono"
+              value={form.telefono}
+              onChange={handleChange}
+              className="input"
+              placeholder="Ej: +54 9 11 ..."
+            />
+          </div>
+
           <button
             type="submit"
             className="btn btn-primary w-full flex items-center justify-center gap-2"
@@ -160,7 +175,7 @@ const PastoresAdmin: React.FC = () => {
       {/* Lista de pastores */}
       <div className="card">
         <h3 className="text-xl font-bold text-gray-800 mb-4">Pastores Registrados</h3>
-        
+
         {loading && !pastores.length ? (
           <div className="text-center py-8">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
@@ -182,6 +197,9 @@ const PastoresAdmin: React.FC = () => {
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Email
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Teléfono
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
@@ -208,6 +226,9 @@ const PastoresAdmin: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-600">{pastor.email}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-600">{(pastor as any).telefono || '-'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">

@@ -78,7 +78,7 @@ export const PastorDashboard: React.FC = () => {
   }, [celulas]);
   const [showAddLider, setShowAddLider] = useState(false);
   const [showEditLider, setShowEditLider] = useState(false);
-  const [newLider, setNewLider] = useState({ name: '', email: '', fechaNacimiento: '' });
+  const [newLider, setNewLider] = useState({ name: '', email: '', fechaNacimiento: '', telefono: '' });
   const [editingLider, setEditingLider] = useState<Lider | null>(null);
 
   // Estado para células
@@ -99,10 +99,11 @@ export const PastorDashboard: React.FC = () => {
         email: newLider.email || `${newLider.name.toLowerCase().replace(/\s+/g, '.')}@renacer.com`,
         password: 'Renacer', // Contraseña por defecto
         role: 'LIDER',
-        fechaNacimiento: newLider.fechaNacimiento || undefined
+        fechaNacimiento: newLider.fechaNacimiento || undefined,
+        telefono: newLider.telefono || undefined
       };
       await api.createUser(liderData);
-      setNewLider({ name: '', email: '', fechaNacimiento: '' });
+      setNewLider({ name: '', email: '', fechaNacimiento: '', telefono: '' });
       setShowAddLider(false);
       // Refrescar lista de líderes
       await enrichLideresWithCelulas();
@@ -119,7 +120,8 @@ export const PastorDashboard: React.FC = () => {
       await api.updateUser(editingLider.id, {
         name: editingLider.name,
         email: editingLider.email,
-        fechaNacimiento: editingLider.fechaNacimiento
+        fechaNacimiento: editingLider.fechaNacimiento,
+        telefono: (editingLider as any).telefono
       });
       setEditingLider(null);
       setShowEditLider(false);
@@ -135,8 +137,9 @@ export const PastorDashboard: React.FC = () => {
   const openEditLider = (lider: Lider) => {
     setEditingLider({
       ...lider,
-      fechaNacimiento: lider.fechaNacimiento ? new Date(lider.fechaNacimiento).toISOString().split('T')[0] : ''
-    });
+      fechaNacimiento: lider.fechaNacimiento ? new Date(lider.fechaNacimiento).toISOString().split('T')[0] : '',
+      telefono: (lider as any).telefono || ''
+    } as any);
     setShowEditLider(true);
   };
 
@@ -560,6 +563,9 @@ export const PastorDashboard: React.FC = () => {
                         Email
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        Teléfono
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                         Célula
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
@@ -581,6 +587,9 @@ export const PastorDashboard: React.FC = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-600">{lider.email}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-600">{(lider as any).telefono || '-'}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {lider.nombreCelula ? (
@@ -735,6 +744,19 @@ export const PastorDashboard: React.FC = () => {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Teléfono
+                  </label>
+                  <input
+                    type="tel"
+                    value={newLider.telefono}
+                    onChange={(e) => setNewLider({ ...newLider, telefono: e.target.value })}
+                    className="input"
+                    placeholder="Ej: +54 9 11 ..."
+                  />
+                </div>
+
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-sm text-blue-800 font-medium mb-2">
                     Contraseña por defecto: <code className="bg-blue-100 px-2 py-1 rounded">Renacer</code>
@@ -875,6 +897,19 @@ export const PastorDashboard: React.FC = () => {
                     value={editingLider.fechaNacimiento || ''}
                     onChange={(e) => setEditingLider({ ...editingLider, fechaNacimiento: e.target.value })}
                     className="input"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Teléfono
+                  </label>
+                  <input
+                    type="tel"
+                    value={(editingLider as any).telefono || ''}
+                    onChange={(e) => setEditingLider({ ...editingLider, telefono: e.target.value } as any)}
+                    className="input"
+                    placeholder="Ej: +54 9 11 ..."
                   />
                 </div>
               </div>
