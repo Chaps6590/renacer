@@ -9,6 +9,7 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
+  phone?: string;
   celulaId?: string; // Solo para líderes y colíderes
   fechaNacimiento?: string; // Fecha de nacimiento opcional
   isRegistered?: boolean; // Para líderes precargados que aún no se registraron
