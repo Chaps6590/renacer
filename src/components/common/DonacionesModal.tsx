@@ -111,7 +111,7 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                   className="w-full p-3 border border-gray-300 rounded-lg font-mono"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   CBU (opcional)
@@ -125,7 +125,7 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                   maxLength={22}
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Descripción
@@ -138,7 +138,7 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                   rows={2}
                 />
               </div>
-              
+
               <div className="flex gap-3">
                 <button
                   onClick={handleActualizarConfiguracion}
@@ -165,54 +165,55 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                 <Heart className="w-8 h-8 text-red-600" />
               </div>
             </div>
-            
+
             <h4 className="text-xl font-bold text-gray-900 mb-2">Apoya nuestra Iglesia</h4>
-            <p className="text-gray-700 mb-6">
-              {configuracionDonaciones.descripcion}
+            <p className="text-gray-700 mb-6 whitespace-pre-wrap">
+              {configuracionDonaciones.descripcion || 'Gracias por tu generosidad. Tu apoyo nos permite seguir creciendo y ayudando a más personas.'}
             </p>
-            
+
             <div className="bg-white border border-red-200 rounded-lg p-4 mb-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">Alias para transferencias:</span>
-                <button
-                  onClick={copiarAlias}
-                  className={`btn btn-sm transition-all duration-200 ${
-                    copiado 
-                      ? 'btn-success' 
-                      : 'btn-primary'
-                  }`}
-                >
-                  {copiado ? (
-                    <>
-                      <CheckCircle className="w-4 h-4 mr-2" />
-                      ¡Copiado!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copiar
-                    </>
-                  )}
-                </button>
+                {configuracionDonaciones.aliasIglesia && (
+                  <button
+                    onClick={copiarAlias}
+                    className={`btn btn-sm transition-all duration-200 ${copiado
+                        ? 'btn-success'
+                        : 'btn-primary'
+                      }`}
+                  >
+                    {copiado ? (
+                      <>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        ¡Copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copiar
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
-              
+
               <div className="text-center">
-                <div className="text-2xl font-bold font-mono text-gray-900 bg-gray-50 py-3 px-4 rounded border">
-                  {configuracionDonaciones.aliasIglesia}
+                <div className={`text-2xl font-bold font-mono py-3 px-4 rounded border ${configuracionDonaciones.aliasIglesia ? 'text-gray-900 bg-gray-50' : 'text-gray-400 bg-gray-100 italic'}`}>
+                  {configuracionDonaciones.aliasIglesia || 'Sin alias configurado'}
                 </div>
               </div>
             </div>
-            
+
             {configuracionDonaciones.cbu && (
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                <div className="text-sm text-gray-600 mb-1">CBU:</div>
-                <div className="font-mono text-sm text-gray-800">
+                <div className="text-sm text-gray-600 mb-1 font-semibold uppercase tracking-wider">CBU / CVU:</div>
+                <div className="font-mono text-sm text-gray-800 break-all">
                   {configuracionDonaciones.cbu}
                 </div>
               </div>
             )}
           </div>
-          
+
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-center justify-center gap-2 mb-2">
               <DollarSign className="w-5 h-5 text-blue-600" />

@@ -223,12 +223,18 @@ class ApiService {
 
   // Donaciones endpoints
   async getConfiguracionDonaciones() {
+    return this.request('/donaciones/info', {
+      method: 'GET',
+    });
+  }
+
+  async getConfiguracionesDonacionesAdmin() {
     return this.request('/donaciones', {
       method: 'GET',
     });
   }
 
-  async actualizarConfiguracionDonaciones(config: any) {
+  async actualizarConfiguracionDonaciones(config: { aliasIglesia: string; cbuIglesia: string; descripcion?: string }) {
     return this.request('/donaciones', {
       method: 'POST',
       body: JSON.stringify(config),

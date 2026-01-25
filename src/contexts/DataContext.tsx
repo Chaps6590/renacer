@@ -156,15 +156,16 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       }));
       setMateriales(materialesTransformados);
 
-      // Cargar configuración de donaciones
-      const donacionesConfig = await api.getConfiguracionDonaciones() as any;
-      if (donacionesConfig) {
+      // Cargar configuración de donaciones (alias, cbu, descripcion)
+      const res = await api.getConfiguracionDonaciones() as any;
+      if (res) {
         setConfiguracionDonaciones({
-          aliasIglesia: donacionesConfig.aliasIglesia || '',
-          descripcion: donacionesConfig.cbuIglesia || '',
-          activo: donacionesConfig.activo || false,
-          fechaActualizacion: donacionesConfig.fechaCreacion ? new Date(donacionesConfig.fechaCreacion) : new Date(),
-          actualizadoPor: donacionesConfig.actualizadoPorId || ''
+          aliasIglesia: res.alias || res.aliasIglesia || '',
+          cbu: res.cbu || res.cbuIglesia || '',
+          descripcion: res.descripcion || '',
+          activo: res.activo !== undefined ? res.activo : true,
+          fechaActualizacion: new Date(res.fechaCreacion || res.updatedAt || new Date()),
+          actualizadoPor: res.actualizadoPorId || ''
         });
       }
 
@@ -467,7 +468,25 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   // Funciones de donaciones
   const actualizarConfiguracionDonaciones = async (config: Partial<ConfiguracionDonaciones>) => {
     try {
-      const configActualizada = await api.actualizarConfiguracionDonaciones(config) as ConfiguracionDonaciones;
+      // Mapeo de cbu (frontend) a cbuIglesia (backend)
+      const dataToSave = {
+        aliasIglesia: config.aliasIglesia || '',
+        cbuIglesia: config.cbu || '',
+        descripcion: config.descripcion || ''
+      };
+
+      const res = await api.actualizarConfiguracionDonaciones(dataToSave) as any;
+
+      // Mapeo de respuesta a tipo frontend
+      const configActualizada: ConfiguracionDonaciones = {
+        aliasIglesia: res.aliasIglesia,
+        cbu: res.cbuIglesia,
+        descripcion: res.descripcion || '',
+        activo: res.activo,
+        fechaActualizacion: new Date(res.updatedAt),
+        actualizadoPor: res.actualizadoPorId
+      };
+
       setConfiguracionDonaciones(configActualizada);
     } catch (error) {
       console.error('Error updating donaciones config:', error);

@@ -8,7 +8,6 @@ import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
 import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart } from 'lucide-react';
-import type { RolCelula } from '../../types';
 
 interface AddMiembroModalProps {
   isOpen: boolean;
@@ -206,6 +205,7 @@ const LiderDashboard: React.FC = () => {
   const isLider = miCelula?.liderId === user?.id;
 
   const getRolDisplay = (rol: string) => {
+    if (!rol) return '-';
     const roles: Record<string, string> = {
       lider: 'Líder',
       colider: 'Colíder',
@@ -217,6 +217,7 @@ const LiderDashboard: React.FC = () => {
   };
 
   const getRolColor = (rol: string) => {
+    if (!rol) return 'bg-gray-100 text-gray-800 border-gray-300';
     const colors: Record<string, string> = {
       lider: 'bg-purple-100 text-purple-800 border-purple-300',
       colider: 'bg-blue-100 text-blue-800 border-blue-300',
@@ -507,11 +508,14 @@ const LiderDashboard: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="text-sm font-medium text-gray-900">{miembro.name}</div>
-                          {miembro.rolCelula === 'lider' && (
+                          {miembro.rolCelula?.toLowerCase() === 'lider' && (
                             <Crown className="w-4 h-4 text-purple-500 ml-2" />
                           )}
-                          {miembro.rolCelula === 'colider' && (
+                          {miembro.rolCelula?.toLowerCase() === 'colider' && (
                             <Star className="w-4 h-4 text-blue-500 ml-2" />
+                          )}
+                          {miembro.rolCelula?.toLowerCase() === 'timoteo' && (
+                            <Star className="w-4 h-4 text-orange-500 ml-2 fill-orange-200" />
                           )}
                         </div>
                       </td>
