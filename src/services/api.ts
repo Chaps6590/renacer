@@ -24,6 +24,13 @@ class ApiService {
   ): Promise<T> {
     const token = localStorage.getItem('token');
 
+    // Logging para debug de tokens (sensible, solo para troubleshooting)
+    if (!token) {
+      console.warn(`[ApiService] No token found for request to ${endpoint}`);
+    } else {
+      console.log(`[ApiService] Token present for request to ${endpoint} (${token.substring(0, 10)}...)`);
+    }
+
     const config: RequestOptions = {
       ...options,
       headers: {
@@ -38,6 +45,16 @@ class ApiService {
       console.log('Making API request to:', url);
 
       const response = await fetch(url, config);
+
+      if (response.status === 401 || response.status === 403) {
+        console.error(`[ApiService] Auth error (${response.status}) on ${endpoint}. Clearing session...`);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        // Redirigir al login si el error persiste para evitar loops
+        if (!endpoint.includes('/auth/login')) {
+          window.location.href = '/login';
+        }
+      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

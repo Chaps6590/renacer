@@ -30,11 +30,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar si hay una sesión guardada
+    // Verificar si hay una sesión guardada completa
     const savedUser = localStorage.getItem('user');
-    if (savedUser) {
+    const savedToken = localStorage.getItem('token');
+
+    if (savedUser && savedToken) {
       setUser(JSON.parse(savedUser));
+    } else if (savedUser || savedToken) {
+      // Si solo hay uno de los dos, la sesión está corrupta
+      console.warn('[AuthContext] Incomplete session found, clearing...');
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      setUser(null);
     }
+
     setIsLoading(false);
   }, []);
 
@@ -43,11 +52,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       // Llamada real a la API
       const response: any = await api.login(email, password);
-      
+
       if (response.token) {
         localStorage.setItem('token', response.token);
       }
-      
+
       const userData: User = {
         id: response.user.id,
         name: response.user.name,
@@ -55,7 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         role: response.user.role.toLowerCase() as UserRole,
         celulaId: response.user.celulaId,
       };
-      
+
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
     } catch (error) {
@@ -70,11 +79,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       // Llamada real a la API
       const response: any = await api.register(userData);
-      
+
       if (response.token) {
         localStorage.setItem('token', response.token);
       }
-      
+
       const newUser: User = {
         id: response.user.id,
         name: response.user.name,
@@ -83,7 +92,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         celulaId: response.user.celulaId,
         isRegistered: true,
       };
-      
+
       setUser(newUser);
       localStorage.setItem('user', JSON.stringify(newUser));
     } catch (error) {
