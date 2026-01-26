@@ -7,7 +7,9 @@ import { PendientesModal } from './PendientesModal';
 import { HistorialAsistenciasModal } from './HistorialAsistenciasModal';
 import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
+
 import { DonacionesModal } from '../common/DonacionesModal';
+import { CumpleanosModal } from '../common/CumpleanosModal';
 
 import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart, History } from 'lucide-react';
 
