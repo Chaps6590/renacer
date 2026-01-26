@@ -3,6 +3,7 @@ import { AlertCircle, Heart, X, Eye, MessageSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { PrioridadAnotacion, MotivoFalta } from '../../types';
+import api from '../../services/api';
 
 interface PeticionesModalProps {
   isOpen: boolean;
@@ -51,7 +52,11 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
   const handleGuardarAccion = async (anotacion: any) => {
     if (!editandoAccion) return;
     try {
-      await registrarAccionPastoral(anotacion.asistenciaId, anotacion.miembroId, editandoAccion.texto, true);
+      await api.updateAccionPastoral(anotacion.asistenciaId, {
+        miembroId: anotacion.miembroId,
+        accionPastoral: editandoAccion.texto,
+        resuelta: true
+      });
       setEditandoAccion(null);
     } catch (error) {
       alert('Error al guardar la acción');
