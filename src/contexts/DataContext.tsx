@@ -159,14 +159,21 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       }));
       setMateriales(materialesTransformados);
 
-      // Cargar pendientes de asistencia si es líder o colíder
-      if (user?.role === 'lider' || user?.role === 'colider') {
-        try {
-          const dataPendientes = await api.getPendientesAsistencia() as any[];
-          setPendientesAsistencia(dataPendientes);
-        } catch (err) {
-          console.error('Error fetching pendings:', err);
+      // Cargar configuración de donaciones
+      try {
+        const configData = await api.getConfiguracionDonaciones() as any;
+        if (configData) {
+          setConfiguracionDonaciones({
+            aliasIglesia: configData.alias || configData.aliasIglesia || '',
+            cbu: configData.cbuOriginal || configData.cbuIglesia || '',
+            descripcion: configData.descripcion || '',
+            activo: true,
+            fechaActualizacion: new Date(),
+            actualizadoPor: ''
+          });
         }
+      } catch (err) {
+        console.error('Error fetching donations config:', err);
       }
 
     } catch (error) {
@@ -530,15 +537,16 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       };
 
       const res = await api.actualizarConfiguracionDonaciones(dataToSave) as any;
+      const c = res.configuracion || res;
 
       // Mapeo de respuesta a tipo frontend
       const configActualizada: ConfiguracionDonaciones = {
-        aliasIglesia: res.aliasIglesia,
-        cbu: res.cbuIglesia,
-        descripcion: res.descripcion || '',
-        activo: res.activo,
-        fechaActualizacion: new Date(res.updatedAt),
-        actualizadoPor: res.actualizadoPorId
+        aliasIglesia: c.aliasIglesia,
+        cbu: c.cbuIglesia,
+        descripcion: c.descripcion || '',
+        activo: c.activo,
+        fechaActualizacion: new Date(c.updatedAt || c.fechaCreacion),
+        actualizadoPor: c.actualizadoPorId
       };
 
       setConfiguracionDonaciones(configActualizada);

@@ -14,9 +14,19 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
   const [mostrandoConfiguracion, setMostrandoConfiguracion] = useState(false);
   const [nuevaConfiguracion, setNuevaConfiguracion] = useState({
     aliasIglesia: configuracionDonaciones.aliasIglesia,
+    cbu: configuracionDonaciones.cbu || '',
     descripcion: configuracionDonaciones.descripcion
   });
   const [copiado, setCopiado] = useState(false);
+
+  // Sincronizar estado local con el contexto cuando se abre la configuración o cambia el contexto
+  React.useEffect(() => {
+    setNuevaConfiguracion({
+      aliasIglesia: configuracionDonaciones.aliasIglesia,
+      cbu: configuracionDonaciones.cbu || '',
+      descripcion: configuracionDonaciones.descripcion
+    });
+  }, [configuracionDonaciones, mostrandoConfiguracion]);
 
   if (!isOpen) return null;
 
@@ -40,25 +50,31 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
     }
   };
 
-  const handleActualizarConfiguracion = () => {
+  const handleActualizarConfiguracion = async () => {
     if (!nuevaConfiguracion.aliasIglesia.trim()) {
       alert('El alias de la iglesia es obligatorio');
       return;
     }
 
-    actualizarConfiguracionDonaciones({
-      aliasIglesia: nuevaConfiguracion.aliasIglesia.trim(),
-      descripcion: nuevaConfiguracion.descripcion.trim(),
-      actualizadoPor: user?.id || ''
-    });
+    try {
+      await actualizarConfiguracionDonaciones({
+        aliasIglesia: nuevaConfiguracion.aliasIglesia.trim(),
+        cbu: nuevaConfiguracion.cbu.trim(),
+        descripcion: nuevaConfiguracion.descripcion.trim(),
+        actualizadoPor: user?.id || ''
+      });
 
-    setMostrandoConfiguracion(false);
-    alert('Configuración actualizada exitosamente');
+      setMostrandoConfiguracion(false);
+      alert('Configuración actualizada exitosamente');
+    } catch (error: any) {
+      alert(error.message || 'Error al actualizar configuración');
+    }
   };
 
   const cancelarConfiguracion = () => {
     setNuevaConfiguracion({
       aliasIglesia: configuracionDonaciones.aliasIglesia,
+      cbu: configuracionDonaciones.cbu || '',
       descripcion: configuracionDonaciones.descripcion
     });
     setMostrandoConfiguracion(false);
@@ -105,6 +121,20 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                   value={nuevaConfiguracion.aliasIglesia}
                   onChange={(e) => setNuevaConfiguracion({ ...nuevaConfiguracion, aliasIglesia: e.target.value })}
                   placeholder="Ej: IGLESIA.RENACER.MP"
+                  className="w-full p-3 border border-gray-300 rounded-lg font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  CBU de la Iglesia (opcional)
+                </label>
+                <input
+                  type="text"
+                  value={nuevaConfiguracion.cbu}
+                  onChange={(e) => setNuevaConfiguracion({ ...nuevaConfiguracion, cbu: e.target.value })}
+                  placeholder="22 dígitos"
+                  maxLength={22}
                   className="w-full p-3 border border-gray-300 rounded-lg font-mono"
                 />
               </div>

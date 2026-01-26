@@ -343,10 +343,10 @@ export const PastorDashboard: React.FC = () => {
         </div>
 
         {/* Navegación de vistas */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200">
+        <div className="flex gap-2 mb-6 border-b border-gray-200 overflow-x-auto pb-1 scrollbar-hide">
           <button
             onClick={() => setView('dashboard')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'dashboard'
+            className={`px-4 py-2 font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${view === 'dashboard'
               ? 'border-blue-500 text-blue-600'
               : 'border-transparent text-gray-600 hover:text-gray-800'
               }`}
@@ -355,7 +355,7 @@ export const PastorDashboard: React.FC = () => {
           </button>
           <button
             onClick={() => setView('lideres')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'lideres'
+            className={`px-4 py-2 font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${view === 'lideres'
               ? 'border-blue-500 text-blue-600'
               : 'border-transparent text-gray-600 hover:text-gray-800'
               }`}
@@ -364,7 +364,7 @@ export const PastorDashboard: React.FC = () => {
           </button>
           <button
             onClick={() => setView('celulas')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'celulas'
+            className={`px-4 py-2 font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${view === 'celulas'
               ? 'border-blue-500 text-blue-600'
               : 'border-transparent text-gray-600 hover:text-gray-800'
               }`}
@@ -373,7 +373,7 @@ export const PastorDashboard: React.FC = () => {
           </button>
           <button
             onClick={() => setView('recursos')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'recursos'
+            className={`px-4 py-2 font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${view === 'recursos'
               ? 'border-blue-500 text-blue-600'
               : 'border-transparent text-gray-600 hover:text-gray-800'
               }`}
@@ -382,7 +382,7 @@ export const PastorDashboard: React.FC = () => {
           </button>
           <button
             onClick={() => setView('cumpleanos')}
-            className={`px-4 py-2 font-medium border-b-2 transition-colors ${view === 'cumpleanos'
+            className={`px-4 py-2 font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${view === 'cumpleanos'
               ? 'border-blue-500 text-blue-600'
               : 'border-transparent text-gray-600 hover:text-gray-800'
               }`}
