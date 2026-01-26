@@ -33,7 +33,7 @@ export const PastorDashboard: React.FC = () => {
   const [loadingLideres, setLoadingLideres] = useState(false);
 
   // Estado para peticiones (pendientes de asistencia)
-  const [pendientesAsistencia, setPendientesAsistencia] = useState<any[]>([]);
+  const [pendientesAsistencia] = useState<any[]>([]);
 
   // Función para enriquecer líderes con información de células
   const enrichLideresWithCelulas = async () => {
