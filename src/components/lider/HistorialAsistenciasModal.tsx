@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../../services/api';
 import { useData } from '../../contexts/DataContext';
 import { AsistenciaRecord } from '../../types';
 import { X, Calendar, ChevronDown, ChevronUp, CheckCircle2, XCircle, Flag, MessageSquare, Users } from 'lucide-react';
@@ -16,6 +17,25 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
     const [historial, setHistorial] = useState<AsistenciaRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const handleDelete = (id: string) => {
+        setDeletingId(id);
+        setConfirmOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!deletingId) return;
+        try {
+            await api.deleteAsistencia(deletingId);
+            setHistorial(historial.filter(h => h.id !== deletingId));
+        } catch (error) {
+            alert('Error eliminando asistencia');
+        } finally {
+            setConfirmOpen(false);
+            setDeletingId(null);
+        }
+    };
 
     useEffect(() => {
         if (isOpen) {
@@ -129,9 +149,39 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                             </div>
                                         </div>
 
-                                        {/* Detalle expandido */}
+                                        {/* Botón eliminar */}
                                         {isExpanded && (
                                             <div className="border-t border-gray-100 bg-gray-50/30 p-5 animate-in fade-in duration-300">
+                                                <div className="flex justify-end mb-2">
+                                                    <button
+                                                        className="px-3 py-1 bg-red-100 text-red-700 rounded-lg font-bold hover:bg-red-200 transition-colors text-sm"
+                                                        onClick={() => handleDelete(registro.id)}
+                                                    >
+                                                        Eliminar asistencia
+                                                    </button>
+                                                </div>
+                                                                {/* Modal de confirmación */}
+                                                                {confirmOpen && (
+                                                                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                                                                        <div className="bg-white rounded-xl shadow-lg p-8 max-w-xs w-full flex flex-col items-center">
+                                                                            <p className="text-lg font-bold text-gray-800 mb-4 text-center">¿Estás seguro que deseas eliminar esta asistencia?</p>
+                                                                            <div className="flex gap-4 mt-2">
+                                                                                <button
+                                                                                    className="px-4 py-2 bg-gray-200 rounded-lg font-bold text-gray-700 hover:bg-gray-300"
+                                                                                    onClick={() => { setConfirmOpen(false); setDeletingId(null); }}
+                                                                                >
+                                                                                    Cancelar
+                                                                                </button>
+                                                                                <button
+                                                                                    className="px-4 py-2 bg-red-600 rounded-lg font-bold text-white hover:bg-red-700"
+                                                                                    onClick={confirmDelete}
+                                                                                >
+                                                                                    Sí, eliminar
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
                                                 <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                                                     <Users className="w-4 h-4" />
                                                     Listado de Asistencia
