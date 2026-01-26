@@ -33,7 +33,7 @@ export const PastorDashboard: React.FC = () => {
   const [loadingLideres, setLoadingLideres] = useState(false);
 
   // Estado para peticiones (pendientes de asistencia)
-  const [pendientesAsistencia] = useState<any[]>([]);
+  const [pendientesAsistencia, setPendientesAsistencia] = useState<any[]>([]);
 
   // Función para enriquecer líderes con información de células
   const enrichLideresWithCelulas = async () => {
@@ -81,6 +81,23 @@ export const PastorDashboard: React.FC = () => {
   useEffect(() => {
     enrichLideresWithCelulas();
   }, [celulas]);
+
+  // Cargar pendientes de asistencia al montar el componente
+  useEffect(() => {
+    const fetchPendientes = async () => {
+      try {
+        const pendientes = await api.getPendientesAsistencia();
+        // Filtrar solo prioridad alta o media
+        const filtrados = pendientes.filter((p: any) => p.prioridad === 'alta' || p.prioridad === 'media');
+        setPendientesAsistencia(filtrados);
+      } catch (error) {
+        setPendientesAsistencia([]);
+        console.error('Error cargando pendientes de asistencia:', error);
+      }
+    };
+    fetchPendientes();
+  }, []);
+
   const [showAddLider, setShowAddLider] = useState(false);
   const [showEditLider, setShowEditLider] = useState(false);
   const [newLider, setNewLider] = useState({ name: '', email: '', fechaNacimiento: '', telefono: '' });
@@ -257,7 +274,7 @@ export const PastorDashboard: React.FC = () => {
 
       // Obtener fecha de cumpleaños en este año para ordenar
       const currentYear = today.getFullYear();
-      const birthdayA = new Date(currentYear, dateA.getMonth(), dateA.getDate());
+      const birthdayA = new Date(currentYear, dateA.getMonth
       const birthdayB = new Date(currentYear, dateB.getMonth(), dateB.getDate());
 
       // Si ya pasó este año (ej: ayer), asumimos que es el próximo año (aunque filtro de 7 días elimina esto, pero por robustez)
