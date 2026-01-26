@@ -337,6 +337,12 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  async deleteAsistencia(id: string) {
+    return this.request(`/asistencias/${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const api = new ApiService(API_BASE);
