@@ -8,121 +8,36 @@ import { PrioridadAnotacion, MotivoFalta } from '../../types';
 interface PeticionesModalProps {
   isOpen: boolean;
   onClose: () => void;
+  pendientesAsistencia?: Array<{
+    id: string;
+    asistenciaId: string;
+    celulaId: string;
+    celulaNombre: string;
+    miembroId: string;
+    miembroNombre: string;
+    fecha: Date;
+    presente: boolean;
+    anotacion: string;
+    prioridad: PrioridadAnotacion;
+    motivoFalta?: MotivoFalta;
+    motivoPersonalizado?: string;
+    registradoPor: string;
+    accionPastoral?: string;
+    resuelta: boolean;
+    fechaResolucion?: string;
+  }>;
 }
 
-export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClose }) => {
+export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClose, pendientesAsistencia = [] }) => {
   const { celulas, asistencias, registrarAccionPastoral } = useData();
   const [filtroActivo, setFiltroActivo] = useState<'todas' | 'alta' | 'media' | 'baja'>('todas');
-
   const [resolucionFiltro, setResolucionFiltro] = useState<'pendiente' | 'resuelta' | 'todas'>('pendiente');
   const [editandoAccion, setEditandoAccion] = useState<{ id: string, texto: string } | null>(null);
 
   if (!isOpen) return null;
 
-  // Obtener todas las anotaciones con datos completos
-  const obtenerTodasLasAnotaciones = () => {
-    const anotaciones: Array<{
-      id: string;
-      asistenciaId: string;
-      celulaId: string;
-      celulaNombre: string;
-      miembroId: string;
-      miembroNombre: string;
-      fecha: Date;
-      presente: boolean;
-      anotacion: string;
-      prioridad: PrioridadAnotacion;
-      motivoFalta?: MotivoFalta;
-      motivoPersonalizado?: string;
-      registradoPor: string;
-      accionPastoral?: string;
-      resuelta: boolean;
-      fechaResolucion?: string;
-    }> = [];
-
-    asistencias.forEach(asistencia => {
-      const celula = celulas.find(c => c.id === asistencia.celulaId);
-      if (!celula) return;
-
-      asistencia.miembros.forEach(miembroAsistencia => {
-        const miembro = celula.miembros.find(m => m.id === miembroAsistencia.miembroId);
-        if (!miembro) return;
-
-        // Anotaciones para presentes
-        if (miembroAsistencia.presente && miembroAsistencia.anotacionEspecial && miembroAsistencia.prioridadAnotacion) {
-          anotaciones.push({
-            id: `${asistencia.id}-${miembroAsistencia.miembroId}`,
-            asistenciaId: asistencia.id,
-            celulaId: asistencia.celulaId,
-            celulaNombre: celula.name,
-            miembroId: miembro.id,
-            miembroNombre: miembro.name,
-            fecha: asistencia.date,
-            presente: true,
-            anotacion: miembroAsistencia.anotacionEspecial,
-            prioridad: miembroAsistencia.prioridadAnotacion,
-            registradoPor: asistencia.registradoPor,
-            accionPastoral: miembroAsistencia.accionPastoral,
-            resuelta: !!miembroAsistencia.resuelta,
-            fechaResolucion: miembroAsistencia.fechaResolucion
-          });
-        }
-
-        // Anotaciones para ausentes con motivos importantes
-        if (!miembroAsistencia.presente && miembroAsistencia.motivoFalta && miembroAsistencia.prioridadAnotacion) {
-          let anotacionTexto = '';
-
-          if (miembroAsistencia.motivoFalta === 'otro' && miembroAsistencia.motivoPersonalizado) {
-            anotacionTexto = miembroAsistencia.motivoPersonalizado;
-          } else {
-            const motivosTexto = {
-              'enfermedad': 'Ausente por enfermedad',
-              'familia': 'Situación familiar',
-              'trabajo': 'Compromisos laborales',
-              'viaje': 'De viaje',
-              'vacaciones': 'En vacaciones',
-              'sin-motivo': 'Sin motivo específico',
-              'otro': miembroAsistencia.motivoPersonalizado || 'Otro motivo'
-            };
-            anotacionTexto = (motivosTexto as any)[miembroAsistencia.motivoFalta];
-          }
-
-          anotaciones.push({
-            id: `${asistencia.id}-${miembroAsistencia.miembroId}`,
-            asistenciaId: asistencia.id,
-            celulaId: asistencia.celulaId,
-            celulaNombre: celula.name,
-            miembroId: miembro.id,
-            miembroNombre: miembro.name,
-            fecha: asistencia.date,
-            presente: false,
-            anotacion: anotacionTexto,
-            prioridad: miembroAsistencia.prioridadAnotacion,
-            motivoFalta: miembroAsistencia.motivoFalta,
-            motivoPersonalizado: miembroAsistencia.motivoPersonalizado,
-            registradoPor: asistencia.registradoPor,
-            accionPastoral: miembroAsistencia.accionPastoral,
-            resuelta: !!miembroAsistencia.resuelta,
-            fechaResolucion: miembroAsistencia.fechaResolucion
-          });
-        }
-      });
-    });
-
-    return anotaciones.sort((a, b) => {
-      // Primero por estado (pendientes arriba)
-      if (a.resuelta !== b.resuelta) return a.resuelta ? 1 : -1;
-      // Luego por prioridad (alta primero)
-      const prioridadOrden = { 'alta': 3, 'media': 2, 'baja': 1 };
-      if (prioridadOrden[a.prioridad] !== prioridadOrden[b.prioridad]) {
-        return prioridadOrden[b.prioridad] - prioridadOrden[a.prioridad];
-      }
-      // Luego por fecha (más recientes primero)
-      return new Date(b.fecha).getTime() - new Date(a.fecha).getTime();
-    });
-  };
-
-  const anotaciones = obtenerTodasLasAnotaciones();
+  // Usar pendientesAsistencia si está disponible
+  const anotaciones = pendientesAsistencia.length > 0 ? pendientesAsistencia : [];
 
   // Aplicar filtros
   const anotacionesFiltradas = anotaciones.filter(anotacion => {

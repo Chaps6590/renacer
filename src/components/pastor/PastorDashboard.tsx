@@ -32,6 +32,10 @@ export const PastorDashboard: React.FC = () => {
   const [lideres, setLideres] = useState<Lider[]>([]);
   const [loadingLideres, setLoadingLideres] = useState(false);
 
+  // Estado para peticiones (pendientes de asistencia)
+  const [pendientesAsistencia, setPendientesAsistencia] = useState<any[]>([]);
+  const [loadingPendientes, setLoadingPendientes] = useState(false);
+
   // Función para enriquecer líderes con información de células
   const enrichLideresWithCelulas = async () => {
     setLoadingLideres(true);
@@ -1384,6 +1388,7 @@ export const PastorDashboard: React.FC = () => {
       <PeticionesModal
         isOpen={showPeticiones}
         onClose={() => setShowPeticiones(false)}
+        pendientesAsistencia={pendientesAsistencia}
       />
 
       <CumpleanosModal
