@@ -176,6 +176,16 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         console.error('Error fetching donations config:', err);
       }
 
+      // Cargar peticiones pendientes (solo para admin/pastor)
+      if (user?.role === 'admin' || user?.role === 'pastor') {
+        try {
+          const dataPendientes = await api.getPendientesAsistencia() as any[];
+          setPendientesAsistencia(dataPendientes);
+        } catch (err) {
+          console.error('Error fetching pending petitions:', err);
+        }
+      }
+
     } catch (error) {
       console.error('Error loading initial data:', error);
     } finally {
