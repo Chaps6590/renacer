@@ -8,6 +8,7 @@ import { HistorialAsistenciasModal } from './HistorialAsistenciasModal';
 import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
+import { CumpleanosModal } from '../common/CumpleanosModal';
 import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart, History } from 'lucide-react';
 
 interface AddMiembroModalProps {
@@ -182,6 +183,7 @@ const LiderDashboard: React.FC = () => {
   const [showNoticias, setShowNoticias] = useState(false);
   const [showDonaciones, setShowDonaciones] = useState(false);
   const [showHistorial, setShowHistorial] = useState(false);
+  const [showCumpleanos, setShowCumpleanos] = useState(false);
 
   // Estados para modales de confirmación y acciones
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -418,7 +420,7 @@ const LiderDashboard: React.FC = () => {
             <h3 className="text-lg font-medium text-gray-900">Recursos</h3>
           </div>
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <button
                 onClick={() => setShowMateriales(true)}
                 className="group p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-lg hover:from-blue-100 hover:to-blue-200 hover:border-blue-300 transition-all duration-200"
@@ -465,6 +467,21 @@ const LiderDashboard: React.FC = () => {
                   <div className="text-left">
                     <div className="font-semibold text-red-900">Donaciones</div>
                     <div className="text-sm text-red-700">Apoyar la iglesia</div>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => setShowCumpleanos(true)}
+                className="group p-4 bg-gradient-to-br from-pink-50 to-yellow-50 border-2 border-pink-200 rounded-lg hover:from-pink-100 hover:to-yellow-100 hover:border-pink-300 transition-all duration-200"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="bg-pink-400 p-2 rounded-lg group-hover:scale-110 transition-transform">
+                    <Calendar className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-pink-900">Cumpleaños</div>
+                    <div className="text-sm text-pink-700">Próximos cumpleaños</div>
                   </div>
                 </div>
               </button>
@@ -804,6 +821,12 @@ const LiderDashboard: React.FC = () => {
         <DonacionesModal
           isOpen={showDonaciones}
           onClose={() => setShowDonaciones(false)}
+        />
+
+        {/* Modal de cumpleaños */}
+        <CumpleanosModal
+          isOpen={showCumpleanos}
+          onClose={() => setShowCumpleanos(false)}
         />
       </div>
     </div>
