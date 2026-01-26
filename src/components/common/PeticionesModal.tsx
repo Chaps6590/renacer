@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useData } from '../../contexts/DataContext';
 import { AlertCircle, Heart, X, Eye, MessageSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -29,7 +28,6 @@ interface PeticionesModalProps {
 }
 
 export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClose, pendientesAsistencia = [] }) => {
-  const { celulas, asistencias, registrarAccionPastoral } = useData();
   const [filtroActivo, setFiltroActivo] = useState<'todas' | 'alta' | 'media' | 'baja'>('todas');
   const [resolucionFiltro, setResolucionFiltro] = useState<'pendiente' | 'resuelta' | 'todas'>('pendiente');
   const [editandoAccion, setEditandoAccion] = useState<{ id: string, texto: string } | null>(null);
