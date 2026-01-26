@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Celula, Miembro, CoLider, AsistenciaRecord, MotivoFalta, Noticia, MaterialCelula, ConfiguracionDonaciones, PendienteAsistencia } from '../types';
+import { Celula, Miembro, CoLider, AsistenciaRecord, MotivoFalta, Noticia, MaterialCelula, ConfiguracionDonaciones, PendienteAsistencia, PeticionPastor } from '../types';
 import { api } from '../services/api';
 import { useAuth } from './AuthContext';
 
@@ -10,6 +10,7 @@ interface DataContextType {
   materiales: MaterialCelula[];
   configuracionDonaciones: ConfiguracionDonaciones;
   pendientesAsistencia: PendienteAsistencia[];
+  peticionesPastor: PeticionPastor[];
   loading: boolean;
 
   // Funciones de células
@@ -75,6 +76,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     actualizadoPor: ''
   });
   const [pendientesAsistencia, setPendientesAsistencia] = useState<PendienteAsistencia[]>([]);
+  const [peticionesPastor, setPeticionesPastor] = useState<PeticionPastor[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Cargar datos iniciales cuando el usuario está autenticado
@@ -179,11 +181,19 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       // Cargar peticiones pendientes (solo para admin/pastor)
       if (user?.role === 'admin' || user?.role === 'pastor') {
         try {
-          const dataPendientes = await api.getPendientesAsistencia() as any[];
-          setPendientesAsistencia(dataPendientes);
+          const dataPeticiones = await api.getPeticionesPastor() as PeticionPastor[];
+          setPeticionesPastor(dataPeticiones);
         } catch (err) {
-          console.error('Error fetching pending petitions:', err);
+          console.error('Error fetching pastoral petitions:', err);
         }
+      }
+
+      // Cargar pendientes de asistencia (para todos)
+      try {
+        const dataPendientes = await api.getPendientesAsistencia() as PendienteAsistencia[];
+        setPendientesAsistencia(dataPendientes);
+      } catch (err) {
+        console.error('Error fetching pending attendance:', err);
       }
 
     } catch (error) {
@@ -381,6 +391,12 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         }
         return a;
       }));
+
+      // Recargar peticiones para el pastor si es necesario
+      if (user?.role === 'admin' || user?.role === 'pastor') {
+        const dataPeticiones = await api.getPeticionesPastor() as PeticionPastor[];
+        setPeticionesPastor(dataPeticiones);
+      }
     } catch (error) {
       console.error('Error updating pastoral action:', error);
       throw error;
@@ -424,9 +440,14 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         return a;
       }));
 
-      // Actualizar pendientes
+      // Actualizar pendientes y peticiones
       const dataPendientes = await api.getPendientesAsistencia() as any[];
       setPendientesAsistencia(dataPendientes);
+
+      if (user?.role === 'admin' || user?.role === 'pastor') {
+        const dataPeticiones = await api.getPeticionesPastor() as PeticionPastor[];
+        setPeticionesPastor(dataPeticiones);
+      }
     } catch (error) {
       console.error('Error updating motivo falta:', error);
       throw error;
@@ -583,6 +604,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     materiales,
     configuracionDonaciones,
     pendientesAsistencia,
+    peticionesPastor,
     loading,
     addCelula,
     updateCelula,

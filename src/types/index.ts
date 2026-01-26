@@ -132,3 +132,21 @@ export interface PendienteAsistencia {
   }>;
   cantidadPendientes: number;
 }
+export interface PeticionPastor {
+  id: string;
+  asistenciaId: string;
+  celulaId: string;
+  celulaNombre: string;
+  miembroId: string;
+  miembroNombre: string;
+  fecha: Date;
+  presente: boolean;
+  anotacion: string;
+  prioridad: PrioridadAnotacion;
+  motivoFalta?: MotivoFalta;
+  motivoPersonalizado?: string;
+  registradoPor: string;
+  accionPastoral?: string;
+  resuelta: boolean;
+  fechaResolucion?: string;
+}

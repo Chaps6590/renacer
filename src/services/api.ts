@@ -204,6 +204,12 @@ class ApiService {
     });
   }
 
+  async getPeticionesPastor() {
+    return this.request('/asistencias/peticiones', {
+      method: 'GET',
+    });
+  }
+
   async getEstadisticasAsistencia() {
     return this.request('/asistencias/estadisticas', {
       method: 'GET',

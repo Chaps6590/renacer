@@ -18,7 +18,7 @@ interface Lider extends User {
 }
 
 export const PastorDashboard: React.FC = () => {
-  const { celulas, asistencias, noticias, materiales, configuracionDonaciones, recargarCelulas } = useData();
+  const { celulas, asistencias, noticias, materiales, configuracionDonaciones, recargarCelulas, peticionesPastor } = useData();
   const [view, setView] = useState<'dashboard' | 'lideres' | 'celulas' | 'recursos' | 'cumpleanos'>('dashboard');
 
   // Estados para modales de recursos
@@ -32,8 +32,6 @@ export const PastorDashboard: React.FC = () => {
   const [lideres, setLideres] = useState<Lider[]>([]);
   const [loadingLideres, setLoadingLideres] = useState(false);
 
-  // Estado para peticiones (pendientes de asistencia)
-  const [pendientesAsistencia, setPendientesAsistencia] = useState<any[]>([]);
 
   // Función para enriquecer líderes con información de células
   const enrichLideresWithCelulas = async () => {
@@ -82,19 +80,6 @@ export const PastorDashboard: React.FC = () => {
     enrichLideresWithCelulas();
   }, [celulas]);
 
-  // Cargar pendientes de asistencia al montar el componente
-  useEffect(() => {
-    const fetchPendientes = async () => {
-      try {
-        const pendientes = await api.getPendientesAsistencia() as any[];
-        setPendientesAsistencia(pendientes);
-      } catch (error) {
-        setPendientesAsistencia([]);
-        console.error('Error cargando pendientes de asistencia:', error);
-      }
-    };
-    fetchPendientes();
-  }, []);
 
   const [showAddLider, setShowAddLider] = useState(false);
   const [showEditLider, setShowEditLider] = useState(false);
@@ -454,7 +439,7 @@ export const PastorDashboard: React.FC = () => {
                   <div>
                     <p className="text-orange-100 text-sm mb-1">Peticiones</p>
                     <p className="text-4xl font-bold">
-                      {pendientesAsistencia.filter(p => !p.resuelta).length}
+                      {peticionesPastor.filter(p => !p.resuelta).length}
                     </p>
                     <p className="text-orange-200 text-xs">Atender ahora</p>
                   </div>
@@ -1348,7 +1333,7 @@ export const PastorDashboard: React.FC = () => {
                   <div className="space-y-3">
                     <div className="bg-orange-50 p-3 rounded-lg">
                       <div className="text-sm text-orange-800 font-medium">
-                        {pendientesAsistencia.filter(p => !p.resuelta).length} peticiones pendientes
+                        {peticionesPastor.filter(p => !p.resuelta).length} peticiones pendientes
                       </div>
                     </div>
                     <button
@@ -1384,7 +1369,7 @@ export const PastorDashboard: React.FC = () => {
       <PeticionesModal
         isOpen={showPeticiones}
         onClose={() => setShowPeticiones(false)}
-        pendientesAsistencia={pendientesAsistencia}
+        pendientesAsistencia={peticionesPastor}
       />
 
       <CumpleanosModal

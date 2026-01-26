@@ -606,38 +606,26 @@ const LiderDashboard: React.FC = () => {
                         <>
                           {/* Columna Cambiar Rol */}
                           <td className="px-6 py-4 whitespace-nowrap text-center">
-                            {miembro.rolCelula !== 'lider' ? (
-                              <button
-                                onClick={() => handleChangeRole(miembro)}
-                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition duration-200"
-                                title="Cambiar Rol"
-                              >
-                                <Edit className="w-3 h-3 mr-1" />
-                                Cambiar
-                              </button>
-                            ) : (
-                              <span className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 rounded-lg">
-                                Protegido
-                              </span>
-                            )}
+                            <button
+                              onClick={() => handleChangeRole(miembro)}
+                              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition duration-200"
+                              title="Cambiar Rol"
+                            >
+                              <Edit className="w-3 h-3 mr-1" />
+                              Cambiar
+                            </button>
                           </td>
 
                           {/* Columna Eliminar */}
                           <td className="px-6 py-4 whitespace-nowrap text-center">
-                            {miembro.rolCelula !== 'lider' ? (
-                              <button
-                                onClick={() => handleDeleteMiembro(miembro)}
-                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition duration-200"
-                                title="Eliminar Miembro"
-                              >
-                                <Trash2 className="w-3 h-3 mr-1" />
-                                Eliminar
-                              </button>
-                            ) : (
-                              <span className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 rounded-lg">
-                                Protegido
-                              </span>
-                            )}
+                            <button
+                              onClick={() => handleDeleteMiembro(miembro)}
+                              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition duration-200"
+                              title="Eliminar Miembro"
+                            >
+                              <Trash2 className="w-3 h-3 mr-1" />
+                              Eliminar
+                            </button>
                           </td>
                         </>
                       )}
