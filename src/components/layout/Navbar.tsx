@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { LogOut, User } from 'lucide-react';
-// import { CumpleanosModal } from '../common/CumpleanosModal';
 import { useNavigate } from 'react-router-dom';
 import { PerfilModal } from '../common/PerfilModal';
 
@@ -9,7 +8,6 @@ export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showPerfil, setShowPerfil] = useState(false);
-  // const [showCumple, setShowCumple] = useState(false);
 
   const handleLogout = () => {
     logout();
