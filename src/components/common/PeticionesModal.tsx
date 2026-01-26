@@ -57,6 +57,12 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
         accionPastoral: editandoAccion.texto,
         resuelta: true
       });
+
+      // Actualizar localmente la anotación para reflejar el cambio en la UI
+      anotacion.resuelta = true;
+      anotacion.accionPastoral = editandoAccion.texto;
+      anotacion.fechaResolucion = new Date().toISOString();
+
       setEditandoAccion(null);
     } catch (error) {
       alert('Error al guardar la acción');
