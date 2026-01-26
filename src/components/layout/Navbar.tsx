@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Gift } from 'lucide-react';
+import { CumpleanosModal } from '../common/CumpleanosModal';
 import { useNavigate } from 'react-router-dom';
 import { PerfilModal } from '../common/PerfilModal';
 
@@ -8,6 +9,7 @@ export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showPerfil, setShowPerfil] = useState(false);
+  const [showCumple, setShowCumple] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -25,6 +27,14 @@ export const Navbar: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-4">
+              <button
+                onClick={() => setShowCumple(true)}
+                className="btn btn-secondary flex items-center gap-2"
+                title="Cumpleaños"
+              >
+                <Gift className="w-4 h-4 text-pink-500" />
+                Cumpleaños
+              </button>
               <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-medium capitalize">
                 {user?.role}
               </span>
@@ -48,6 +58,7 @@ export const Navbar: React.FC = () => {
       </nav>
 
       {showPerfil && <PerfilModal onClose={() => setShowPerfil(false)} />}
+      {showCumple && <CumpleanosModal isOpen={showCumple} onClose={() => setShowCumple(false)} />}
     </>
   );
 };
