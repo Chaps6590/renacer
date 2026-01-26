@@ -87,9 +87,7 @@ export const PastorDashboard: React.FC = () => {
     const fetchPendientes = async () => {
       try {
         const pendientes = await api.getPendientesAsistencia() as any[];
-        // Filtrar solo prioridad alta o media
-        const filtrados = pendientes.filter((p: any) => p.prioridad === 'alta' || p.prioridad === 'media');
-        setPendientesAsistencia(filtrados);
+        setPendientesAsistencia(pendientes);
       } catch (error) {
         setPendientesAsistencia([]);
         console.error('Error cargando pendientes de asistencia:', error);
@@ -456,12 +454,7 @@ export const PastorDashboard: React.FC = () => {
                   <div>
                     <p className="text-orange-100 text-sm mb-1">Peticiones Altas</p>
                     <p className="text-4xl font-bold">
-                      {asistencias.reduce((count, asistencia) => {
-                        return count + asistencia.miembros.filter(m =>
-                          m.prioridadAnotacion === 'alta' &&
-                          (m.anotacionEspecial || m.motivoFalta)
-                        ).length;
-                      }, 0)}
+                      {pendientesAsistencia.filter(p => p.prioridad === 'alta').length}
                     </p>
                     <p className="text-orange-200 text-xs">Click para ver</p>
                   </div>
@@ -1238,28 +1231,28 @@ export const PastorDashboard: React.FC = () => {
         {view === 'recursos' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                            {/* Cumpleaños */}
-                            <div className="card">
-                              <div className="p-6">
-                                <div className="flex items-center gap-3 mb-4">
-                                  <div className="bg-pink-400 p-2 rounded-lg">
-                                    <Gift className="w-6 h-6 text-white" />
-                                  </div>
-                                  <div>
-                                    <h3 className="text-lg font-semibold text-pink-900">Cumpleaños</h3>
-                                    <p className="text-sm text-pink-700">Próximos cumpleaños</p>
-                                  </div>
-                                </div>
-                                <div className="space-y-3">
-                                  <button
-                                    onClick={() => setShowCumpleanos(true)}
-                                    className="w-full btn btn-primary"
-                                  >
-                                    Ver Cumpleaños
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
+              {/* Cumpleaños */}
+              <div className="card">
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-pink-400 p-2 rounded-lg">
+                      <Gift className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-pink-900">Cumpleaños</h3>
+                      <p className="text-sm text-pink-700">Próximos cumpleaños</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => setShowCumpleanos(true)}
+                      className="w-full btn btn-primary"
+                    >
+                      Ver Cumpleaños
+                    </button>
+                  </div>
+                </div>
+              </div>
               {/* Gestión de Materiales */}
               <div className="card">
                 <div className="p-6">

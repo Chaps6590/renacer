@@ -111,10 +111,6 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
               <div className="text-3xl font-black text-yellow-600">{contadores.media}</div>
               <div className="text-[10px] font-black text-yellow-400 uppercase tracking-widest mt-1">Intermedios</div>
             </div>
-            <div className="bg-white border-2 border-green-100 rounded-2xl p-4 shadow-sm text-center">
-              <div className="text-3xl font-black text-green-600">{contadores.baja}</div>
-              <div className="text-[10px] font-black text-green-400 uppercase tracking-widest mt-1">Atención</div>
-            </div>
             <div className="bg-white border-2 border-orange-100 rounded-2xl p-4 shadow-sm text-center">
               <div className="text-3xl font-black text-orange-600">{contadores.pendientes}</div>
               <div className="text-[10px] font-black text-orange-400 uppercase tracking-widest mt-1">Pendientes</div>
@@ -147,7 +143,7 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
               <div className="space-y-2">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Prioridad</span>
                 <div className="flex p-1 bg-gray-100 rounded-xl w-fit">
-                  {(['todas', 'alta', 'media', 'baja'] as const).map(f => (
+                  {(['todas', 'alta', 'media'] as const).map(f => (
                     <button
                       key={f}
                       onClick={() => setFiltroActivo(f)}
@@ -207,11 +203,31 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
                           </div>
                         </div>
 
-                        <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 relative">
-                          <MessageSquare className="w-8 h-8 text-white absolute -top-2 -left-2 fill-gray-200" />
-                          <p className="text-gray-700 text-sm font-medium leading-relaxed relative z-10">
-                            {anotacion.anotacion}
-                          </p>
+                        <div className="space-y-3">
+                          {anotacion.anotacion && (
+                            <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 relative">
+                              <MessageSquare className="w-8 h-8 text-white absolute -top-2 -left-2 fill-gray-200" />
+                              <div className="flex flex-col gap-1 relative z-10">
+                                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Petición / Anotación</span>
+                                <p className="text-gray-700 text-sm font-medium leading-relaxed">
+                                  {anotacion.anotacion}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
+                          {!anotacion.presente && (anotacion.motivoFalta || anotacion.motivoPersonalizado) && (
+                            <div className="bg-red-50/50 rounded-2xl p-4 border border-red-100/50">
+                              <div className="flex flex-col gap-1">
+                                <span className="text-[9px] font-black text-red-400 uppercase tracking-widest">Motivo de Ausencia</span>
+                                <p className="text-red-900 text-sm font-bold">
+                                  {anotacion.motivoFalta === 'otro'
+                                    ? anotacion.motivoPersonalizado
+                                    : anotacion.motivoFalta?.replace('-', ' ')}
+                                </p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
 
