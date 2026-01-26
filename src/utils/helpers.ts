@@ -49,6 +49,7 @@ export const getRoleDisplay = (role: string): string => {
     pastor: 'Pastor',
     lider: 'Líder',
     colider: 'Colíder',
+    timoteo: 'Timoteo',
   };
   return roles[role] || role;
 };

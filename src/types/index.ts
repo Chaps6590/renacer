@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'pastor' | 'lider' | 'colider';
+export type UserRole = 'admin' | 'pastor' | 'lider' | 'colider' | 'timoteo';
 
 export type MotivoFalta = 'vacaciones' | 'trabajo' | 'enfermedad' | 'familia' | 'viaje' | 'sin-motivo' | 'otro';
 
