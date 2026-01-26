@@ -1355,20 +1355,7 @@ export const PastorDashboard: React.FC = () => {
                   <div className="space-y-3">
                     <div className="bg-orange-50 p-3 rounded-lg">
                       <div className="text-sm text-orange-800 font-medium">
-                        {asistencias.reduce((count, asistencia) => {
-                          return count + asistencia.miembros.filter(m =>
-                            m.prioridadAnotacion === 'alta' &&
-                            (m.anotacionEspecial || m.motivoFalta)
-                          ).length;
-                        }, 0)} prioridad alta
-                      </div>
-                      <div className="text-sm text-orange-700">
-                        {asistencias.reduce((count, asistencia) => {
-                          return count + asistencia.miembros.filter(m =>
-                            m.prioridadAnotacion &&
-                            (m.anotacionEspecial || m.motivoFalta)
-                          ).length;
-                        }, 0)} total
+                        {pendientesAsistencia.length} peticiones (media/alta)
                       </div>
                     </div>
                     <button
