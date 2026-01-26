@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { UserPlus, Users, CheckCircle, XCircle, Eye, EyeOff } from 'lucide-react';
-import api from '../../services/api';
+import { api } from '../../services/api';
 import { User } from '../../types';
 
 const PastoresAdmin: React.FC = () => {

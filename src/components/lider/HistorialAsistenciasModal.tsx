@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../../services/api';
+import { api } from '../../services/api';
 import { useData } from '../../contexts/DataContext';
 import { AsistenciaRecord } from '../../types';
 import { X, Calendar, ChevronDown, ChevronUp, CheckCircle2, XCircle, Flag, MessageSquare, Users } from 'lucide-react';

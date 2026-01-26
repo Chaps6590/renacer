@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Celula, Miembro, CoLider, AsistenciaRecord, MotivoFalta, Noticia, MaterialCelula, ConfiguracionDonaciones, PendienteAsistencia } from '../types';
-import api from '../services/api';
+import { api } from '../services/api';
 import { useAuth } from './AuthContext';
 
 interface DataContextType {

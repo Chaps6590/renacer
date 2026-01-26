@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, User, Mail, Lock, Save } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import api from '../../services/api';
+import { api } from '../../services/api';
 
 interface PerfilModalProps {
   onClose: () => void;
