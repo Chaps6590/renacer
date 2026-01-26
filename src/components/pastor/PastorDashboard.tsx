@@ -452,11 +452,11 @@ export const PastorDashboard: React.FC = () => {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-orange-100 text-sm mb-1">Peticiones Altas</p>
+                    <p className="text-orange-100 text-sm mb-1">Peticiones</p>
                     <p className="text-4xl font-bold">
-                      {pendientesAsistencia.filter(p => p.prioridad === 'alta').length}
+                      {pendientesAsistencia.filter(p => !p.resuelta).length}
                     </p>
-                    <p className="text-orange-200 text-xs">Click para ver</p>
+                    <p className="text-orange-200 text-xs">Atender ahora</p>
                   </div>
                   <AlertCircle className="w-12 h-12 text-orange-200" />
                 </div>
@@ -1348,7 +1348,7 @@ export const PastorDashboard: React.FC = () => {
                   <div className="space-y-3">
                     <div className="bg-orange-50 p-3 rounded-lg">
                       <div className="text-sm text-orange-800 font-medium">
-                        {pendientesAsistencia.length} peticiones (media/alta)
+                        {pendientesAsistencia.filter(p => !p.resuelta).length} peticiones pendientes
                       </div>
                     </div>
                     <button
