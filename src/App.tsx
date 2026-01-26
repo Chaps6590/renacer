@@ -22,7 +22,7 @@ const Dashboard: React.FC = () => {
     return <AdminDashboard />;
   } else if (user.role === 'pastor') {
     return <PastorDashboard />;
-  } else if (user.role === 'lider' || user.role === 'colider') {
+  } else if (user.role === 'lider' || user.role === 'colider' || user.role === 'timoteo') {
     return <LiderDashboard />;
   }
               <Route
@@ -84,7 +84,7 @@ function App() {
             <Route
               path="/lider"
               element={
-                <ProtectedRoute allowedRoles={['lider', 'colider']}>
+                <ProtectedRoute allowedRoles={['lider', 'colider', 'timoteo']}>
                   <LiderDashboard />
                 </ProtectedRoute>
               }
