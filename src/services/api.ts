@@ -1,8 +1,3 @@
-  async deleteAsistencia(id: string) {
-    return this.request(`/asistencias/${id}`, {
-      method: 'DELETE',
-    });
-  }
 // API Base Configuration
 // Este archivo será la base para integrar las llamadas a la API
 
