@@ -6,6 +6,7 @@ import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
 import { PeticionesModal } from '../common/PeticionesModal';
+import { CumpleanosModal } from '../common/CumpleanosModal';
 import { User } from '../../types';
 import api from '../../services/api';
 import jsPDF from 'jspdf';
@@ -25,6 +26,7 @@ export const PastorDashboard: React.FC = () => {
   const [showNoticias, setShowNoticias] = useState(false);
   const [showDonaciones, setShowDonaciones] = useState(false);
   const [showPeticiones, setShowPeticiones] = useState(false);
+  const [showCumpleanos, setShowCumpleanos] = useState(false);
 
   // Estado para líderes
   const [lideres, setLideres] = useState<Lider[]>([]);
@@ -1215,7 +1217,29 @@ export const PastorDashboard: React.FC = () => {
         {/* Vista Recursos */}
         {view === 'recursos' && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                            {/* Cumpleaños */}
+                            <div className="card">
+                              <div className="p-6">
+                                <div className="flex items-center gap-3 mb-4">
+                                  <div className="bg-pink-400 p-2 rounded-lg">
+                                    <Gift className="w-6 h-6 text-white" />
+                                  </div>
+                                  <div>
+                                    <h3 className="text-lg font-semibold text-pink-900">Cumpleaños</h3>
+                                    <p className="text-sm text-pink-700">Próximos cumpleaños</p>
+                                  </div>
+                                </div>
+                                <div className="space-y-3">
+                                  <button
+                                    onClick={() => setShowCumpleanos(true)}
+                                    className="w-full btn btn-primary"
+                                  >
+                                    Ver Cumpleaños
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
               {/* Gestión de Materiales */}
               <div className="card">
                 <div className="p-6">
@@ -1360,6 +1384,11 @@ export const PastorDashboard: React.FC = () => {
       <PeticionesModal
         isOpen={showPeticiones}
         onClose={() => setShowPeticiones(false)}
+      />
+
+      <CumpleanosModal
+        isOpen={showCumpleanos}
+        onClose={() => setShowCumpleanos(false)}
       />
     </div>
   );
