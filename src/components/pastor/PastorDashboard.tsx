@@ -8,7 +8,7 @@ import { DonacionesModal } from '../common/DonacionesModal';
 import { PeticionesModal } from '../common/PeticionesModal';
 import { CumpleanosModal } from '../common/CumpleanosModal';
 import { User } from '../../types';
-import api from '../../services/api';
+import { api } from '../../services/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -86,7 +86,7 @@ export const PastorDashboard: React.FC = () => {
   useEffect(() => {
     const fetchPendientes = async () => {
       try {
-        const pendientes = await api.getPendientesAsistencia();
+        const pendientes = await api.getPendientesAsistencia() as any[];
         // Filtrar solo prioridad alta o media
         const filtrados = pendientes.filter((p: any) => p.prioridad === 'alta' || p.prioridad === 'media');
         setPendientesAsistencia(filtrados);
@@ -274,7 +274,7 @@ export const PastorDashboard: React.FC = () => {
 
       // Obtener fecha de cumpleaños en este año para ordenar
       const currentYear = today.getFullYear();
-      const birthdayA = new Date(currentYear, dateA.getMonth
+      const birthdayA = new Date(currentYear, dateA.getMonth(), dateA.getDate());
       const birthdayB = new Date(currentYear, dateB.getMonth(), dateB.getDate());
 
       // Si ya pasó este año (ej: ayer), asumimos que es el próximo año (aunque filtro de 7 días elimina esto, pero por robustez)

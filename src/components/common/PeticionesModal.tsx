@@ -3,7 +3,7 @@ import { AlertCircle, Heart, X, Eye, MessageSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { PrioridadAnotacion, MotivoFalta } from '../../types';
-import api from '../../services/api';
+import { api } from '../../services/api';
 
 interface PeticionesModalProps {
   isOpen: boolean;
