@@ -184,6 +184,12 @@ class ApiService {
     });
   }
 
+  async getAllAsistencias() {
+    return this.request('/asistencias', {
+      method: 'GET',
+    });
+  }
+
   async updateMotivoAsistencia(asistenciaId: string, data: any) {
     return this.request(`/asistencias/${asistenciaId}/motivo`, {
       method: 'PUT',

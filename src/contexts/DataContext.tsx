@@ -178,6 +178,28 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         console.error('Error fetching donations config:', err);
       }
 
+      // Cargar asistencias según el rol
+      try {
+        let asistenciasData: any[] = [];
+        if (user?.role === 'admin' || user?.role === 'pastor') {
+          asistenciasData = await api.getAllAsistencias() as any[];
+        } else if (user?.role === 'lider' || user?.role === 'colider') {
+          const misCelulas = await api.getCelulas() as any[];
+          for (const c of misCelulas) {
+            const data = await api.getAsistencias(c.id) as any[];
+            asistenciasData = [...asistenciasData, ...data];
+          }
+        }
+
+        const asistenciasTransformadas = asistenciasData.map((a: any) => ({
+          ...a,
+          date: new Date(a.date)
+        }));
+        setAsistencias(asistenciasTransformadas);
+      } catch (err) {
+        console.error('Error fetching asistencias:', err);
+      }
+
       // Cargar peticiones pendientes (solo para admin/pastor)
       if (user?.role === 'admin' || user?.role === 'pastor') {
         try {
