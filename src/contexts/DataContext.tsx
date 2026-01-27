@@ -270,6 +270,17 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     }
   };
 
+  // Eliminar líder
+  const deleteLider = async (id: string) => {
+    try {
+      await api.deleteUser(id);
+      await recargarCelulas();
+    } catch (error) {
+      console.error('Error deleting lider:', error);
+      throw error;
+    }
+  };
+
   const updateCelula = async (id: string, updatedData: Partial<Celula>) => {
     try {
       const res = await api.actualizarCelula(id, updatedData) as any;
