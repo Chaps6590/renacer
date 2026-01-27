@@ -238,14 +238,18 @@ const LiderDashboard: React.FC = () => {
   // Ordenar miembros: Líder principal, Colíderes, Miembros, Nuevos
   // Evitamos duplicados si un miembro tiene rol 'colider' o 'lider' pero ya está arriba
   const miembrosOrdenados = miCelula ? [
-    // Líder principal (mostrar email y teléfono si existen)
-    {
-      id: miCelula.liderId,
-      name: miCelula.liderName,
-      rolCelula: 'lider',
-      email: miCelula.lider?.email || '-',
-      phone: miCelula.lider?.phone || '-'
-    },
+    // Líder principal (mostrar email y teléfono si existen, buscar en miembros si no hay datos directos)
+    (() => {
+      // Buscar datos del líder en la lista de miembros si no existen en la celula
+      const miembroLider = miCelula.miembros.find(m => m.id === miCelula.liderId && m.rolCelula === 'lider');
+      return {
+        id: miCelula.liderId,
+        name: miCelula.liderName,
+        rolCelula: 'lider',
+        email: miembroLider?.email || '-',
+        phone: miembroLider?.phone || '-'
+      };
+    })(),
     // Colíderes (Usuarios)
     ...miCelula.coLideres.map(colider => ({
       ...colider,
@@ -563,12 +567,12 @@ const LiderDashboard: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          {miembro.phone || '-'}
+                          {'phone' in miembro ? (miembro.phone || '-') : '-'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          {miembro.email || '-'}
+                          {'email' in miembro ? (miembro.email || '-') : '-'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
