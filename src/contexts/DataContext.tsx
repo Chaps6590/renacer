@@ -51,11 +51,11 @@ interface DataContextType {
   getPendientesAsistencia: (liderId: string) => PendienteAsistencia[];
 }
 
-  // Eliminar líder
+
+  // Eliminar líder (debe ir después de recargarCelulas)
   const deleteLider = async (id: string) => {
     try {
       await api.deleteUser(id);
-      // Refrescar datos
       await recargarCelulas();
     } catch (error) {
       console.error('Error deleting lider:', error);
@@ -66,20 +66,10 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const useData = () => {
-  // Siempre obtener el usuario actualizado desde localStorage para evitar datos desactualizados
   const context = useContext(DataContext);
   if (!context) {
     throw new Error('useData debe ser usado dentro de un DataProvider');
   }
-  // Refrescar datos de usuario si hay cambios en localStorage
-  React.useEffect(() => {
-    const handleStorage = () => {
-      // Forzar re-render si cambia el usuario
-      context.recargarCelulas();
-    };
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, []);
   return context;
 };
 
