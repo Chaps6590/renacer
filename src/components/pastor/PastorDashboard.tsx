@@ -15,29 +15,31 @@ import autoTable from 'jspdf-autotable';
 interface Lider extends User {
   celulaAsignada?: string;
   nombreCelula?: string;
-// ...existing code...
+}
 
+export const PastorDashboard: React.FC = () => {
   const { celulas, asistencias, noticias, materiales, configuracionDonaciones, recargarCelulas, peticionesPastor, deleteCelula } = useData();
-    // Estado para eliminar célula
-    const [celulaAEliminar, setCelulaAEliminar] = useState<string | null>(null);
-    const [showDeleteCelula, setShowDeleteCelula] = useState(false);
+  // Estado para eliminar célula
+  const [celulaAEliminar, setCelulaAEliminar] = useState<string | null>(null);
+  const [showDeleteCelula, setShowDeleteCelula] = useState(false);
 
-    const handleDeleteCelula = (id: string) => {
-      setCelulaAEliminar(id);
-      setShowDeleteCelula(true);
-    };
+  const handleDeleteCelula = (id: string) => {
+    setCelulaAEliminar(id);
+    setShowDeleteCelula(true);
+  };
 
-    const confirmDeleteCelula = async () => {
-      if (!celulaAEliminar) return;
-      try {
-        await deleteCelula(celulaAEliminar);
-        setShowDeleteCelula(false);
-        setCelulaAEliminar(null);
-        alert('Célula eliminada exitosamente');
-      } catch (error: any) {
-        alert(error.message || 'Error al eliminar la célula');
-      }
-    };
+  const confirmDeleteCelula = async () => {
+    if (!celulaAEliminar) return;
+    try {
+      await deleteCelula(celulaAEliminar);
+      setShowDeleteCelula(false);
+      setCelulaAEliminar(null);
+      alert('Célula eliminada exitosamente');
+    } catch (error: any) {
+      alert(error.message || 'Error al eliminar la célula');
+    }
+  };
+// ...resto del componente...
   const [view, setView] = useState<'dashboard' | 'lideres' | 'celulas' | 'recursos' | 'cumpleanos'>('dashboard');
 
   // Estados para modales de recursos
