@@ -51,10 +51,20 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const useData = () => {
+  // Siempre obtener el usuario actualizado desde localStorage para evitar datos desactualizados
   const context = useContext(DataContext);
   if (!context) {
     throw new Error('useData debe ser usado dentro de un DataProvider');
   }
+  // Refrescar datos de usuario si hay cambios en localStorage
+  React.useEffect(() => {
+    const handleStorage = () => {
+      // Forzar re-render si cambia el usuario
+      context.recargarCelulas();
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
   return context;
 };
 
@@ -241,8 +251,24 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const recargarCelulas = async () => {
     try {
       if (user?.role === 'admin' || user?.role === 'pastor') {
-        const data = await api.getCelulas() as Celula[];
-        setCelulas(data);
+        const celulasData = await api.getCelulas() as any[];
+        // Transformar datos igual que en loadInitialData
+        const celulasTransformadas = celulasData.map((c: any) => ({
+          id: c.id,
+          name: c.nombre,
+          liderId: c.liderId,
+          liderName: c.lider?.name || '',
+          diaSemana: c.dia,
+          horario: c.horario,
+          coLideres: c.coLideres || [],
+          miembros: (c.miembros || []).map((m: any) => ({
+            ...m,
+            name: m.nombre,
+            phone: m.telefono
+          })),
+          createdAt: new Date(c.createdAt)
+        }));
+        setCelulas(celulasTransformadas);
       }
     } catch (error) {
       console.error('Error refreshing celulas:', error);

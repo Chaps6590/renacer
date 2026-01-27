@@ -31,20 +31,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Verificar si hay una sesión guardada completa
-    const savedUser = localStorage.getItem('user');
-    const savedToken = localStorage.getItem('token');
-
-    if (savedUser && savedToken) {
-      setUser(JSON.parse(savedUser));
-    } else if (savedUser || savedToken) {
-      // Si solo hay uno de los dos, la sesión está corrupta
-      console.warn('[AuthContext] Incomplete session found, clearing...');
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-      setUser(null);
-    }
-
-    setIsLoading(false);
+    const refreshUser = () => {
+      const savedUser = localStorage.getItem('user');
+      const savedToken = localStorage.getItem('token');
+      if (savedUser && savedToken) {
+        setUser(JSON.parse(savedUser));
+      } else if (savedUser || savedToken) {
+        // Si solo hay uno de los dos, la sesión está corrupta
+        console.warn('[AuthContext] Incomplete session found, clearing...');
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        setUser(null);
+      }
+      setIsLoading(false);
+    };
+    refreshUser();
+    window.addEventListener('storage', refreshUser);
+    return () => window.removeEventListener('storage', refreshUser);
   }, []);
 
   const login = async (email: string, password: string) => {
