@@ -24,7 +24,7 @@ export const Register: React.FC = () => {
     setLoading(true);
     try {
       // Buscar líderes precargados desde la API (ajusta la ruta según tu backend)
-      const lideres = await api.getUsers();
+      const lideres = await api.getUsers() as any[];
       const lideresNoRegistrados = lideres.filter((l: any) => l.role === 'LIDER' && !l.isRegistered);
       const lider = lideresNoRegistrados.find((l: any) => l.name.toLowerCase().includes(searchName.toLowerCase()));
       if (lider) {
