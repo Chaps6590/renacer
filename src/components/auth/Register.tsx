@@ -2,11 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Church, Search } from 'lucide-react';
-
-
-
-
-import axios from 'axios';
+import { api } from '../../services/api';
 
 export const Register: React.FC = () => {
   const [step, setStep] = useState<'search' | 'validate' | 'form'>('search');
@@ -28,9 +24,9 @@ export const Register: React.FC = () => {
     setLoading(true);
     try {
       // Buscar líderes precargados desde la API (ajusta la ruta según tu backend)
-      const res = await axios.get('/api/users?role=lider&isRegistered=false');
-      const lideres = res.data;
-      const lider = lideres.find((l: any) => l.name.toLowerCase().includes(searchName.toLowerCase()));
+      const lideres = await api.getUsers();
+      const lideresNoRegistrados = lideres.filter((l: any) => l.role === 'LIDER' && !l.isRegistered);
+      const lider = lideresNoRegistrados.find((l: any) => l.name.toLowerCase().includes(searchName.toLowerCase()));
       if (lider) {
         setFoundLider({ id: lider.id, name: lider.name });
         setStep('validate');
