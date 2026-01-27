@@ -110,7 +110,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           createdAt: new Date(c.createdAt)
         }));
         setCelulas(celulasTransformadas);
-      } else if (user?.role === 'lider' || user?.role === 'colider') {
+      } else if (user?.role === 'lider' || user?.role === 'colider' || user?.role === 'timoteo') {
         const miCelula = await api.getMiCelula() as any;
         if (miCelula) {
           const celulaTransformada = {
