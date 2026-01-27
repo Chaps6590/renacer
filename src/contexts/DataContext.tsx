@@ -230,6 +230,8 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       const res = await api.crearCelula(celula) as any;
       const nuevaCelula = res.celula || res;
       setCelulas([...celulas, nuevaCelula]);
+      // Sincronizar datos con el backend
+      await recargarCelulas();
     } catch (error) {
       console.error('Error adding celula:', error);
       throw error;
@@ -283,6 +285,8 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         }
         return c;
       }));
+      // Sincronizar datos con el backend
+      await recargarCelulas();
     } catch (error) {
       console.error('Error adding miembro:', error);
       throw error;
