@@ -52,16 +52,6 @@ interface DataContextType {
 }
 
 
-  // Eliminar líder (debe ir después de recargarCelulas)
-  const deleteLider = async (id: string) => {
-    try {
-      await api.deleteUser(id);
-      await recargarCelulas();
-    } catch (error) {
-      console.error('Error deleting lider:', error);
-      throw error;
-    }
-  };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
