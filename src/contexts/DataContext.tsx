@@ -254,6 +254,8 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       const res = await api.actualizarCelula(id, updatedData) as any;
       const celulaActualizada = res.celula || res;
       setCelulas(celulas.map(c => c.id === id ? celulaActualizada : c));
+      // Sincronizar datos con el backend
+      await recargarCelulas();
     } catch (error) {
       console.error('Error updating celula:', error);
       throw error;
@@ -264,6 +266,8 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     try {
       await api.eliminarCelula(id);
       setCelulas(celulas.filter(c => c.id !== id));
+      // Sincronizar datos con el backend
+      await recargarCelulas();
     } catch (error) {
       console.error('Error deleting celula:', error);
       throw error;
