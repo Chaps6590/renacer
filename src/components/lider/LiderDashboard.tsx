@@ -238,11 +238,13 @@ const LiderDashboard: React.FC = () => {
   // Ordenar miembros: Líder principal, Colíderes, Miembros, Nuevos
   // Evitamos duplicados si un miembro tiene rol 'colider' o 'lider' pero ya está arriba
   const miembrosOrdenados = miCelula ? [
-    // Líder principal
+    // Líder principal (mostrar email y teléfono si existen)
     {
       id: miCelula.liderId,
       name: miCelula.liderName,
-      rolCelula: 'lider'
+      rolCelula: 'lider',
+      email: miCelula.lider?.email || '-',
+      phone: miCelula.lider?.phone || '-'
     },
     // Colíderes (Usuarios)
     ...miCelula.coLideres.map(colider => ({
@@ -561,12 +563,12 @@ const LiderDashboard: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          {'phone' in miembro ? (miembro.phone || '-') : '-'}
+                          {miembro.phone || '-'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          {'email' in miembro ? (miembro.email || '-') : '-'}
+                          {miembro.email || '-'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -619,14 +621,25 @@ const LiderDashboard: React.FC = () => {
 
                           {/* Columna Eliminar */}
                           <td className="px-6 py-4 whitespace-nowrap text-center">
-                            <button
-                              onClick={() => handleDeleteMiembro(miembro)}
-                              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition duration-200"
-                              title="Eliminar Miembro"
-                            >
-                              <Trash2 className="w-3 h-3 mr-1" />
-                              Eliminar
-                            </button>
+                            {miembro.rolCelula === 'lider' ? (
+                              <button
+                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed"
+                                title="No puedes eliminar al líder principal"
+                                disabled
+                              >
+                                <Trash2 className="w-3 h-3 mr-1" />
+                                Eliminar
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleDeleteMiembro(miembro)}
+                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition duration-200"
+                                title="Eliminar Miembro"
+                              >
+                                <Trash2 className="w-3 h-3 mr-1" />
+                                Eliminar
+                              </button>
+                            )}
                           </td>
                         </>
                       )}
