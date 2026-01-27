@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useData } from '../../contexts/DataContext';
-import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, FileText, Newspaper, Heart, AlertCircle, Gift } from 'lucide-react';
+import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, Trash2, FileText, Newspaper, Heart, AlertCircle, Gift } from 'lucide-react';
 import { Navbar } from '../layout/Navbar';
 import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
@@ -17,8 +17,27 @@ interface Lider extends User {
   nombreCelula?: string;
 }
 
-export const PastorDashboard: React.FC = () => {
-  const { celulas, asistencias, noticias, materiales, configuracionDonaciones, recargarCelulas, peticionesPastor } = useData();
+  const { celulas, asistencias, noticias, materiales, configuracionDonaciones, recargarCelulas, peticionesPastor, deleteCelula } = useData();
+    // Estado para eliminar célula
+    const [celulaAEliminar, setCelulaAEliminar] = useState<string | null>(null);
+    const [showDeleteCelula, setShowDeleteCelula] = useState(false);
+
+    const handleDeleteCelula = (id: string) => {
+      setCelulaAEliminar(id);
+      setShowDeleteCelula(true);
+    };
+
+    const confirmDeleteCelula = async () => {
+      if (!celulaAEliminar) return;
+      try {
+        await deleteCelula(celulaAEliminar);
+        setShowDeleteCelula(false);
+        setCelulaAEliminar(null);
+        alert('Célula eliminada exitosamente');
+      } catch (error: any) {
+        alert(error.message || 'Error al eliminar la célula');
+      }
+    };
   const [view, setView] = useState<'dashboard' | 'lideres' | 'celulas' | 'recursos' | 'cumpleanos'>('dashboard');
 
   // Estados para modales de recursos
@@ -657,12 +676,22 @@ export const PastorDashboard: React.FC = () => {
                         {celula.diaSemana} - {celula.horario}
                       </p>
                     </div>
-                    <button
-                      onClick={() => openEditCelula(celula)}
-                      className="text-blue-500 hover:text-blue-700 bg-blue-50 p-2 rounded-full hover:bg-blue-100 transition-colors"
-                    >
-                      <Edit2 className="w-5 h-5" />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => openEditCelula(celula)}
+                        className="text-blue-500 hover:text-blue-700 bg-blue-50 p-2 rounded-full hover:bg-blue-100 transition-colors"
+                        title="Editar célula"
+                      >
+                        <Edit2 className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCelula(celula.id)}
+                        className="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-full hover:bg-red-100 transition-colors"
+                        title="Eliminar célula"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="space-y-2 text-sm">
@@ -687,6 +716,34 @@ export const PastorDashboard: React.FC = () => {
                   </div>
                 </div>
               ))}
+                  {/* Modal de confirmación para eliminar célula */}
+                  {showDeleteCelula && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                      <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="text-xl font-bold">Eliminar Célula</h3>
+                          <button onClick={() => setShowDeleteCelula(false)} className="text-gray-400 hover:text-gray-600">
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                        <p className="mb-6 text-gray-700">¿Estás seguro de que deseas eliminar esta célula? Esta acción no se puede deshacer.</p>
+                        <div className="flex gap-4 mt-6">
+                          <button
+                            onClick={confirmDeleteCelula}
+                            className="btn btn-danger flex-1"
+                          >
+                            Eliminar
+                          </button>
+                          <button
+                            onClick={() => setShowDeleteCelula(false)}
+                            className="btn btn-secondary flex-1"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
             </div>
           </>
         )}
