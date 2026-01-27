@@ -43,10 +43,24 @@ interface DataContextType {
   // Funciones de donaciones
   actualizarConfiguracionDonaciones: (config: Partial<ConfiguracionDonaciones>) => Promise<void>;
 
+  // Funciones de líderes
+  deleteLider: (id: string) => Promise<void>;
+
   // Utilidades
   getCelulaById: (id: string) => Celula | undefined;
   getPendientesAsistencia: (liderId: string) => PendienteAsistencia[];
 }
+  // Eliminar líder
+  const deleteLider = async (id: string) => {
+    try {
+      await api.deleteUser(id);
+      // Refrescar datos
+      await recargarCelulas();
+    } catch (error) {
+      console.error('Error deleting lider:', error);
+      throw error;
+    }
+  };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
@@ -685,6 +699,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     subirMaterial,
     eliminarMaterial,
     actualizarConfiguracionDonaciones,
+    deleteLider,
     getCelulaById,
     getPendientesAsistencia,
     getHistorialAsistencias,

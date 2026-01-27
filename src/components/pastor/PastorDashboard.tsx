@@ -18,7 +18,28 @@ interface Lider extends User {
 }
 
 export const PastorDashboard: React.FC = () => {
-  const { celulas, asistencias, noticias, materiales, configuracionDonaciones, recargarCelulas, peticionesPastor, deleteCelula } = useData();
+  const { celulas, asistencias, noticias, materiales, configuracionDonaciones, recargarCelulas, peticionesPastor, deleteCelula, deleteLider } = useData();
+    // Estado para eliminar líder
+    const [liderAEliminar, setLiderAEliminar] = useState<string | null>(null);
+    const [showDeleteLider, setShowDeleteLider] = useState(false);
+
+    const handleDeleteLider = (id: string) => {
+      setLiderAEliminar(id);
+      setShowDeleteLider(true);
+    };
+
+    const confirmDeleteLider = async () => {
+      if (!liderAEliminar) return;
+      try {
+        await deleteLider(liderAEliminar);
+        setShowDeleteLider(false);
+        setLiderAEliminar(null);
+        alert('Líder eliminado exitosamente');
+        await enrichLideresWithCelulas();
+      } catch (error: any) {
+        alert(error.message || 'Error al eliminar el líder');
+      }
+    };
   // Estado para eliminar célula
   const [celulaAEliminar, setCelulaAEliminar] = useState<string | null>(null);
   const [showDeleteCelula, setShowDeleteCelula] = useState(false);
@@ -632,14 +653,50 @@ export const PastorDashboard: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <code className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-700">Renacer</code>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex gap-2 justify-end">
                           <button
                             onClick={() => openEditLider(lider)}
                             className="text-blue-600 hover:text-blue-900"
+                            title="Editar líder"
                           >
                             <Edit2 className="w-5 h-5" />
                           </button>
+                          <button
+                            onClick={() => handleDeleteLider(lider.id)}
+                            className="text-red-600 hover:text-red-900"
+                            title="Eliminar líder"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
                         </td>
+                              {/* Modal de confirmación para eliminar líder */}
+                              {showDeleteLider && (
+                                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                                  <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                                    <div className="flex justify-between items-center mb-4">
+                                      <h3 className="text-xl font-bold">Eliminar Líder</h3>
+                                      <button onClick={() => setShowDeleteLider(false)} className="text-gray-400 hover:text-gray-600">
+                                        <X className="w-5 h-5" />
+                                      </button>
+                                    </div>
+                                    <p className="mb-6 text-gray-700">¿Estás seguro de que deseas eliminar este líder? Esta acción no se puede deshacer.</p>
+                                    <div className="flex gap-4 mt-6">
+                                      <button
+                                        onClick={confirmDeleteLider}
+                                        className="btn btn-danger flex-1"
+                                      >
+                                        Eliminar
+                                      </button>
+                                      <button
+                                        onClick={() => setShowDeleteLider(false)}
+                                        className="btn btn-secondary flex-1"
+                                      >
+                                        Cancelar
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                       </tr>
                     ))}
                   </tbody>
