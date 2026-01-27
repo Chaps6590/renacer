@@ -669,34 +669,6 @@ export const PastorDashboard: React.FC = () => {
                             <Trash2 className="w-5 h-5" />
                           </button>
                         </td>
-                              {/* Modal de confirmación para eliminar líder (fuera de la tabla) */}
-                              {showDeleteLider && (
-                                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                                  <div className="bg-white rounded-lg p-6 max-w-md w-full">
-                                    <div className="flex justify-between items-center mb-4">
-                                      <h3 className="text-xl font-bold">Eliminar Líder</h3>
-                                      <button onClick={() => setShowDeleteLider(false)} className="text-gray-400 hover:text-gray-600">
-                                        <X className="w-5 h-5" />
-                                      </button>
-                                    </div>
-                                    <p className="mb-6 text-gray-700">¿Estás seguro de que deseas eliminar este líder? Esta acción no se puede deshacer.</p>
-                                    <div className="flex gap-4 mt-6">
-                                      <button
-                                        onClick={confirmDeleteLider}
-                                        className="btn btn-danger flex-1"
-                                      >
-                                        Eliminar
-                                      </button>
-                                      <button
-                                        onClick={() => setShowDeleteLider(false)}
-                                        className="btn btn-secondary flex-1"
-                                      >
-                                        Cancelar
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
                       </tr>
                     ))}
                   </tbody>
@@ -964,6 +936,35 @@ export const PastorDashboard: React.FC = () => {
                 <p className="text-gray-500">No se encontraron cumpleaños en los próximos 7 días.</p>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Modal de confirmación para eliminar líder */}
+        {showDeleteLider && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">Eliminar Líder</h3>
+                <button onClick={() => setShowDeleteLider(false)} className="text-gray-400 hover:text-gray-600">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <p className="mb-6 text-gray-700">¿Estás seguro de que deseas eliminar este líder? Esta acción no se puede deshacer.</p>
+              <div className="flex gap-4 mt-6">
+                <button
+                  onClick={confirmDeleteLider}
+                  className="btn btn-danger flex-1"
+                >
+                  Eliminar
+                </button>
+                <button
+                  onClick={() => setShowDeleteLider(false)}
+                  className="btn btn-secondary flex-1"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
