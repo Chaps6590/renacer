@@ -46,14 +46,17 @@ class ApiService {
 
       const response = await fetch(url, config);
 
-      if (response.status === 401 || response.status === 403) {
-        console.error(`[ApiService] Auth error (${response.status}) on ${endpoint}. Clearing session...`);
+      if (response.status === 401) {
+        console.error(`[ApiService] Auth error (401) on ${endpoint}. Clearing session...`);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        // Redirigir al login si el error persiste para evitar loops
         if (!endpoint.includes('/auth/login')) {
           window.location.href = '/login';
         }
+      } else if (response.status === 403) {
+        // No autorizado, lanzar error especial pero no desloguear
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'No tienes permisos para realizar esta acción.');
       }
 
       if (!response.ok) {

@@ -378,8 +378,12 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       // Recargar pendientes después de registrar
       const dataPendientes = await api.getPendientesAsistencia() as any[];
       setPendientesAsistencia(dataPendientes);
-    } catch (error) {
-      console.error('Error registering asistencia:', error);
+    } catch (error: any) {
+      if (error.message && error.message.includes('No tienes permisos')) {
+        window.alert(error.message);
+      } else {
+        console.error('Error registering asistencia:', error);
+      }
       throw error;
     }
   };
