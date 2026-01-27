@@ -201,10 +201,11 @@ const LiderDashboard: React.FC = () => {
     n.visible && n.importante && (!n.fechaVencimiento || new Date(n.fechaVencimiento) > new Date())
   ).length;
 
-  // Encontrar la célula donde el usuario es líder o colíder
+  // Encontrar la célula donde el usuario es líder, colíder o timoteo
   const miCelula = celulas.find(c =>
     c.liderId === user?.id ||
-    c.coLideres.some(col => col.id === user?.id)
+    c.coLideres.some(col => col.id === user?.id) ||
+    (user?.role === 'timoteo' && c.miembros.some(m => m.email === user.email && (m.rolCelula?.toLowerCase?.() === 'timoteo' || m.rolCelula === 'TIMOTEO')))
   );
 
   // Verificar si el usuario es el líder principal
