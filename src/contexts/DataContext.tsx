@@ -50,6 +50,7 @@ interface DataContextType {
   getCelulaById: (id: string) => Celula | undefined;
   getPendientesAsistencia: (liderId: string) => PendienteAsistencia[];
 }
+
   // Eliminar líder
   const deleteLider = async (id: string) => {
     try {
