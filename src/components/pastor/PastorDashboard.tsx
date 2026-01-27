@@ -188,7 +188,6 @@ export const PastorDashboard: React.FC = () => {
       setNewCelula({ name: '', liderId: '', diaSemana: '', horario: '', coliderIds: [] });
       setShowAddCelula(false);
       setColiderSearch('');
-
       alert('Célula creada exitosamente');
     } catch (error: any) {
       console.error('Error creando célula:', error);
