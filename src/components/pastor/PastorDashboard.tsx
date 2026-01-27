@@ -15,7 +15,7 @@ import autoTable from 'jspdf-autotable';
 interface Lider extends User {
   celulaAsignada?: string;
   nombreCelula?: string;
-}
+// ...existing code...
 
   const { celulas, asistencias, noticias, materiales, configuracionDonaciones, recargarCelulas, peticionesPastor, deleteCelula } = useData();
     // Estado para eliminar célula
