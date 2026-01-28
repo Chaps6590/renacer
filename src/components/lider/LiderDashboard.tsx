@@ -248,12 +248,16 @@ const LiderDashboard: React.FC = () => {
       name: miCelula.liderName,
       rolCelula: 'lider',
       email: miCelula.liderEmail || '-',
-      phone: miCelula.liderPhone || '-'
+      phone: miCelula.liderPhone || '-',
+      isBautizado: true, // Los líderes siempre tienen bautismo
+      tieneDiscipulado: true // Los líderes siempre tienen discipulado
     },
     // Colíderes (Usuarios)
     ...miCelula.coLideres.map(colider => ({
       ...colider,
-      rolCelula: 'colider'
+      rolCelula: 'colider',
+      isBautizado: true, // Los colíderes siempre tienen bautismo
+      tieneDiscipulado: true // Los colíderes siempre tienen discipulado
     })),
     // Otros miembros que no sean el líder ni los colíderes arriba
     ...miCelula.miembros.filter(m =>
@@ -653,6 +657,15 @@ const LiderDashboard: React.FC = () => {
                               <button
                                 className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed"
                                 title="No puedes eliminar al líder principal"
+                                disabled
+                              >
+                                <Trash2 className="w-3 h-3 mr-1" />
+                                Eliminar
+                              </button>
+                            ) : miembro.rolCelula === 'colider' ? (
+                              <button
+                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed"
+                                title="Solo admin o pastor pueden eliminar colíderes"
                                 disabled
                               >
                                 <Trash2 className="w-3 h-3 mr-1" />
