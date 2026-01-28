@@ -26,25 +26,63 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
   const [showIosInstructions, setShowIosInstructions] = useState(false);
   const [showInstallMsg, setShowInstallMsg] = useState(false);
   const [deviceType, setDeviceType] = useState('other');
+  const [canInstall, setCanInstall] = useState(false);
 
   useEffect(() => {
-    setDeviceType(getDeviceType());
-    window.addEventListener('beforeinstallprompt', (e: any) => {
+    const dt = getDeviceType();
+    setDeviceType(dt);
+    
+    // Verificar si la app ya está instalada
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      console.log('App ya instalada');
+      return;
+    }
+
+    const handler = (e: any) => {
       e.preventDefault();
+      console.log('beforeinstallprompt capturado');
       setDeferredPrompt(e);
-    });
+      setCanInstall(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+
+    // Para iOS, siempre mostrar la opción
+    if (dt === 'ios') {
+      setCanInstall(true);
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
   }, []);
+
   // Handler para instalar app
-  const handleInstallApp = () => {
-    if (deviceType === 'android' && deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
-    } else if (deviceType === 'ios') {
+  const handleInstallApp = async () => {
+    console.log('Intentando instalar...', { deviceType, deferredPrompt, canInstall });
+    
+    if (deviceType === 'ios') {
       setShowIosInstructions(true);
-    } else if (deviceType === 'desktop' && deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
+      return;
+    }
+
+    if (deferredPrompt) {
+      try {
+        await deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`Install prompt outcome: ${outcome}`);
+        
+        if (outcome === 'accepted') {
+          setMessage({ type: 'success', text: '¡App instalada correctamente!' });
+        }
+        setDeferredPrompt(null);
+        setCanInstall(false);
+      } catch (error) {
+        console.error('Error al instalar:', error);
+        setShowInstallMsg(true);
+      }
     } else {
+      console.log('No hay prompt disponible');
       setShowInstallMsg(true);
     }
   };
@@ -190,9 +228,15 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
             <button
               type="button"
               onClick={handleInstallApp}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl font-semibold shadow hover:from-green-600 hover:to-blue-600 transition"
+              disabled={!canInstall}
+              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold shadow transition ${
+                canInstall
+                  ? 'bg-gradient-to-r from-green-500 to-blue-500 text-white hover:from-green-600 hover:to-blue-600'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
-              <span role="img" aria-label="instalar">📲</span> Instalar aplicación
+              <span role="img" aria-label="instalar">📲</span> 
+              {canInstall ? 'Instalar aplicación' : 'App ya instalada'}
             </button>
           </div>
 
@@ -210,9 +254,12 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
           {/* Mensaje para otros casos */}
           {showInstallMsg && (
             <div className="mb-4 p-4 rounded-lg bg-yellow-50 text-yellow-800 border border-yellow-200">
-              Si tu dispositivo soporta instalación, aparecerá una ventana emergente.<br />
-              Si no ves la opción, intenta desde el navegador Chrome, Edge o Safari.<br />
-              <button className="mt-2 underline text-yellow-700" onClick={() => setShowInstallMsg(false)}>Cerrar</button>
+              <strong>No se puede instalar en este momento:</strong><br />
+              • La app ya podría estar instalada<br />
+              • Usa Chrome, Edge o Samsung Internet en Android<br />
+              • En iOS, usa Safari y el botón de Compartir<br />
+              • Verifica que estés usando HTTPS<br />
+              <button className="mt-2 px-3 py-1 bg-yellow-600 text-white rounded hover:bg-yellow-700" onClick={() => setShowInstallMsg(false)}>Cerrar</button>
             </div>
           )}
 
