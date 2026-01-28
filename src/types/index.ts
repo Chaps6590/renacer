@@ -34,6 +34,7 @@ export interface CoLider {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   addedAt: Date;
 }
 
