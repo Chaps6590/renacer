@@ -94,7 +94,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
         console.log(`✅ Resultado: ${outcome}`);
         
         if (outcome === 'accepted') {
-          setMessage({ type: 'success', text: '¡App instalada! Busca el ícono en tu pantalla.' });
+          setMessage({ type: 'success', text: '¡App instalada! Busca el ícono "Renacer" en tu pantalla de inicio.' });
         } else {
           setMessage({ type: 'error', text: 'Instalación cancelada' });
         }
@@ -107,6 +107,14 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
       console.log('⚠️ No hay prompt disponible');
       setShowInstallMsg(true);
     }
+  };
+
+  // Handler para mostrar cómo desinstalar
+  const handleShowUninstallInstructions = () => {
+    setMessage({ 
+      type: 'error', 
+      text: 'Para desinstalar: Chrome → Menú (⋮) → Información de la app → Desinstalar' 
+    });
   };
 
   // Estado para información personal
@@ -257,13 +265,19 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
             </button>
             
             {/* Indicador de estado para debugging */}
-            {!isStandalone && (
-              <p className="text-xs text-gray-500">
-                {deferredPrompt 
-                  ? '✅ Disponible para instalar' 
-                  : deviceType === 'ios' 
-                    ? 'ℹ️ Usa Safari para instalar'
-                    : '⏳ Esperando disponibilidad...'}
+            {!isStandalone && !deferredPrompt && deviceType !== 'ios' && (
+              <button
+                type="button"
+                onClick={handleShowUninstallInstructions}
+                className="text-xs text-blue-600 underline hover:text-blue-800"
+              >
+                ¿No encuentras la app? Ver cómo desinstalar
+              </button>
+            )}
+            
+            {!isStandalone && deferredPrompt && (
+              <p className="text-xs text-green-600 font-medium">
+                ✅ Lista para instalar
               </p>
             )}
           </div>
@@ -282,12 +296,15 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
           {/* Mensaje para otros casos */}
           {showInstallMsg && (
             <div className="mb-4 p-4 rounded-lg bg-yellow-50 text-yellow-800 border border-yellow-200">
-              <strong>No se puede instalar en este momento:</strong><br />
-              • La app ya podría estar instalada<br />
-              • Usa Chrome, Edge o Samsung Internet en Android<br />
-              • En iOS, usa Safari y el botón de Compartir<br />
-              • Verifica que estés usando HTTPS<br />
-              <button className="mt-2 px-3 py-1 bg-yellow-600 text-white rounded hover:bg-yellow-700" onClick={() => setShowInstallMsg(false)}>Cerrar</button>
+              <strong>La app podría estar ya instalada:</strong><br /><br />
+              <strong>Para buscarla:</strong><br />
+              • Desliza hacia arriba en la pantalla de inicio<br />
+              • Busca "Renacer" en el cajón de apps<br />
+              • O ve a Configuración → Apps → Busca "Renacer"<br /><br />
+              <strong>Para reinstalar:</strong><br />
+              • Chrome → Menú (⋮) → Información de la app → Desinstalar<br />
+              • O escribe en Chrome: <code className="bg-yellow-100 px-1">chrome://apps</code><br />
+              <button className="mt-3 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium" onClick={() => setShowInstallMsg(false)}>Entendido</button>
             </div>
           )}
 
