@@ -576,8 +576,10 @@ const LiderDashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {miembrosOrdenados.map((miembro) => (
-                    <tr key={miembro.id} className="hover:bg-gray-50">
+                  {miembrosOrdenados
+                    .filter((miembro) => miembro.rolCelula?.toLowerCase() !== 'lider' && miembro.rolCelula?.toLowerCase() !== 'colider')
+                    .map((miembro) => (
+                      <tr key={miembro.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="text-sm font-medium text-gray-900">{miembro.name}</div>
