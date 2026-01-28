@@ -1,4 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+// Detecta el tipo de dispositivo
+function getDeviceType() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  if (/android/i.test(ua)) return 'android';
+  if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return 'ios';
+  if (/windows|macintosh|linux/i.test(ua)) return 'desktop';
+  return 'other';
+}
+
 import { X, User, Mail, Lock, Save } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { api } from '../../services/api';
@@ -12,6 +21,32 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState<'info' | 'password'>('info');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showIosInstructions, setShowIosInstructions] = useState(false);
+  const [showInstallMsg, setShowInstallMsg] = useState(false);
+  const [deviceType, setDeviceType] = useState('other');
+
+  useEffect(() => {
+    setDeviceType(getDeviceType());
+    window.addEventListener('beforeinstallprompt', (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    });
+  }, []);
+  // Handler para instalar app
+  const handleInstallApp = () => {
+    if (deviceType === 'android' && deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
+    } else if (deviceType === 'ios') {
+      setShowIosInstructions(true);
+    } else if (deviceType === 'desktop' && deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
+    } else {
+      setShowInstallMsg(true);
+    }
+  };
 
   // Estado para información personal
   const [profileData, setProfileData] = useState({
@@ -146,6 +181,37 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
               }`}
             >
               {message.text}
+            </div>
+          )}
+
+          {/* Botón Instalar Aplicación */}
+          <div className="mb-6 flex justify-center">
+            <button
+              type="button"
+              onClick={handleInstallApp}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl font-semibold shadow hover:from-green-600 hover:to-blue-600 transition"
+            >
+              <span role="img" aria-label="instalar">📲</span> Instalar aplicación
+            </button>
+          </div>
+
+          {/* Mensaje para iOS */}
+          {showIosInstructions && (
+            <div className="mb-4 p-4 rounded-lg bg-blue-50 text-blue-800 border border-blue-200">
+              <b>Para instalar en iPhone/iPad:</b><br />
+              1. Pulsa el botón <b>Compartir</b> en Safari (<span role="img" aria-label="compartir">⬆️</span>)<br />
+              2. Selecciona <b>Agregar a pantalla de inicio</b> (<span role="img" aria-label="home">🏠</span>)<br />
+              3. Confirma la instalación.<br />
+              <button className="mt-2 underline text-blue-600" onClick={() => setShowIosInstructions(false)}>Cerrar</button>
+            </div>
+          )}
+
+          {/* Mensaje para otros casos */}
+          {showInstallMsg && (
+            <div className="mb-4 p-4 rounded-lg bg-yellow-50 text-yellow-800 border border-yellow-200">
+              Si tu dispositivo soporta instalación, aparecerá una ventana emergente.<br />
+              Si no ves la opción, intenta desde el navegador Chrome, Edge o Safari.<br />
+              <button className="mt-2 underline text-yellow-700" onClick={() => setShowInstallMsg(false)}>Cerrar</button>
             </div>
           )}
 
