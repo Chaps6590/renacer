@@ -43,6 +43,7 @@ export interface Miembro {
   phone?: string;
   email?: string;
   fechaNacimiento?: string; // Fecha de nacimiento opcional
+  direccion?: string; // Dirección opcional
   rolCelula: RolCelula;
   addedAt: Date;
   isBautizado: boolean;

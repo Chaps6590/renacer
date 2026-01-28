@@ -16,7 +16,7 @@ import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCi
 interface AddMiembroModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (miembro: { name: string; phone?: string; email?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean }) => void;
+  onAdd: (miembro: { name: string; phone?: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean }) => void;
 }
 
 const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAdd }) => {
@@ -24,6 +24,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
     name: '',
     phone: '',
     email: '',
+    direccion: '',
     isBautizado: false,
     tieneDiscipulado: false,
     fechaNacimiento: '',
@@ -37,12 +38,13 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
         name: formData.name.trim(),
         phone: formData.phone.trim() || undefined,
         email: formData.email.trim() || undefined,
+        direccion: formData.direccion.trim() || undefined,
         isBautizado: formData.isBautizado,
         tieneDiscipulado: formData.tieneDiscipulado,
         fechaNacimiento: formData.fechaNacimiento || undefined,
         isRegistered: formData.isRegistered
       });
-      setFormData({ name: '', phone: '', email: '', isBautizado: false, tieneDiscipulado: false, fechaNacimiento: '', isRegistered: false });
+      setFormData({ name: '', phone: '', email: '', direccion: '', isBautizado: false, tieneDiscipulado: false, fechaNacimiento: '', isRegistered: false });
       onClose();
     }
   };
@@ -109,6 +111,20 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
               placeholder="Ej: juan@email.com"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            />
+          </div>
+
+          {/* Dirección */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Dirección
+            </label>
+            <input
+              type="text"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white text-gray-900 placeholder-gray-500"
+              placeholder="Ej: Calle 123, Ciudad"
+              value={formData.direccion}
+              onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
             />
           </div>
 
@@ -268,13 +284,14 @@ const LiderDashboard: React.FC = () => {
     })
   ].filter(Boolean) : [];
 
-  const handleAddMiembro = (miembroData: { name: string; phone?: string; email?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean }) => {
+  const handleAddMiembro = (miembroData: { name: string; phone?: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean }) => {
     if (miCelula) {
       const nuevoMiembro = {
         id: `member-${Date.now()}`,
         name: miembroData.name,
         phone: miembroData.phone,
         email: miembroData.email,
+        direccion: miembroData.direccion,
         addedAt: new Date(),
         rolCelula: 'nuevo' as const,
         isBautizado: miembroData.isBautizado,
