@@ -28,7 +28,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
     isBautizado: false,
     tieneDiscipulado: false,
     fechaNacimiento: '',
-    isRegistered: false
+    isRegistered: true
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -44,7 +44,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
         fechaNacimiento: formData.fechaNacimiento || undefined,
         isRegistered: formData.isRegistered
       });
-      setFormData({ name: '', phone: '', email: '', direccion: '', isBautizado: false, tieneDiscipulado: false, fechaNacimiento: '', isRegistered: false });
+      setFormData({ name: '', phone: '', email: '', direccion: '', isBautizado: false, tieneDiscipulado: false, fechaNacimiento: '', isRegistered: true });
       onClose();
     }
   };
@@ -155,18 +155,6 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
                 ¿Tiene discipulado?
               </label>
             </div>
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="isRegistered"
-                checked={formData.isRegistered}
-                onChange={(e) => setFormData({ ...formData, isRegistered: e.target.checked })}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-              />
-              <label htmlFor="isRegistered" className="ml-3 text-sm font-medium text-gray-700">
-                ¿Está registrado?
-              </label>
-            </div>
           </div>
 
           {/* Buttons */}
@@ -193,7 +181,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
 const LiderDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { celulas, addMiembroToCelula, removeMiembroFromCelula, updateMiembroRol, getPendientesAsistencia, noticias } = useData();
+  const { celulas, addMiembroToCelula, removeMiembroFromCelula, removeColiderFromCelula, updateMiembroRol, getPendientesAsistencia, noticias } = useData();
   const [showAsistencia, setShowAsistencia] = useState(false);
   const [showAddMiembro, setShowAddMiembro] = useState(false);
   const [showPendientes, setShowPendientes] = useState(false);
@@ -310,11 +298,18 @@ const LiderDashboard: React.FC = () => {
   const confirmDeleteMiembro = async () => {
     if (selectedMiembro && miCelula && isLider) {
       try {
-        await removeMiembroFromCelula(miCelula.id, selectedMiembro.id);
+        // Si es colíder, usar removeColiderFromCelula, si no, usar removeMiembroFromCelula
+        if (selectedMiembro.rolCelula === 'colider') {
+          await removeColiderFromCelula(miCelula.id, selectedMiembro.id);
+        } else {
+          await removeMiembroFromCelula(miCelula.id, selectedMiembro.id);
+        }
         setShowDeleteConfirm(false);
         setSelectedMiembro(null);
       } catch (error: any) {
-        let msg = 'Error al eliminar miembro.';
+        let msg = selectedMiembro.rolCelula === 'colider' 
+          ? 'Error al eliminar colíder.' 
+          : 'Error al eliminar miembro.';
         if (error?.response?.status === 409 && error?.response?.data?.message) {
           msg = error.response.data.message;
         }
