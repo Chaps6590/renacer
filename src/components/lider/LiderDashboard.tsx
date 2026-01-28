@@ -310,12 +310,27 @@ const LiderDashboard: React.FC = () => {
     setShowDeleteConfirm(true);
   };
 
-  const confirmDeleteMiembro = () => {
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const confirmDeleteMiembro = async () => {
     if (selectedMiembro && miCelula && isLider) {
-      removeMiembroFromCelula(miCelula.id, selectedMiembro.id);
+      try {
+        await removeMiembroFromCelula(miCelula.id, selectedMiembro.id);
+        setShowDeleteConfirm(false);
+        setSelectedMiembro(null);
+      } catch (error: any) {
+        let msg = 'Error al eliminar miembro.';
+        if (error?.response?.status === 409 && error?.response?.data?.message) {
+          msg = error.response.data.message;
+        }
+        setDeleteError(msg);
+        setShowDeleteConfirm(false);
+        setSelectedMiembro(null);
+        setTimeout(() => setDeleteError(null), 6000);
+      }
+    } else {
+      setShowDeleteConfirm(false);
+      setSelectedMiembro(null);
     }
-    setShowDeleteConfirm(false);
-    setSelectedMiembro(null);
   };
 
   const handleChangeRole = (miembro: any) => {
@@ -728,6 +743,13 @@ const LiderDashboard: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Cartel de error al eliminar miembro */}
+        {deleteError && (
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-red-600 text-white px-6 py-4 rounded-xl shadow-xl font-semibold text-center animate-fade-in">
+            {deleteError}
           </div>
         )}
 
