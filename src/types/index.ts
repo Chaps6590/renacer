@@ -21,6 +21,8 @@ export interface Celula {
   name: string;
   liderId: string;
   liderName: string;
+  liderEmail?: string;
+  liderPhone?: string;
   diaSemana: string;
   horario: string;
   coLideres: CoLider[];

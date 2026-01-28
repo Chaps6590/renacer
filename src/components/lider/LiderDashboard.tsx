@@ -254,18 +254,14 @@ const LiderDashboard: React.FC = () => {
   // Ordenar miembros: Líder principal, Colíderes, Miembros, Nuevos
   // Evitamos duplicados si un miembro tiene rol 'colider' o 'lider' pero ya está arriba
   const miembrosOrdenados = miCelula ? [
-    // Líder principal (mostrar email y teléfono si existen, buscar en miembros si no hay datos directos)
-    (() => {
-      // Buscar datos del líder en la lista de miembros si no existen en la celula
-      const miembroLider = miCelula.miembros.find(m => m.id === miCelula.liderId && m.rolCelula === 'lider');
-      return {
-        id: miCelula.liderId,
-        name: miCelula.liderName,
-        rolCelula: 'lider',
-        email: miembroLider?.email || '-',
-        phone: miembroLider?.phone || '-'
-      };
-    })(),
+    // Líder principal (usar datos desde miCelula directamente)
+    {
+      id: miCelula.liderId,
+      name: miCelula.liderName,
+      rolCelula: 'lider',
+      email: miCelula.liderEmail || '-',
+      phone: miCelula.liderPhone || '-'
+    },
     // Colíderes (Usuarios)
     ...miCelula.coLideres.map(colider => ({
       ...colider,
