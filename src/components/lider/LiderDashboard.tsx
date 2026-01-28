@@ -577,7 +577,6 @@ const LiderDashboard: React.FC = () => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {miembrosOrdenados
-                    .filter((miembro) => miembro.rolCelula?.toLowerCase() !== 'lider' && miembro.rolCelula?.toLowerCase() !== 'colider')
                     .map((miembro) => (
                       <tr key={miembro.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
