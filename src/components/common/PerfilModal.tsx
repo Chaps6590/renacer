@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 // Detecta el tipo de dispositivo
 function getDeviceType() {
-  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const ua = navigator.userAgent || navigator.vendor;
   if (/android/i.test(ua)) return 'android';
-  if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return 'ios';
+  // iOS detection: userAgent y no window.MSStream
+  if (/iPad|iPhone|iPod/.test(ua)) return 'ios';
   if (/windows|macintosh|linux/i.test(ua)) return 'desktop';
   return 'other';
 }
