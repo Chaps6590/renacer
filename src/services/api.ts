@@ -41,6 +41,9 @@ class ApiService {
     };
 
     try {
+      if (!navigator.onLine) {
+        throw new Error('No tienes conexión a internet. Por favor, verifica tu red.');
+      }
       const url = `${this.baseUrl}${endpoint}`;
       console.log('Making API request to:', url);
 

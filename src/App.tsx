@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import OfflineBanner from './components/common/OfflineBanner';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
@@ -54,15 +55,28 @@ const Unauthorized: React.FC = () => {
 };
 
 function App() {
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   return (
     <Router>
       <AuthProvider>
         <DataProvider>
+          {isOffline && <OfflineBanner />}
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
-            
             <Route
               path="/dashboard"
               element={
@@ -71,7 +85,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            
             <Route
               path="/pastor"
               element={
@@ -80,7 +93,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            
             <Route
               path="/lider"
               element={
@@ -89,7 +101,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
