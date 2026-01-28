@@ -26,31 +26,39 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
   const [showIosInstructions, setShowIosInstructions] = useState(false);
   const [showInstallMsg, setShowInstallMsg] = useState(false);
   const [deviceType, setDeviceType] = useState('other');
-  const [canInstall, setCanInstall] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     const dt = getDeviceType();
     setDeviceType(dt);
     
-    // Verificar si la app ya está instalada
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      console.log('App ya instalada');
-      return;
+    // Verificar si la app ya está instalada (modo standalone)
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || 
+                      (window.navigator as any).standalone === true;
+    setIsStandalone(standalone);
+    
+    if (standalone) {
+      console.log('App corriendo en modo standalone (instalada)');
     }
 
     const handler = (e: any) => {
       e.preventDefault();
-      console.log('beforeinstallprompt capturado');
+      console.log('✅ beforeinstallprompt capturado - puede instalarse');
       setDeferredPrompt(e);
-      setCanInstall(true);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    // Para iOS, siempre mostrar la opción
-    if (dt === 'ios') {
-      setCanInstall(true);
-    }
+    // Log para debugging
+    setTimeout(() => {
+      if (!deferredPrompt && !standalone) {
+        console.log('⚠️ No se capturó beforeinstallprompt. Posibles razones:');
+        console.log('- App ya instalada previamente');
+        console.log('- Navegador no compatible');
+        console.log('- Criterios PWA no cumplidos');
+        console.log('Device type:', dt);
+      }
+    }, 2000);
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
@@ -59,30 +67,44 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
 
   // Handler para instalar app
   const handleInstallApp = async () => {
-    console.log('Intentando instalar...', { deviceType, deferredPrompt, canInstall });
+    console.log('🔵 Botón instalar presionado', { 
+      deviceType, 
+      hayPrompt: !!deferredPrompt,
+      isStandalone 
+    });
     
+    // Si ya está en modo standalone, mostrar mensaje
+    if (isStandalone) {
+      setMessage({ type: 'success', text: '¡La app ya está instalada! La estás usando ahora.' });
+      return;
+    }
+
+    // iOS usa instrucciones manuales
     if (deviceType === 'ios') {
       setShowIosInstructions(true);
       return;
     }
 
+    // Si tenemos el prompt, intentar instalar
     if (deferredPrompt) {
       try {
+        console.log('📲 Mostrando prompt de instalación...');
         await deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-        console.log(`Install prompt outcome: ${outcome}`);
+        console.log(`✅ Resultado: ${outcome}`);
         
         if (outcome === 'accepted') {
-          setMessage({ type: 'success', text: '¡App instalada correctamente!' });
+          setMessage({ type: 'success', text: '¡App instalada! Busca el ícono en tu pantalla.' });
+        } else {
+          setMessage({ type: 'error', text: 'Instalación cancelada' });
         }
         setDeferredPrompt(null);
-        setCanInstall(false);
       } catch (error) {
-        console.error('Error al instalar:', error);
+        console.error('❌ Error al instalar:', error);
         setShowInstallMsg(true);
       }
     } else {
-      console.log('No hay prompt disponible');
+      console.log('⚠️ No hay prompt disponible');
       setShowInstallMsg(true);
     }
   };
@@ -224,20 +246,26 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
           )}
 
           {/* Botón Instalar Aplicación */}
-          <div className="mb-6 flex justify-center">
+          <div className="mb-6 flex flex-col items-center gap-2">
             <button
               type="button"
               onClick={handleInstallApp}
-              disabled={!canInstall}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold shadow transition ${
-                canInstall
-                  ? 'bg-gradient-to-r from-green-500 to-blue-500 text-white hover:from-green-600 hover:to-blue-600'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl font-semibold shadow hover:from-green-600 hover:to-blue-600 transition"
             >
               <span role="img" aria-label="instalar">📲</span> 
-              {canInstall ? 'Instalar aplicación' : 'App ya instalada'}
+              {isStandalone ? 'App ya instalada' : 'Instalar aplicación'}
             </button>
+            
+            {/* Indicador de estado para debugging */}
+            {!isStandalone && (
+              <p className="text-xs text-gray-500">
+                {deferredPrompt 
+                  ? '✅ Disponible para instalar' 
+                  : deviceType === 'ios' 
+                    ? 'ℹ️ Usa Safari para instalar'
+                    : '⏳ Esperando disponibilidad...'}
+              </p>
+            )}
           </div>
 
           {/* Mensaje para iOS */}
