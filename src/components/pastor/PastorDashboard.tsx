@@ -263,17 +263,20 @@ export const PastorDashboard: React.FC = () => {
     const nextWeek = new Date();
     nextWeek.setDate(today.getDate() + 7);
 
+    const parseDate = (dateString?: string) => {
+      if (!dateString) return null;
+      // Soporta 'YYYY-MM-DD' o 'YYYY-MM-DD HH:mm:ss'
+      const [datePart] = dateString.split(' ');
+      const [year, month, day] = datePart.split('-').map(Number);
+      if (!year || !month || !day) return null;
+      return new Date(year, month - 1, day);
+    };
+
     const isBirthdayUpcoming = (dateString?: string) => {
-      if (!dateString) return false;
-      const dob = new Date(dateString);
-
-      // Ajuste simple: Verificar si el día y mes caen en los próximos 7 días
-      // Normalizamos todo a timestamps para comparar rangos de días del año
-
-      // Mejor enfoque: Iterar los próximos 7 días y ver si matchea día y mes
+      const dob = parseDate(dateString);
+      if (!dob) return false;
       for (let i = 0; i <= 7; i++) {
-        const checkDate = new Date();
-        checkDate.setDate(today.getDate() + i);
+        const checkDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
         if (checkDate.getMonth() === dob.getMonth() && checkDate.getDate() === dob.getDate()) {
           return true;
         }
@@ -293,18 +296,14 @@ export const PastorDashboard: React.FC = () => {
 
     // Unir y ordenar por fecha próxima
     const allBirthdays = [...upcomingMembers, ...upcomingLeaders].sort((a, b) => {
-      const dateA = new Date(a.fechaNacimiento!);
-      const dateB = new Date(b.fechaNacimiento!);
-
-      // Obtener fecha de cumpleaños en este año para ordenar
+      const dateA = parseDate(a.fechaNacimiento!);
+      const dateB = parseDate(b.fechaNacimiento!);
+      if (!dateA || !dateB) return 0;
       const currentYear = today.getFullYear();
       const birthdayA = new Date(currentYear, dateA.getMonth(), dateA.getDate());
       const birthdayB = new Date(currentYear, dateB.getMonth(), dateB.getDate());
-
-      // Si ya pasó este año (ej: ayer), asumimos que es el próximo año (aunque filtro de 7 días elimina esto, pero por robustez)
       if (birthdayA < new Date(today.setHours(0, 0, 0, 0))) birthdayA.setFullYear(currentYear + 1);
       if (birthdayB < new Date(today.setHours(0, 0, 0, 0))) birthdayB.setFullYear(currentYear + 1);
-
       return birthdayA.getTime() - birthdayB.getTime();
     });
 
@@ -915,7 +914,13 @@ export const PastorDashboard: React.FC = () => {
             {birthdays.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {birthdays.map((person: any) => {
-                  const dob = new Date(person.fechaNacimiento);
+                  const dob = (() => {
+                    // Soporta 'YYYY-MM-DD' o 'YYYY-MM-DD HH:mm:ss'
+                    if (!person.fechaNacimiento) return new Date('');
+                    const [datePart] = person.fechaNacimiento.split(' ');
+                    const [year, month, day] = datePart.split('-').map(Number);
+                    return new Date(year, month - 1, day);
+                  })();
                   const today = new Date();
                   const isToday = dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
 

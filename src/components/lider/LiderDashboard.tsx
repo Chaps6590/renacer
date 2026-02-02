@@ -511,25 +511,32 @@ const LiderDashboard: React.FC = () => {
                 // Contador de cumpleaños del día en la célula
                 const today = new Date();
                 let cumpleanosHoy = 0;
+                const parseDate = (dateString?: string) => {
+                  if (!dateString) return null;
+                  const [datePart] = dateString.split(' ');
+                  const [year, month, day] = datePart.split('-').map(Number);
+                  if (!year || !month || !day) return null;
+                  return new Date(year, month - 1, day);
+                };
                 if (miCelula) {
                   // Miembros
                   cumpleanosHoy += miCelula.miembros.filter(m => {
-                    if (!m.fechaNacimiento) return false;
-                    const dob = new Date(m.fechaNacimiento);
+                    const dob = parseDate(m.fechaNacimiento);
+                    if (!dob) return false;
                     return dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
                   }).length;
                   // Colíderes
                   if (miCelula.coLideres) {
                     cumpleanosHoy += miCelula.coLideres.filter(c => {
-                      if (!c.fechaNacimiento) return false;
-                      const dob = new Date(c.fechaNacimiento);
+                      const dob = parseDate(c.fechaNacimiento);
+                      if (!dob) return false;
                       return dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
                     }).length;
                   }
                   // Líder
                   if (miCelula.liderFechaNacimiento) {
-                    const dob = new Date(miCelula.liderFechaNacimiento);
-                    if (dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth()) {
+                    const dob = parseDate(miCelula.liderFechaNacimiento);
+                    if (dob && dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth()) {
                       cumpleanosHoy += 1;
                     }
                   }
