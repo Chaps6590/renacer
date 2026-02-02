@@ -79,7 +79,9 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
                         if (!m.fechaNacimiento) return 'Sin fecha';
                         let d;
                         try {
-                          d = new Date(m.fechaNacimiento + 'T00:00:00Z');
+                          // Extraer solo la parte de fecha (YYYY-MM-DD)
+                          const dateStr = m.fechaNacimiento.split(' ')[0].split('T')[0];
+                          d = new Date(dateStr + 'T00:00:00Z');
                           if (isNaN(d.getTime())) throw new Error('Invalid date');
                         } catch {
                           return 'Sin fecha';
