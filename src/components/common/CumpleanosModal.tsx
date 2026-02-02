@@ -1,8 +1,6 @@
 import React from 'react';
 import { useData } from '../../contexts/DataContext';
 import { Gift } from 'lucide-react';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 
 interface CumpleanosModalProps {
   isOpen: boolean;
@@ -77,19 +75,16 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
                     <div className="text-sm text-gray-500">
                       {(() => {
                         if (!m.fechaNacimiento) return 'Sin fecha';
-                        let d;
                         try {
                           // Extraer solo la parte de fecha (YYYY-MM-DD)
                           const dateStr = m.fechaNacimiento.split(' ')[0].split('T')[0];
-                          // Parse as local date to avoid timezone subtraction
                           const [year, month, day] = dateStr.split('-').map(Number);
-                          d = new Date(year, month - 1, day);
-                          if (isNaN(d.getTime())) throw new Error('Invalid date');
+                          if (!year || !month || !day) throw new Error('Invalid date');
+                          const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+                          return `${day} ${meses[month - 1]}`;
                         } catch {
                           return 'Sin fecha';
                         }
-                          const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-                          return `${day} ${meses[month - 1]}`;
                       })()}
                     </div>
                   </div>
