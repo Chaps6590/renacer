@@ -68,7 +68,7 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
                   <div className="flex-1">
                     <div className="font-bold text-gray-800">{m.name}</div>
                     <div className="text-sm text-gray-500">
-                      {m.fechaNacimiento ? format(new Date(m.fechaNacimiento), 'd MMMM', { locale: es }) : 'Sin fecha'}
+                      {m.fechaNacimiento ? format(new Date(m.fechaNacimiento + 'T00:00:00Z'), 'd MMMM', { locale: es }) : 'Sin fecha'}
                     </div>
                   </div>
                 </li>
