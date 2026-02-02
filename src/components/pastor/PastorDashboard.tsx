@@ -265,10 +265,11 @@ export const PastorDashboard: React.FC = () => {
 
     const getDayMonth = (dateString?: string) => {
       if (!dateString) return null;
-      const [datePart] = dateString.split(' ');
-      const parts = datePart.split('-').map(Number);
-      if (parts.length < 3) return null;
-      const result = { day: parts[2], month: parts[1] };
+      // Soporta 'YYYY-MM-DD', 'YYYY-MM-DD HH:mm:ss', 'YYYY-MM-DDTHH:mm:ss.sssZ'
+      const clean = dateString.slice(0, 10); // Solo la parte de fecha
+      const [year, month, day] = clean.split('-').map(Number);
+      if (!year || !month || !day) return null;
+      const result = { day, month };
       console.log('Cumpleaños parseado:', dateString, result);
       return result;
     };
