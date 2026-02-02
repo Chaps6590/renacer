@@ -88,7 +88,8 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
                         } catch {
                           return 'Sin fecha';
                         }
-                        return format(d, 'd MMMM', { locale: es });
+                          const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+                          return `${day} ${meses[month - 1]}`;
                       })()}
                     </div>
                   </div>
