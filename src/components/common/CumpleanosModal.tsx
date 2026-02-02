@@ -17,11 +17,18 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
   // Obtener todos los miembros de todas las células
   const miembros = celulas.flatMap(c => c.miembros || []);
   // Filtrar los que tienen fechaNacimiento
-  const cumpleanieros = miembros.filter(m => m.fechaNacimiento);
+  const cumpleanieros = miembros.filter(m => {
+    if (!m.fechaNacimiento) return false;
+    const d = new Date(m.fechaNacimiento);
+    return !isNaN(d.getTime());
+  });
   // Ordenar por mes y día
   cumpleanieros.sort((a, b) => {
     const da = a.fechaNacimiento ? new Date(a.fechaNacimiento) : new Date(0);
     const db = b.fechaNacimiento ? new Date(b.fechaNacimiento) : new Date(0);
+    if (isNaN(da.getTime()) && isNaN(db.getTime())) return 0;
+    if (isNaN(da.getTime())) return 1;
+    if (isNaN(db.getTime())) return -1;
     return da.getMonth() !== db.getMonth()
       ? da.getMonth() - db.getMonth()
       : da.getDate() - db.getDate();
@@ -68,7 +75,9 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
                   <div className="flex-1">
                     <div className="font-bold text-gray-800">{m.name}</div>
                     <div className="text-sm text-gray-500">
-                      {m.fechaNacimiento ? format(new Date(m.fechaNacimiento + 'T00:00:00Z'), 'd MMMM', { locale: es }) : 'Sin fecha'}
+                      {m.fechaNacimiento && !isNaN(new Date(m.fechaNacimiento).getTime())
+                        ? format(new Date(m.fechaNacimiento + 'T00:00:00Z'), 'd MMMM', { locale: es })
+                        : 'Sin fecha'}
                     </div>
                   </div>
                 </li>
