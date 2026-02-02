@@ -507,20 +507,55 @@ const LiderDashboard: React.FC = () => {
                 </div>
               </button>
 
-              <button
-                onClick={() => setShowCumpleanos(true)}
-                className="group p-4 bg-gradient-to-br from-pink-50 to-yellow-50 border-2 border-pink-200 rounded-lg hover:from-pink-100 hover:to-yellow-100 hover:border-pink-300 transition-all duration-200"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="bg-pink-400 p-2 rounded-lg group-hover:scale-110 transition-transform">
-                    <Calendar className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <div className="font-semibold text-pink-900">Cumpleaños</div>
-                    <div className="text-sm text-pink-700">Próximos cumpleaños</div>
-                  </div>
-                </div>
-              </button>
+              {(() => {
+                // Contador de cumpleaños del día en la célula
+                const today = new Date();
+                let cumpleanosHoy = 0;
+                if (miCelula) {
+                  // Miembros
+                  cumpleanosHoy += miCelula.miembros.filter(m => {
+                    if (!m.fechaNacimiento) return false;
+                    const dob = new Date(m.fechaNacimiento);
+                    return dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
+                  }).length;
+                  // Colíderes
+                  if (miCelula.coLideres) {
+                    cumpleanosHoy += miCelula.coLideres.filter(c => {
+                      if (!c.fechaNacimiento) return false;
+                      const dob = new Date(c.fechaNacimiento);
+                      return dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
+                    }).length;
+                  }
+                  // Líder
+                  if (miCelula.liderFechaNacimiento) {
+                    const dob = new Date(miCelula.liderFechaNacimiento);
+                    if (dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth()) {
+                      cumpleanosHoy += 1;
+                    }
+                  }
+                }
+                return (
+                  <button
+                    onClick={() => setShowCumpleanos(true)}
+                    className="group p-4 bg-gradient-to-br from-pink-50 to-yellow-50 border-2 border-pink-200 rounded-lg hover:from-pink-100 hover:to-yellow-100 hover:border-pink-300 transition-all duration-200"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="bg-pink-400 p-2 rounded-lg group-hover:scale-110 transition-transform">
+                        <Calendar className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <div className="font-semibold text-pink-900 flex items-center gap-2">
+                          Cumpleaños
+                          {cumpleanosHoy > 0 && (
+                            <span className="ml-1 bg-white text-pink-600 rounded-full px-2 py-0.5 text-base font-bold shadow">{cumpleanosHoy}</span>
+                          )}
+                        </div>
+                        <div className="text-sm text-pink-700">Próximos cumpleaños</div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })()}
             </div>
           </div>
         </div>

@@ -439,51 +439,67 @@ export const PastorDashboard: React.FC = () => {
         </div>
 
         {/* Vista Dashboard */}
+        {/* Vista Dashboard */}
         {view === 'dashboard' && (
           <>
             {/* Estadísticas Generales */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="card bg-gradient-to-br from-primary-500 to-primary-600 text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-primary-100 text-sm mb-1">Total Células</p>
-                    <p className="text-4xl font-bold">{celulas.length}</p>
+            {(() => {
+              // Contador de cumpleaños del día
+              const today = new Date();
+              const birthdaysToday = birthdays.filter(b => {
+                if (!b.fechaNacimiento) return false;
+                const dob = new Date(b.fechaNacimiento);
+                return dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
+              }).length;
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                  <div className="card bg-gradient-to-br from-primary-500 to-primary-600 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-primary-100 text-sm mb-1">Total Células</p>
+                        <p className="text-4xl font-bold">{celulas.length}</p>
+                      </div>
+                      <Users className="w-12 h-12 text-primary-200" />
+                    </div>
                   </div>
-                  <Users className="w-12 h-12 text-primary-200" />
-                </div>
-              </div>
 
-              <div className="card bg-gradient-to-br from-green-500 to-green-600 text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-green-100 text-sm mb-1">Total Miembros</p>
-                    <p className="text-4xl font-bold">{totalMiembros}</p>
+                  <div className="card bg-gradient-to-br from-green-500 to-green-600 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-green-100 text-sm mb-1">Total Miembros</p>
+                        <p className="text-4xl font-bold">{totalMiembros}</p>
+                      </div>
+                      <UserPlus className="w-12 h-12 text-green-200" />
+                    </div>
                   </div>
-                  <TrendingUp className="w-12 h-12 text-green-200" />
-                </div>
-              </div>
 
-              <div className="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-purple-100 text-sm mb-1">Líderes Activos</p>
-                    <p className="text-4xl font-bold">{lideres.filter(l => l.celulaAsignada).length}</p>
+                  <div className="card bg-gradient-to-br from-yellow-500 to-yellow-600 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-yellow-100 text-sm mb-1">Donaciones</p>
+                        <p className="text-4xl font-bold">${configuracionDonaciones?.aliasIglesia ? '✔' : '—'}</p>
+                      </div>
+                      <Gift className="w-12 h-12 text-yellow-200" />
+                    </div>
                   </div>
-                  <BarChart3 className="w-12 h-12 text-purple-200" />
-                </div>
-              </div>
 
-              <div
-                className="card bg-gradient-to-br from-orange-500 to-red-600 text-white cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => setShowPeticiones(true)}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-orange-100 text-sm mb-1">Peticiones</p>
-                    <p className="text-4xl font-bold">
-                      {peticionesPastor.filter(p => !p.resuelta).length}
-                    </p>
-                    <p className="text-orange-200 text-xs">Atender ahora</p>
+                  <div className="card bg-gradient-to-br from-pink-500 to-pink-600 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-pink-100 text-sm mb-1">Próximo Cumpleaños</p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-4xl">🎂</span>
+                          {birthdaysToday > 0 && (
+                            <span className="ml-1 bg-white text-pink-600 rounded-full px-3 py-1 text-lg font-bold shadow">{birthdaysToday}</span>
+                          )}
+                        </div>
+                      </div>
+                      <Heart className="w-12 h-12 text-pink-200" />
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
                   </div>
                   <AlertCircle className="w-12 h-12 text-orange-200" />
                 </div>
