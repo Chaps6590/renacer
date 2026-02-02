@@ -914,15 +914,15 @@ export const PastorDashboard: React.FC = () => {
             {birthdays.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {birthdays.map((person: any) => {
-                  const dob = (() => {
-                    // Soporta 'YYYY-MM-DD' o 'YYYY-MM-DD HH:mm:ss'
-                    if (!person.fechaNacimiento) return new Date('');
+                  const dobParts = (() => {
+                    if (!person.fechaNacimiento) return null;
                     const [datePart] = person.fechaNacimiento.split(' ');
                     const [year, month, day] = datePart.split('-').map(Number);
-                    return new Date(year, month - 1, day);
+                    if (!year || !month || !day) return null;
+                    return { day, month };
                   })();
                   const today = new Date();
-                  const isToday = dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
+                  const isToday = dobParts && dobParts.day === today.getDate() && dobParts.month === (today.getMonth() + 1);
 
                   return (
                     <div key={person.id} className={`p-4 rounded-lg border ${isToday ? 'bg-pink-50 border-pink-200' : 'bg-white border-gray-200'
@@ -940,10 +940,10 @@ export const PastorDashboard: React.FC = () => {
                         <div className="text-center">
                           <span className={`block text-lg font-bold ${isToday ? 'text-pink-600' : 'text-gray-700'
                             }`}>
-                            {dob.getDate()}
+                            {dobParts ? dobParts.day : ''}
                           </span>
                           <span className="text-xs uppercase text-gray-500">
-                            {dob.toLocaleDateString('es-AR', { month: 'short' })}
+                            {dobParts ? ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][dobParts.month-1] : ''}
                           </span>
                         </div>
                       </div>
