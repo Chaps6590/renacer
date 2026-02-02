@@ -316,10 +316,11 @@ export const PastorDashboard: React.FC = () => {
   const getEstadisticas = () => {
     return celulas.map(celula => {
       const celasAsistencias = asistencias.filter(a => a.celulaId === celula.id);
-      const totalMiembros = celula.miembros.length;
+      // Contar miembros + líder + colíderes
+      const totalMiembros = celula.miembros.length + 1 + (celula.coLideres ? celula.coLideres.length : 0);
 
       const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
-      const promedioAsistencia = celasAsistencias.length > 0
+      const promedioAsistencia = celasAsistencias.length > 0 && totalMiembros > 0
         ? Math.round((totalPresentes / celasAsistencias.length / totalMiembros) * 100)
         : 0;
 

@@ -383,7 +383,7 @@ const LiderDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-primary-100 text-sm mb-1">Total Miembros</p>
-                <p className="text-4xl font-bold">{miCelula.miembros.length}</p>
+                <p className="text-4xl font-bold">{miCelula.miembros.length + 1 + (miCelula.coLideres ? miCelula.coLideres.length : 0)}</p>
               </div>
               <Users className="w-12 h-12 text-primary-200" />
             </div>
