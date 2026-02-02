@@ -524,7 +524,7 @@ const LiderDashboard: React.FC = () => {
                     const dob = parseDate(m.fechaNacimiento);
                     if (!dob) return false;
                     const [datePart] = m.fechaNacimiento ? m.fechaNacimiento.split(' ') : [''];
-                    const [year, month, day] = datePart.split('-').map(Number);
+                    const [, month, day] = datePart.split('-').map(Number);
                     return day === today.getDate() && month === (today.getMonth() + 1);
                   }).length;
                   // Colíderes
@@ -533,14 +533,14 @@ const LiderDashboard: React.FC = () => {
                       const dob = parseDate(c.fechaNacimiento);
                       if (!dob) return false;
                       const [datePart] = c.fechaNacimiento ? c.fechaNacimiento.split(' ') : [''];
-                      const [year, month, day] = datePart.split('-').map(Number);
+                      const [, month, day] = datePart.split('-').map(Number);
                       return day === today.getDate() && month === (today.getMonth() + 1);
                     }).length;
                   }
                   // Líder
                   if (miCelula.liderFechaNacimiento) {
                     const [datePart] = miCelula.liderFechaNacimiento.split(' ');
-                    const [year, month, day] = datePart.split('-').map(Number);
+                    const [, month, day] = datePart.split('-').map(Number);
                     if (day === today.getDate() && month === (today.getMonth() + 1)) {
                       cumpleanosHoy += 1;
                     }
