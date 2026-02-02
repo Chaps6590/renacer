@@ -23,6 +23,7 @@ export interface Celula {
   liderName: string;
   liderEmail?: string;
   liderPhone?: string;
+  liderFechaNacimiento?: string; // Fecha de nacimiento del líder principal
   diaSemana: string;
   horario: string;
   coLideres: CoLider[];
@@ -35,6 +36,7 @@ export interface CoLider {
   name: string;
   email: string;
   phone?: string;
+  fechaNacimiento?: string; // Fecha de nacimiento opcional
   addedAt: Date;
 }
 
