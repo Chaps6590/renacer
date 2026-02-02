@@ -566,6 +566,7 @@ const LiderDashboard: React.FC = () => {
               })()}
             </div>
           </div>
+        </div>
 
         {/* Lista de Miembros */}
         <div className="card">
