@@ -376,7 +376,6 @@ const LiderDashboard: React.FC = () => {
             </span>
           </div>
         </div>
-
         {/* Estadísticas de la Célula */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="card bg-gradient-to-br from-primary-500 to-primary-600 text-white">
