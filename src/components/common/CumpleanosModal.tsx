@@ -75,9 +75,17 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
                   <div className="flex-1">
                     <div className="font-bold text-gray-800">{m.name}</div>
                     <div className="text-sm text-gray-500">
-                      {m.fechaNacimiento && !isNaN(new Date(m.fechaNacimiento).getTime())
-                        ? format(new Date(m.fechaNacimiento + 'T00:00:00Z'), 'd MMMM', { locale: es })
-                        : 'Sin fecha'}
+                      {(() => {
+                        if (!m.fechaNacimiento) return 'Sin fecha';
+                        let d;
+                        try {
+                          d = new Date(m.fechaNacimiento + 'T00:00:00Z');
+                          if (isNaN(d.getTime())) throw new Error('Invalid date');
+                        } catch {
+                          return 'Sin fecha';
+                        }
+                        return format(d, 'd MMMM', { locale: es });
+                      })()}
                     </div>
                   </div>
                 </li>
