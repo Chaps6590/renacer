@@ -543,28 +543,27 @@ const LiderDashboard: React.FC = () => {
                   }
                 }
                 return (
-                  return (
-                    <button
-                      onClick={() => setShowCumpleanos(true)}
-                      className="group p-4 bg-gradient-to-br from-pink-50 to-yellow-50 border-2 border-pink-200 rounded-lg hover:from-pink-100 hover:to-yellow-100 hover:border-pink-300 transition-all duration-200"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="bg-pink-500 p-2 rounded-lg group-hover:scale-110 transition-transform">
-                          <Calendar className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-semibold text-pink-900">Cumpleaños</div>
-                          <div className="text-sm text-pink-700">Ver próximos</div>
-                        </div>
-                        {/* Notificación si hay cumpleaños hoy */}
-                        {cumpleanosHoy > 0 && (
-                          <span className="ml-auto bg-pink-500 text-white rounded-full px-3 py-1 text-lg font-bold shadow animate-pulse">
-                            {cumpleanosHoy}
-                          </span>
-                        )}
+                  <button
+                    onClick={() => setShowCumpleanos(true)}
+                    className="group p-4 bg-gradient-to-br from-pink-50 to-yellow-50 border-2 border-pink-200 rounded-lg hover:from-pink-100 hover:to-yellow-100 hover:border-pink-300 transition-all duration-200"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="bg-pink-500 p-2 rounded-lg group-hover:scale-110 transition-transform">
+                        <Calendar className="w-5 h-5 text-white" />
                       </div>
-                    </button>
-                  );
+                      <div className="text-left">
+                        <div className="font-semibold text-pink-900">Cumpleaños</div>
+                        <div className="text-sm text-pink-700">Ver próximos</div>
+                      </div>
+                      {/* Notificación si hay cumpleaños hoy */}
+                      {cumpleanosHoy > 0 && (
+                        <span className="ml-auto bg-pink-500 text-white rounded-full px-3 py-1 text-lg font-bold shadow animate-pulse">
+                          {cumpleanosHoy}
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                );
           </div>
         </div>
 
