@@ -511,37 +511,32 @@ const LiderDashboard: React.FC = () => {
                 // Contador de cumpleaños del día en la célula
                 const today = new Date();
                 let cumpleanosHoy = 0;
-                const parseDate = (dateString?: string) => {
+                const getDayMonth = (dateString?: string) => {
                   if (!dateString) return null;
                   const [datePart] = dateString.split(' ');
-                  const [year, month, day] = datePart.split('-').map(Number);
-                  if (!year || !month || !day) return null;
-                  return new Date(year, month - 1, day);
+                  const parts = datePart.split('-').map(Number);
+                  if (parts.length < 3) return null;
+                  return { day: parts[2], month: parts[1] };
                 };
                 if (miCelula) {
                   // Miembros
                   cumpleanosHoy += miCelula.miembros.filter(m => {
-                    const dob = parseDate(m.fechaNacimiento);
+                    const dob = getDayMonth(m.fechaNacimiento);
                     if (!dob) return false;
-                    const [datePart] = m.fechaNacimiento ? m.fechaNacimiento.split(' ') : [''];
-                    const [, month, day] = datePart.split('-').map(Number);
-                    return day === today.getDate() && month === (today.getMonth() + 1);
+                    return dob.day === today.getDate() && dob.month === (today.getMonth() + 1);
                   }).length;
                   // Colíderes
                   if (miCelula.coLideres) {
                     cumpleanosHoy += miCelula.coLideres.filter(c => {
-                      const dob = parseDate(c.fechaNacimiento);
+                      const dob = getDayMonth(c.fechaNacimiento);
                       if (!dob) return false;
-                      const [datePart] = c.fechaNacimiento ? c.fechaNacimiento.split(' ') : [''];
-                      const [, month, day] = datePart.split('-').map(Number);
-                      return day === today.getDate() && month === (today.getMonth() + 1);
+                      return dob.day === today.getDate() && dob.month === (today.getMonth() + 1);
                     }).length;
                   }
                   // Líder
                   if (miCelula.liderFechaNacimiento) {
-                    const [datePart] = miCelula.liderFechaNacimiento.split(' ');
-                    const [, month, day] = datePart.split('-').map(Number);
-                    if (day === today.getDate() && month === (today.getMonth() + 1)) {
+                    const dob = getDayMonth(miCelula.liderFechaNacimiento);
+                    if (dob && dob.day === today.getDate() && dob.month === (today.getMonth() + 1)) {
                       cumpleanosHoy += 1;
                     }
                   }

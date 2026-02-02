@@ -263,21 +263,20 @@ export const PastorDashboard: React.FC = () => {
     const nextWeek = new Date();
     nextWeek.setDate(today.getDate() + 7);
 
-    const parseDate = (dateString?: string) => {
+    const getDayMonth = (dateString?: string) => {
       if (!dateString) return null;
-      // Soporta 'YYYY-MM-DD' o 'YYYY-MM-DD HH:mm:ss'
       const [datePart] = dateString.split(' ');
-      const [year, month, day] = datePart.split('-').map(Number);
-      if (!year || !month || !day) return null;
-      return new Date(year, month - 1, day);
+      const parts = datePart.split('-').map(Number);
+      if (parts.length < 3) return null;
+      return { day: parts[2], month: parts[1] };
     };
 
     const isBirthdayUpcoming = (dateString?: string) => {
-      const dob = parseDate(dateString);
+      const dob = getDayMonth(dateString);
       if (!dob) return false;
       for (let i = 0; i <= 7; i++) {
         const checkDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
-        if (checkDate.getMonth() === dob.getMonth() && checkDate.getDate() === dob.getDate()) {
+        if (dob.day === checkDate.getDate() && dob.month === (checkDate.getMonth() + 1)) {
           return true;
         }
       }
@@ -296,15 +295,12 @@ export const PastorDashboard: React.FC = () => {
 
     // Unir y ordenar por fecha próxima
     const allBirthdays = [...upcomingMembers, ...upcomingLeaders].sort((a, b) => {
-      const dateA = parseDate(a.fechaNacimiento!);
-      const dateB = parseDate(b.fechaNacimiento!);
-      if (!dateA || !dateB) return 0;
-      const currentYear = today.getFullYear();
-      const birthdayA = new Date(currentYear, dateA.getMonth(), dateA.getDate());
-      const birthdayB = new Date(currentYear, dateB.getMonth(), dateB.getDate());
-      if (birthdayA < new Date(today.setHours(0, 0, 0, 0))) birthdayA.setFullYear(currentYear + 1);
-      if (birthdayB < new Date(today.setHours(0, 0, 0, 0))) birthdayB.setFullYear(currentYear + 1);
-      return birthdayA.getTime() - birthdayB.getTime();
+      const dobA = getDayMonth(a.fechaNacimiento!);
+      const dobB = getDayMonth(b.fechaNacimiento!);
+      if (!dobA || !dobB) return 0;
+      // Ordenar por mes y día
+      if (dobA.month !== dobB.month) return dobA.month - dobB.month;
+      return dobA.day - dobB.day;
     });
 
     return allBirthdays;
