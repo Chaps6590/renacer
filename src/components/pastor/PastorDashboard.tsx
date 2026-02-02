@@ -473,6 +473,31 @@ export const PastorDashboard: React.FC = () => {
                 </div>
               </div>
 
+              {/* Tarjeta de Cumpleaños con notificación si hay cumpleaños hoy */}
+              <div className="card bg-gradient-to-br from-pink-500 to-pink-600 text-white cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setView('cumpleanos')}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-pink-100 text-sm mb-1">Cumpleaños</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-4xl">🎂</span>
+                      {(() => {
+                        const today = new Date();
+                        const cumpleanosHoy = birthdays.filter(b => {
+                          if (!b.fechaNacimiento) return false;
+                          const dob = new Date(b.fechaNacimiento);
+                          return dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
+                        }).length;
+                        return cumpleanosHoy > 0 ? (
+                          <span className="ml-1 bg-white text-pink-600 rounded-full px-3 py-1 text-lg font-bold shadow">{cumpleanosHoy}</span>
+                        ) : null;
+                      })()}
+                    </div>
+                    <p className="text-pink-200 text-xs">Ver próximos</p>
+                  </div>
+                  <Heart className="w-12 h-12 text-pink-200" />
+                </div>
+              </div>
+
               <div
                 className="card bg-gradient-to-br from-orange-500 to-red-600 text-white cursor-pointer hover:shadow-lg transition-shadow"
                 onClick={() => setShowPeticiones(true)}
