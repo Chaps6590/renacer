@@ -270,7 +270,6 @@ export const PastorDashboard: React.FC = () => {
       const [year, month, day] = clean.split('-').map(Number);
       if (!year || !month || !day) return null;
       const result = { day, month };
-      console.log('Cumpleaños parseado:', dateString, result);
       return result;
     };
 
@@ -288,20 +287,12 @@ export const PastorDashboard: React.FC = () => {
 
     const upcomingMembers = celulas.flatMap(c =>
       c.miembros
-        .filter(m => {
-          const res = isBirthdayUpcoming(m.fechaNacimiento);
-          if (res) console.log('Miembro cumple:', m.name, m.fechaNacimiento);
-          return res;
-        })
+        .filter(m => isBirthdayUpcoming(m.fechaNacimiento))
         .map(m => ({ ...m, type: 'Miembro', celulaName: c.name, liderName: c.liderName }))
     );
 
     const upcomingLeaders = lideres
-      .filter(l => {
-        const res = isBirthdayUpcoming(l.fechaNacimiento);
-        if (res) console.log('Líder cumple:', l.name, l.fechaNacimiento);
-        return res;
-      })
+      .filter(l => isBirthdayUpcoming(l.fechaNacimiento))
       .map(l => ({ ...l, type: 'Líder', celulaName: l.nombreCelula || 'Sin asignar' }));
 
     // Unir y ordenar por fecha próxima
@@ -313,7 +304,6 @@ export const PastorDashboard: React.FC = () => {
       if (dobA.month !== dobB.month) return dobA.month - dobB.month;
       return dobA.day - dobB.day;
     });
-    console.log('Listado final de cumpleaños:', allBirthdays);
 
     return allBirthdays;
   };

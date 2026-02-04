@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useData } from '../../contexts/DataContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { api } from '../../services/api';
 import { Gift } from 'lucide-react';
+import { User } from '../../types';
 
 interface CumpleanosModalProps {
   isOpen: boolean;
@@ -9,17 +12,38 @@ interface CumpleanosModalProps {
 
 export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClose }) => {
   const { celulas } = useData();
+  const { user } = useAuth();
+  const [lideres, setLideres] = useState<User[]>([]);
+
+  useEffect(() => {
+    // Solo cargar líderes si el usuario es pastor
+    if (isOpen && user?.role?.toLowerCase() === 'pastor') {
+      api.getUsers().then((users) => {
+        const lideresUsuarios = (users as User[]).filter((u) => u.role && u.role.toLowerCase() === 'lider');
+        setLideres(lideresUsuarios);
+      }).catch(error => {
+        console.error('Error cargando líderes:', error);
+      });
+    }
+  }, [isOpen, user]);
 
   if (!isOpen) return null;
 
   // Obtener todos los miembros de todas las células
   const miembros = celulas.flatMap(c => c.miembros || []);
+  
+  // Si es pastor, agregar también los líderes
+  const todasLasPersonas = user?.role?.toLowerCase() === 'pastor' 
+    ? [...miembros, ...lideres]
+    : miembros;
+
   // Filtrar los que tienen fechaNacimiento
-  const cumpleanieros = miembros.filter(m => {
+  const cumpleanieros = todasLasPersonas.filter(m => {
     if (!m.fechaNacimiento) return false;
     const d = new Date(m.fechaNacimiento);
     return !isNaN(d.getTime());
   });
+  
   // Ordenar por mes y día
   cumpleanieros.sort((a, b) => {
     const da = a.fechaNacimiento ? new Date(a.fechaNacimiento) : new Date(0);
