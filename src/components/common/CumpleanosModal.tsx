@@ -34,6 +34,9 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
     ? celulas.find(c => c.liderId === user.id || c.coLideres.some(col => col.id === user.id))
     : null;
 
+  console.log('Usuario rol:', user?.role);
+  console.log('Mi célula:', miCelula);
+
   // Obtener todos los miembros
   let miembros = celulas.flatMap(c => c.miembros || []);
   
@@ -52,6 +55,12 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
   
   // Si es líder, agregar el líder principal y colíderes de su célula
   if (user?.role?.toLowerCase() === 'lider' && miCelula) {
+    console.log('Líder principal:', { 
+      name: miCelula.liderName, 
+      fecha: miCelula.liderFechaNacimiento 
+    });
+    console.log('Colíderes:', miCelula.coLideres);
+    
     // Agregar líder principal
     if (miCelula.liderFechaNacimiento) {
       todasLasPersonas.push({
@@ -65,6 +74,8 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
       todasLasPersonas = [...todasLasPersonas, ...miCelula.coLideres];
     }
   }
+
+  console.log('Todas las personas antes de filtrar:', todasLasPersonas);
 
   // Filtrar los que tienen fechaNacimiento
   const cumpleanieros = todasLasPersonas.filter(m => {
