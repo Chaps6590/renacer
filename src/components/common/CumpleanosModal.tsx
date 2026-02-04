@@ -29,13 +29,42 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
 
   if (!isOpen) return null;
 
-  // Obtener todos los miembros de todas las células
-  const miembros = celulas.flatMap(c => c.miembros || []);
+  // Obtener la célula del líder si es líder
+  const miCelula = user?.role?.toLowerCase() === 'lider' 
+    ? celulas.find(c => c.liderId === user.id || c.coLideres.some(col => col.id === user.id))
+    : null;
+
+  // Obtener todos los miembros
+  let miembros = celulas.flatMap(c => c.miembros || []);
   
-  // Si es pastor, agregar también los líderes
-  const todasLasPersonas = user?.role?.toLowerCase() === 'pastor' 
-    ? [...miembros, ...lideres]
-    : miembros;
+  // Si es líder, filtrar solo su célula
+  if (user?.role?.toLowerCase() === 'lider' && miCelula) {
+    miembros = miCelula.miembros || [];
+  }
+
+  // Construir la lista de todas las personas (usando tipo genérico para compatibilidad)
+  let todasLasPersonas: Array<{ id: string; name?: string; fechaNacimiento?: string }> = [...miembros];
+
+  // Si es pastor, agregar todos los líderes
+  if (user?.role?.toLowerCase() === 'pastor') {
+    todasLasPersonas = [...todasLasPersonas, ...lideres];
+  }
+  
+  // Si es líder, agregar el líder principal y colíderes de su célula
+  if (user?.role?.toLowerCase() === 'lider' && miCelula) {
+    // Agregar líder principal
+    if (miCelula.liderFechaNacimiento) {
+      todasLasPersonas.push({
+        id: miCelula.liderId,
+        name: miCelula.liderName,
+        fechaNacimiento: miCelula.liderFechaNacimiento
+      });
+    }
+    // Agregar colíderes
+    if (miCelula.coLideres) {
+      todasLasPersonas = [...todasLasPersonas, ...miCelula.coLideres];
+    }
+  }
 
   // Filtrar los que tienen fechaNacimiento
   const cumpleanieros = todasLasPersonas.filter(m => {
