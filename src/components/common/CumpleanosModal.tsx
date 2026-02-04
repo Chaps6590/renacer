@@ -26,9 +26,11 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
       const allUsers = users as User[];
       
       if (user?.role?.toLowerCase() === 'pastor') {
-        // Si es pastor, cargar todos los líderes
-        const lideresUsuarios = allUsers.filter((u) => u.role && u.role.toLowerCase() === 'lider');
-        setLideres(lideresUsuarios);
+        // Si es pastor, cargar todos los líderes y colíderes
+        const lideresYColideres = allUsers.filter((u) => 
+          u.role && (u.role.toLowerCase() === 'lider' || u.role.toLowerCase() === 'colider')
+        );
+        setLideres(lideresYColideres);
       } else if (user?.role?.toLowerCase() === 'lider') {
         // Si es líder, cargar los líderes/colíderes de su célula
         const miCelula = celulas.find(c => c.liderId === user.id || c.coLideres.some(col => col.id === user.id));
