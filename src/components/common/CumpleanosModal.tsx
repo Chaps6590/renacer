@@ -14,12 +14,9 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
   const { celulas } = useData();
   const { user } = useAuth();
   const [lideres, setLideres] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
-    
-    setLoading(true);
     
     // Cargar usuarios para obtener fechas de nacimiento completas
     api.getUsers().then((users) => {
@@ -40,11 +37,8 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
           setLideres(lideresRelevantes);
         }
       }
-      
-      setLoading(false);
     }).catch(error => {
       console.error('Error cargando usuarios:', error);
-      setLoading(false);
     });
   }, [isOpen, user, celulas]);
 
