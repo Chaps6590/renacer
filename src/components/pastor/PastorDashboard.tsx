@@ -260,52 +260,68 @@ export const PastorDashboard: React.FC = () => {
   // Lógica de cumpleaños
   const getUpcomingBirthdays = () => {
     const today = new Date();
-    const nextWeek = new Date();
-    nextWeek.setDate(today.getDate() + 7);
+    today.setHours(0, 0, 0, 0); // Normalizar a medianoche
 
     const getDayMonth = (dateString?: string) => {
       if (!dateString) return null;
-      // Soporta 'YYYY-MM-DD', 'YYYY-MM-DD HH:mm:ss', 'YYYY-MM-DDTHH:mm:ss.sssZ'
-      const clean = dateString.slice(0, 10); // Solo la parte de fecha
+      const clean = dateString.slice(0, 10); // Solo 'YYYY-MM-DD'
       const [year, month, day] = clean.split('-').map(Number);
       if (!year || !month || !day) return null;
-      const result = { day, month };
-      return result;
+      return { day, month };
     };
 
-    const isBirthdayUpcoming = (dateString?: string) => {
+    // Calcular cuántos días faltan para el cumpleaños (0-7 para esta semana)
+    const getDaysUntilBirthday = (dateString?: string): number | null => {
       const dob = getDayMonth(dateString);
-      if (!dob) return false;
+      if (!dob) return null;
+      
       for (let i = 0; i <= 7; i++) {
-        const checkDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
-        if (dob.day === checkDate.getDate() && dob.month === (checkDate.getMonth() + 1)) {
-          return true;
+        const checkDate = new Date(today);
+        checkDate.setDate(today.getDate() + i);
+        if (dob.day === checkDate.getDate() && dob.month === checkDate.getMonth() + 1) {
+          return i;
         }
       }
-      return false;
+      return null;
     };
 
-    const upcomingMembers = celulas.flatMap(c =>
-      c.miembros
-        .filter(m => isBirthdayUpcoming(m.fechaNacimiento))
-        .map(m => ({ ...m, type: 'Miembro', celulaName: c.name, liderName: c.liderName }))
-    );
+    // Recolectar todos los cumpleaños próximos
+    const allBirthdays: any[] = [];
 
-    const upcomingLeaders = lideres
-      .filter(l => isBirthdayUpcoming(l.fechaNacimiento))
-      .map(l => ({ ...l, type: 'Líder', celulaName: l.nombreCelula || 'Sin asignar' }));
-
-    // Unir y ordenar por fecha próxima
-    const allBirthdays = [...upcomingMembers, ...upcomingLeaders].sort((a, b) => {
-      const dobA = getDayMonth(a.fechaNacimiento!);
-      const dobB = getDayMonth(b.fechaNacimiento!);
-      if (!dobA || !dobB) return 0;
-      // Ordenar por mes y día
-      if (dobA.month !== dobB.month) return dobA.month - dobB.month;
-      return dobA.day - dobB.day;
+    // Miembros de células
+    celulas.forEach(c => {
+      c.miembros.forEach(m => {
+        const daysUntil = getDaysUntilBirthday(m.fechaNacimiento);
+        if (daysUntil !== null) {
+          allBirthdays.push({ ...m, type: 'Miembro', celulaName: c.name, liderName: c.liderName, daysUntil });
+        }
+      });
     });
 
-    return allBirthdays;
+    // Líderes
+    lideres.forEach(l => {
+      const daysUntil = getDaysUntilBirthday(l.fechaNacimiento);
+      if (daysUntil !== null) {
+        allBirthdays.push({ ...l, type: 'Líder', celulaName: l.nombreCelula || 'Sin asignar', daysUntil });
+      }
+    });
+
+    // Colíderes
+    celulas.forEach(c => {
+      c.coLideres?.forEach(cl => {
+        const daysUntil = getDaysUntilBirthday(cl.fechaNacimiento);
+        if (daysUntil !== null) {
+          allBirthdays.push({ ...cl, type: 'Colíder', celulaName: c.name, liderName: c.liderName, daysUntil });
+        }
+      });
+    });
+
+    // Ordenar por días próximos (0 = hoy primero, luego 1, 2, etc.)
+    return allBirthdays.sort((a, b) => {
+      if (a.daysUntil !== b.daysUntil) return a.daysUntil - b.daysUntil;
+      // Si es el mismo día, ordenar alfabéticamente por nombre
+      return (a.name || '').localeCompare(b.name || '');
+    });
   };
 
   const birthdays = getUpcomingBirthdays();
