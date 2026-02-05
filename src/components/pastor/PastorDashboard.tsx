@@ -495,10 +495,17 @@ export const PastorDashboard: React.FC = () => {
                       <span className="text-4xl">🎂</span>
                       {(() => {
                         const today = new Date();
+                        const getDayMonth = (dateString?: string) => {
+                          if (!dateString) return null;
+                          const clean = dateString.slice(0, 10);
+                          const [year, month, day] = clean.split('-').map(Number);
+                          if (!year || !month || !day) return null;
+                          return { day, month };
+                        };
                         const cumpleanosHoy = birthdays.filter(b => {
-                          if (!b.fechaNacimiento) return false;
-                          const dob = new Date(b.fechaNacimiento);
-                          return dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
+                          const dob = getDayMonth(b.fechaNacimiento);
+                          if (!dob) return false;
+                          return dob.day === today.getDate() && dob.month === (today.getMonth() + 1);
                         }).length;
                         return cumpleanosHoy > 0 ? (
                           <span className="ml-1 bg-white dark:bg-gray-800 text-pink-600 rounded-full px-3 py-1 text-lg font-bold shadow">{cumpleanosHoy}</span>
