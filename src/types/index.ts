@@ -78,6 +78,7 @@ export interface AsistenciaRecord {
   miembros: MiembroAsistencia[];
   totalPresentes: number;
   totalAusentes: number;
+  ofrenda: number; // Monto de la ofrenda recaudada (por defecto 0)
   pendientesCompletar: number; // Cantidad de ausentes sin motivo completado
   registradoPor: string; // ID del líder o colíder
   fechaRegistro: Date;

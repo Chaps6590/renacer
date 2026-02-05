@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { useData } from '../../contexts/DataContext';
 import { AsistenciaRecord } from '../../types';
-import { X, Calendar, ChevronDown, ChevronUp, CheckCircle2, XCircle, Flag, MessageSquare, Users } from 'lucide-react';
+import { X, Calendar, ChevronDown, ChevronUp, CheckCircle2, XCircle, Flag, MessageSquare, Users, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -129,6 +129,12 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                             <XCircle className="w-3 h-3" />
                                                             {registro.totalAusentes} Ausentes
                                                         </span>
+                                                        {registro.ofrenda > 0 && (
+                                                            <span className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 font-bold rounded-md border border-emerald-100 dark:border-emerald-800">
+                                                                <DollarSign className="w-3 h-3" />
+                                                                ${registro.ofrenda.toFixed(2)}
+                                                            </span>
+                                                        )}
                                                         {registro.pendientesCompletar > 0 && (
                                                             <span className="flex items-center gap-1.5 px-2 py-0.5 bg-amber-50 dark:bg-amber-900 text-amber-700 dark:text-amber-300 font-bold rounded-md border border-amber-100 dark:border-amber-800 animate-pulse">
                                                                 {registro.pendientesCompletar} Pendientes

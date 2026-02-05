@@ -14,6 +14,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
   const { user } = useAuth();
   const { registrarAsistencia } = useData();
   const [fecha, setFecha] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [ofrenda, setOfrenda] = useState<number>(0);
   const [miembrosAsistencia, setMiembrosAsistencia] = useState<{ [key: string]: MiembroAsistencia }>(
     celula.miembros.reduce((acc, m) => ({
       ...acc,
@@ -68,6 +69,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
       miembros,
       totalPresentes: presentes,
       totalAusentes: ausentes,
+      ofrenda: ofrenda || 0,
       pendientesCompletar,
       registradoPor: user?.id || '',
       fechaRegistro: new Date(),
@@ -104,6 +106,20 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
               type="date"
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
+              className="w-full bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2 font-bold text-gray-700 dark:text-gray-200 focus:border-blue-500 focus:ring-0 transition-all"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5">
+              Ofrenda ($)
+            </label>
+            <input
+              type="number"
+              value={ofrenda}
+              onChange={(e) => setOfrenda(Number(e.target.value))}
+              min="0"
+              step="0.01"
+              placeholder="0.00"
               className="w-full bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2 font-bold text-gray-700 dark:text-gray-200 focus:border-blue-500 focus:ring-0 transition-all"
             />
           </div>
