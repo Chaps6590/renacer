@@ -29,12 +29,37 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
         );
         setLideres(lideresYColideres);
       } else if (user?.role?.toLowerCase() === 'lider') {
-        // Si es líder, cargar los líderes/colíderes de su célula
+        // Si es líder, usar los datos directamente de la célula
         const miCelula = celulas.find(c => c.liderId === user.id || c.coLideres.some(col => col.id === user.id));
         if (miCelula) {
-          const idsRelevantes = [miCelula.liderId, ...miCelula.coLideres.map(c => c.id)];
-          const lideresRelevantes = allUsers.filter(u => idsRelevantes.includes(u.id));
-          setLideres(lideresRelevantes);
+          // Construir lista de líderes desde la célula
+          const lideresTemp: User[] = [];
+          
+          // Agregar líder principal
+          if (miCelula.liderId && miCelula.liderName) {
+            lideresTemp.push({
+              id: miCelula.liderId,
+              name: miCelula.liderName,
+              email: miCelula.liderEmail || '',
+              role: 'lider',
+              phone: miCelula.liderPhone,
+              fechaNacimiento: miCelula.liderFechaNacimiento
+            });
+          }
+          
+          // Agregar colíderes (ya tienen fechaNacimiento en sus objetos)
+          miCelula.coLideres.forEach(col => {
+            lideresTemp.push({
+              id: col.id,
+              name: col.name,
+              email: col.email,
+              role: 'colider',
+              phone: col.phone,
+              fechaNacimiento: col.fechaNacimiento
+            });
+          });
+          
+          setLideres(lideresTemp);
         }
       }
     }).catch(error => {
