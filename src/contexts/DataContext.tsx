@@ -267,9 +267,16 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           name: c.nombre,
           liderId: c.liderId,
           liderName: c.lider?.name || '',
+          liderEmail: c.lider?.email || undefined,
+          liderPhone: c.lider?.telefono || undefined,
+          liderFechaNacimiento: c.lider?.fechaNacimiento || undefined,
           diaSemana: c.dia,
           horario: c.horario,
-          coLideres: c.coLideres || [],
+          coLideres: (c.coLideres || []).map((col: any) => ({
+            ...col,
+            phone: col.telefono,
+            fechaNacimiento: col.fechaNacimiento
+          })),
           miembros: (c.miembros || []).map((m: any) => ({
             ...m,
             name: m.nombre,
