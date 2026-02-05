@@ -938,11 +938,17 @@ export const PastorDashboard: React.FC = () => {
                   const today = new Date();
                   const isToday = dobParts && dobParts.day === today.getDate() && dobParts.month === (today.getMonth() + 1);
 
+                  const daysLabel = (() => {
+                    if (person.daysUntil === 0) return 'Hoy';
+                    if (person.daysUntil === 1) return 'Mañana';
+                    return `En ${person.daysUntil} días`;
+                  })();
+
                   return (
-                    <div key={person.id} className={`p-4 rounded-lg border ${isToday ? 'bg-pink-50 border-pink-200' : 'bg-white border-gray-200'
+                    <div key={person.id} className={`p-4 rounded-lg border ${isToday ? 'bg-pink-50 dark:bg-pink-900/20 border-pink-200 dark:border-pink-700' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'
                       }`}>
                       <div className="flex justify-between items-start">
-                        <div>
+                        <div className="flex-1">
                           <h4 className="font-bold text-gray-900 dark:text-white">{person.name}</h4>
                           <p className="text-sm text-gray-600 dark:text-gray-400">{person.type}</p>
                           {person.celulaName && (
@@ -950,9 +956,20 @@ export const PastorDashboard: React.FC = () => {
                               {person.type === 'Miembro' ? `Célula: ${person.celulaName}` : person.celulaName}
                             </p>
                           )}
+                          <div className="mt-2">
+                            <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
+                              person.daysUntil === 0 
+                                ? 'bg-pink-500 text-white' 
+                                : person.daysUntil === 1
+                                ? 'bg-purple-500 text-white'
+                                : 'bg-blue-500 text-white'
+                            }`}>
+                              {daysLabel}
+                            </span>
+                          </div>
                         </div>
                         <div className="text-center">
-                          <span className={`block text-lg font-bold ${isToday ? 'text-pink-600' : 'text-gray-700'
+                          <span className={`block text-lg font-bold ${isToday ? 'text-pink-600 dark:text-pink-400' : 'text-gray-700 dark:text-gray-300'
                             }`}>
                             {dobParts ? dobParts.day : ''}
                           </span>
