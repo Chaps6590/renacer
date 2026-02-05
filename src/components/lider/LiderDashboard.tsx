@@ -684,14 +684,25 @@ const LiderDashboard: React.FC = () => {
                         <>
                           {/* Columna Cambiar Rol */}
                           <td className="px-6 py-4 whitespace-nowrap text-center">
-                            <button
-                              onClick={() => handleChangeRole(miembro)}
-                              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition duration-200"
-                              title="Cambiar Rol"
-                            >
-                              <Edit className="w-3 h-3 mr-1" />
-                              Cambiar
-                            </button>
+                            {miembro.rolCelula === 'lider' || miembro.rolCelula === 'colider' ? (
+                              <button
+                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed"
+                                title={miembro.rolCelula === 'lider' ? "No puedes cambiar el rol del líder principal" : "No puedes cambiar el rol de los colíderes"}
+                                disabled
+                              >
+                                <Edit className="w-3 h-3 mr-1" />
+                                Cambiar
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleChangeRole(miembro)}
+                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition duration-200"
+                                title="Cambiar Rol"
+                              >
+                                <Edit className="w-3 h-3 mr-1" />
+                                Cambiar
+                              </button>
+                            )}
                           </td>
 
                           {/* Columna Eliminar */}
