@@ -18,53 +18,51 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
   useEffect(() => {
     if (!isOpen) return;
     
-    // Cargar usuarios para obtener fechas de nacimiento completas
-    api.getUsers().then((users) => {
-      const allUsers = users as User[];
-      
-      if (user?.role?.toLowerCase() === 'pastor') {
-        // Si es pastor, cargar todos los líderes y colíderes
+    if (user?.role?.toLowerCase() === 'pastor') {
+      // Si es pastor, cargar todos los líderes y colíderes desde la API
+      api.getUsers().then((users) => {
+        const allUsers = users as User[];
         const lideresYColideres = allUsers.filter((u) => 
           u.role && (u.role.toLowerCase() === 'lider' || u.role.toLowerCase() === 'colider')
         );
         setLideres(lideresYColideres);
-      } else if (user?.role?.toLowerCase() === 'lider') {
-        // Si es líder, usar los datos directamente de la célula
-        const miCelula = celulas.find(c => c.liderId === user.id || c.coLideres.some(col => col.id === user.id));
-        if (miCelula) {
-          // Construir lista de líderes desde la célula
-          const lideresTemp: User[] = [];
-          
-          // Agregar líder principal
-          if (miCelula.liderId && miCelula.liderName) {
-            lideresTemp.push({
-              id: miCelula.liderId,
-              name: miCelula.liderName,
-              email: miCelula.liderEmail || '',
-              role: 'lider',
-              phone: miCelula.liderPhone,
-              fechaNacimiento: miCelula.liderFechaNacimiento
-            });
-          }
-          
-          // Agregar colíderes (ya tienen fechaNacimiento en sus objetos)
-          miCelula.coLideres.forEach(col => {
-            lideresTemp.push({
-              id: col.id,
-              name: col.name,
-              email: col.email,
-              role: 'colider',
-              phone: col.phone,
-              fechaNacimiento: col.fechaNacimiento
-            });
+      }).catch(error => {
+        console.error('Error cargando usuarios:', error);
+      });
+    } else if (user?.role?.toLowerCase() === 'lider') {
+      // Si es líder, usar los datos directamente de la célula (sin llamar a la API)
+      const miCelula = celulas.find(c => c.liderId === user.id || c.coLideres.some(col => col.id === user.id));
+      if (miCelula) {
+        // Construir lista de líderes desde la célula
+        const lideresTemp: User[] = [];
+        
+        // Agregar líder principal
+        if (miCelula.liderId && miCelula.liderName) {
+          lideresTemp.push({
+            id: miCelula.liderId,
+            name: miCelula.liderName,
+            email: miCelula.liderEmail || '',
+            role: 'lider',
+            phone: miCelula.liderPhone,
+            fechaNacimiento: miCelula.liderFechaNacimiento
           });
-          
-          setLideres(lideresTemp);
         }
+        
+        // Agregar colíderes (ya tienen fechaNacimiento en sus objetos)
+        miCelula.coLideres.forEach(col => {
+          lideresTemp.push({
+            id: col.id,
+            name: col.name,
+            email: col.email,
+            role: 'colider',
+            phone: col.phone,
+            fechaNacimiento: col.fechaNacimiento
+          });
+        });
+        
+        setLideres(lideresTemp);
       }
-    }).catch(error => {
-      console.error('Error cargando usuarios:', error);
-    });
+    }
   }, [isOpen, user, celulas]);
 
   if (!isOpen) return null;
