@@ -123,7 +123,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg p-6 max-w-4xl w-full my-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-4xl w-full my-8">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-bold flex items-center gap-2">
             <Newspaper className="w-6 h-6 text-blue-600" />
@@ -141,7 +141,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
             )}
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-lg"
+              className="p-2 hover:bg-gray-100 dark:bg-gray-800 rounded-lg"
             >
               <X className="w-5 h-5" />
             </button>
@@ -156,7 +156,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
             </h4>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Título *
                 </label>
                 <input
@@ -164,25 +164,25 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                   value={nuevaNoticia.titulo}
                   onChange={(e) => setNuevaNoticia({ ...nuevaNoticia, titulo: e.target.value })}
                   placeholder="Ej: Conferencia especial este domingo"
-                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Contenido *
                 </label>
                 <textarea
                   value={nuevaNoticia.contenido}
                   onChange={(e) => setNuevaNoticia({ ...nuevaNoticia, contenido: e.target.value })}
                   placeholder="Detalle completo de la noticia..."
-                  className="w-full p-3 border border-gray-300 rounded-lg resize-none"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none"
                   rows={4}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Imagen (opcional)
                 </label>
                 <div className="flex items-center gap-4">
@@ -203,7 +203,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                     />
                     <label
                       htmlFor="news-image-upload"
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
+                      className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:bg-gray-700 cursor-pointer transition-colors"
                     >
                       {cargandoImagen ? 'Procesando...' : (nuevaNoticia.imageUrl ? 'Cambiar Imagen' : 'Subir Imagen')}
                     </label>
@@ -216,7 +216,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                         Quitar
                       </button>
                     )}
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                       Sube una imagen pequeña (formato cuadrado recomendado, máx 1MB).
                     </p>
                   </div>
@@ -224,16 +224,16 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Fecha de vencimiento (opcional)
                 </label>
                 <input
                   type="date"
                   value={nuevaNoticia.fechaVencimiento}
                   onChange={(e) => setNuevaNoticia({ ...nuevaNoticia, fechaVencimiento: e.target.value })}
-                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg"
                 />
-                <p className="text-xs text-gray-600 mt-1">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                   Si se establece, la noticia se ocultará automáticamente después de esta fecha
                 </p>
               </div>
@@ -246,7 +246,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                   onChange={(e) => setNuevaNoticia({ ...nuevaNoticia, importante: e.target.checked })}
                   className="w-4 h-4 text-red-600"
                 />
-                <label htmlFor="importante" className="text-sm font-medium text-gray-700">
+                <label htmlFor="importante" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Marcar como importante
                 </label>
               </div>
@@ -274,10 +274,10 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
           {noticiasVisibles.length === 0 ? (
             <div className="text-center py-8">
               <Newspaper className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h4 className="text-lg font-semibold text-gray-600 mb-2">
+              <h4 className="text-lg font-semibold text-gray-600 dark:text-gray-400 mb-2">
                 No hay noticias disponibles
               </h4>
-              <p className="text-gray-500">
+              <p className="text-gray-500 dark:text-gray-400">
                 {esPastor
                   ? 'Crea la primera noticia para compartir información con los líderes.'
                   : 'Las noticias aparecerán aquí cuando el pastor las publique.'}
@@ -298,7 +298,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                       {noticia.importante && (
                         <AlertCircle className="w-5 h-5 text-red-600" />
                       )}
-                      <h4 className="font-semibold text-gray-900">{noticia.titulo}</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-white">{noticia.titulo}</h4>
                       {noticia.importante && (
                         <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full font-medium">
                           Importante
@@ -306,9 +306,9 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                       )}
                     </div>
 
-                    <p className="text-gray-700 mb-3 whitespace-pre-wrap">{noticia.contenido}</p>
+                    <p className="text-gray-700 dark:text-gray-300 mb-3 whitespace-pre-wrap">{noticia.contenido}</p>
 
-                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {format(noticia.fechaCreacion, 'dd/MM/yyyy HH:mm', { locale: es })}

@@ -53,7 +53,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 overflow-hidden">
+      <div className="relative bg-white dark:bg-gray-800 dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 dark:border-gray-700 overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-sky-600 px-6 py-4 text-center">
           <h3 className="text-xl font-bold text-white">Agregar Nueva Persona</h3>
@@ -63,12 +63,12 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
               Nombre Completo *
             </label>
             <input
               type="text"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white text-gray-900 placeholder-gray-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:placeholder-gray-400"
               placeholder="Ej: Juan Carlos Pérez"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -77,12 +77,12 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
               Teléfono
             </label>
             <input
               type="tel"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white text-gray-900 placeholder-gray-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:placeholder-gray-400"
               placeholder="Ej: +54 9 11 1234-5678"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -90,24 +90,24 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
               Fecha de Nacimiento
             </label>
             <input
               type="date"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white text-gray-900 placeholder-gray-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:placeholder-gray-400"
               value={formData.fechaNacimiento}
               onChange={(e) => setFormData({ ...formData, fechaNacimiento: e.target.value })}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
               Correo Electrónico
             </label>
             <input
               type="email"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white text-gray-900 placeholder-gray-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:placeholder-gray-400"
               placeholder="Ej: juan@email.com"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -116,12 +116,12 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
           {/* Dirección */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
               Dirección
             </label>
             <input
               type="text"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white text-gray-900 placeholder-gray-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:placeholder-gray-400"
               placeholder="Ej: Calle 123, Ciudad"
               value={formData.direccion}
               onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
@@ -129,16 +129,16 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
           </div>
 
           {/* Checkboxes */}
-          <div className="bg-gray-50 p-4 rounded-xl space-y-3">
+          <div className="bg-gray-50 dark:bg-gray-700 dark:bg-gray-700/50 p-4 rounded-xl space-y-3">
             <div className="flex items-center">
               <input
                 type="checkbox"
                 id="isBautizado"
                 checked={formData.isBautizado}
                 onChange={(e) => setFormData({ ...formData, isBautizado: e.target.checked })}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                className="w-5 h-5 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <label htmlFor="isBautizado" className="ml-3 text-sm font-medium text-gray-700">
+              <label htmlFor="isBautizado" className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-300">
                 ¿Está bautizado?
               </label>
             </div>
@@ -149,9 +149,9 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
                 id="tieneDiscipulado"
                 checked={formData.tieneDiscipulado}
                 onChange={(e) => setFormData({ ...formData, tieneDiscipulado: e.target.checked })}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                className="w-5 h-5 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <label htmlFor="tieneDiscipulado" className="ml-3 text-sm font-medium text-gray-700">
+              <label htmlFor="tieneDiscipulado" className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-300">
                 ¿Tiene discipulado?
               </label>
             </div>
@@ -162,7 +162,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-400 transition duration-200"
+              className="flex-1 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:bg-gray-700 hover:border-gray-400 transition duration-200"
             >
               Cancelar
             </button>
@@ -343,16 +343,16 @@ const LiderDashboard: React.FC = () => {
 
   if (!miCelula) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-700 dark:bg-gray-900">
         <Navbar />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
-            <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+            <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-800 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
               <Users className="w-12 h-12 text-gray-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">No tienes una célula asignada</h3>
-            <p className="text-gray-600 dark:text-gray-400">No se encontró una célula asignada a tu usuario.</p>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white dark:text-gray-100 mb-2">No tienes una célula asignada</h3>
+            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400">No se encontró una célula asignada a tu usuario.</p>
           </div>
         </div>
       </div>
@@ -360,13 +360,13 @@ const LiderDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-700 dark:bg-gray-900">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Mi Célula: {miCelula.name}</h2>
-          <p className="text-gray-600 dark:text-gray-400">Gestiona tu célula y toma asistencia</p>
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 dark:text-gray-100 mb-2">Mi Célula: {miCelula.name}</h2>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400">Gestiona tu célula y toma asistencia</p>
           <div className="mt-2 flex items-center gap-4">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
               📅 {miCelula.diaSemana}
@@ -436,7 +436,7 @@ const LiderDashboard: React.FC = () => {
             <Bell className="w-5 h-5 group-hover:scale-110 transition duration-300" />
             <span>Pendientes ({totalPendientes})</span>
             {totalPendientes > 0 && (
-              <span className="bg-white text-yellow-600 text-xs px-2 py-1 rounded-full">
+              <span className="bg-white dark:bg-gray-800 text-yellow-600 text-xs px-2 py-1 rounded-full">
                 {totalPendientes}
               </span>
             )}
@@ -451,8 +451,8 @@ const LiderDashboard: React.FC = () => {
 
         {/* Accesos Rápidos */}
         <div className="card mb-6">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Recursos</h3>
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">Recursos</h3>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -570,56 +570,56 @@ const LiderDashboard: React.FC = () => {
 
         {/* Lista de Miembros */}
         <div className="card">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Miembros de la Célula</h3>
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 dark:border-gray-700">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white dark:text-gray-100">Miembros de la Célula</h3>
           </div>
 
           {miembrosOrdenados.length === 0 ? (
-            <p className="text-gray-600 text-center py-8">
+            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400 text-center py-8">
               No hay miembros registrados. Agrega el primer miembro.
             </p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700 dark:bg-gray-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                       Nombre
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                       Rol
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                       Teléfono
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                       Email
                     </th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                       Bautizado
                     </th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                       Discipulado
                     </th>
                     {isLider && (
                       <>
-                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                           Cambiar Rol
                         </th>
-                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                           Eliminar
                         </th>
                       </>
                     )}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 dark:divide-gray-700">
                   {miembrosOrdenados
                     .map((miembro) => (
-                      <tr key={miembro.id} className="hover:bg-gray-50">
+                      <tr key={miembro.id} className="hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-700">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="text-sm font-medium text-gray-900">{miembro.name}</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-100">{miembro.name}</div>
                           {miembro.rolCelula?.toLowerCase() === 'lider' && (
                             <Crown className="w-4 h-4 text-purple-500 ml-2" />
                           )}
@@ -637,12 +637,12 @@ const LiderDashboard: React.FC = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
                           {'phone' in miembro ? (miembro.phone || '-') : '-'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
                           {'email' in miembro ? (miembro.email || '-') : '-'}
                         </div>
                       </td>
@@ -654,7 +654,7 @@ const LiderDashboard: React.FC = () => {
                               Sí
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
                               <XCircle className="w-3 h-3 mr-1" />
                               No
                             </span>
@@ -671,7 +671,7 @@ const LiderDashboard: React.FC = () => {
                               Sí
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
                               <XCircle className="w-3 h-3 mr-1" />
                               No
                             </span>
@@ -698,7 +698,7 @@ const LiderDashboard: React.FC = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-center">
                             {miembro.rolCelula === 'lider' ? (
                               <button
-                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed"
+                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed"
                                 title="No puedes eliminar al líder principal"
                                 disabled
                               >
@@ -707,7 +707,7 @@ const LiderDashboard: React.FC = () => {
                               </button>
                             ) : miembro.rolCelula === 'colider' ? (
                               <button
-                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed"
+                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed"
                                 title="Solo admin o pastor pueden eliminar colíderes"
                                 disabled
                               >
@@ -753,7 +753,7 @@ const LiderDashboard: React.FC = () => {
         {/* Modal de confirmación para eliminar */}
         {showDeleteConfirm && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden">
               {/* Header */}
               <div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4 text-center">
                 <h3 className="text-xl font-bold text-white flex items-center justify-center gap-2">
@@ -764,13 +764,13 @@ const LiderDashboard: React.FC = () => {
 
               {/* Content */}
               <div className="p-6 text-center">
-                <p className="text-gray-700 mb-2">
+                <p className="text-gray-700 dark:text-gray-300 mb-2">
                   ¿Estás seguro de que deseas eliminar a
                 </p>
-                <p className="font-bold text-gray-900 text-lg mb-4">
+                <p className="font-bold text-gray-900 dark:text-white text-lg mb-4">
                   {selectedMiembro?.name}?
                 </p>
-                <p className="text-sm text-gray-600 mb-6">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
                   Esta acción no se puede deshacer.
                 </p>
 
@@ -778,7 +778,7 @@ const LiderDashboard: React.FC = () => {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowDeleteConfirm(false)}
-                    className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-400 transition duration-200"
+                    className="flex-1 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:bg-gray-700 hover:border-gray-400 transition duration-200"
                   >
                     Cancelar
                   </button>
@@ -804,7 +804,7 @@ const LiderDashboard: React.FC = () => {
         {/* Modal de selección de rol */}
         {showRoleDialog && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden">
               {/* Header */}
               <div className="bg-gradient-to-r from-blue-600 to-sky-600 px-6 py-4 text-center">
                 <h3 className="text-xl font-bold text-white flex items-center justify-center gap-2">
@@ -821,54 +821,54 @@ const LiderDashboard: React.FC = () => {
                 {/* Opciones de rol */}
                 <button
                   onClick={() => confirmChangeRole('miembro')}
-                  className="w-full p-4 text-left border-2 border-gray-200 rounded-xl hover:border-green-300 hover:bg-green-50 transition duration-200 group"
+                  className="w-full p-4 text-left border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-green-300 hover:bg-green-50 transition duration-200 group"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 bg-green-500 rounded-full group-hover:scale-110 transition duration-200"></div>
                     <div>
-                      <div className="font-semibold text-gray-900">Miembro</div>
-                      <div className="text-sm text-gray-600">Miembro regular de la célula</div>
+                      <div className="font-semibold text-gray-900 dark:text-white">Miembro</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Miembro regular de la célula</div>
                     </div>
                   </div>
                 </button>
 
                 <button
                   onClick={() => confirmChangeRole('colider')}
-                  className="w-full p-4 text-left border-2 border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition duration-200 group"
+                  className="w-full p-4 text-left border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition duration-200 group"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 bg-blue-500 rounded-full group-hover:scale-110 transition duration-200"></div>
                     <div>
-                      <div className="font-semibold text-gray-900 flex items-center gap-2">
+                      <div className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                         Colíder <Star className="w-4 h-4 text-blue-500" />
                       </div>
-                      <div className="text-sm text-gray-600">Ayudante del líder de célula</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Ayudante del líder de célula</div>
                     </div>
                   </div>
                 </button>
 
                 <button
                   onClick={() => confirmChangeRole('timoteo')}
-                  className="w-full p-4 text-left border-2 border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition duration-200 group"
+                  className="w-full p-4 text-left border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-orange-300 hover:bg-orange-50 transition duration-200 group"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 bg-orange-500 rounded-full group-hover:scale-110 transition duration-200"></div>
                     <div>
-                      <div className="font-semibold text-gray-900">Timoteo</div>
-                      <div className="text-sm text-gray-600">Ayudante en formación</div>
+                      <div className="font-semibold text-gray-900 dark:text-white">Timoteo</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Ayudante en formación</div>
                     </div>
                   </div>
                 </button>
 
                 <button
                   onClick={() => confirmChangeRole('nuevo')}
-                  className="w-full p-4 text-left border-2 border-gray-200 rounded-xl hover:border-yellow-300 hover:bg-yellow-50 transition duration-200 group"
+                  className="w-full p-4 text-left border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-yellow-300 hover:bg-yellow-50 transition duration-200 group"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 bg-yellow-500 rounded-full group-hover:scale-110 transition duration-200"></div>
                     <div>
-                      <div className="font-semibold text-gray-900">Nuevo</div>
-                      <div className="text-sm text-gray-600">Persona nueva en la célula</div>
+                      <div className="font-semibold text-gray-900 dark:text-white">Nuevo</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Persona nueva en la célula</div>
                     </div>
                   </div>
                 </button>
@@ -876,7 +876,7 @@ const LiderDashboard: React.FC = () => {
                 {/* Botón cancelar */}
                 <button
                   onClick={() => setShowRoleDialog(false)}
-                  className="w-full mt-4 px-4 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-400 transition duration-200"
+                  className="w-full mt-4 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:bg-gray-700 hover:border-gray-400 transition duration-200"
                 >
                   Cancelar
                 </button>

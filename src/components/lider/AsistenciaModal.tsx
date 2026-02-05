@@ -87,15 +87,15 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto font-sans">
-      <div className="bg-white rounded-2xl p-6 max-w-2xl w-full my-8 shadow-2xl border border-gray-100">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-2xl w-full my-8 shadow-2xl border border-gray-100">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-black text-gray-900 tracking-tight">Registrar Asistencia</h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Registrar Asistencia</h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:bg-gray-800 rounded-full transition-colors">
             <X className="w-5 h-5 text-gray-400" />
           </button>
         </div>
 
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4 bg-gray-50 p-4 rounded-xl">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4 bg-gray-50 dark:bg-gray-700 p-4 rounded-xl">
           <div className="flex-1">
             <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1.5">
               Fecha de la Reunión
@@ -104,14 +104,14 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
               type="date"
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full bg-white border-2 border-gray-200 rounded-xl px-4 py-2 font-bold text-gray-700 focus:border-blue-500 focus:ring-0 transition-all"
+              className="w-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2 font-bold text-gray-700 dark:text-gray-300 focus:border-blue-500 focus:ring-0 transition-all"
             />
           </div>
           <div className="hidden sm:block h-10 w-px bg-gray-200 mx-2"></div>
           <div className="flex gap-4">
             <div className="text-center">
               <p className="text-[10px] font-black text-gray-400 uppercase">Miembros</p>
-              <p className="text-xl font-black text-gray-900">{celula.miembros.length}</p>
+              <p className="text-xl font-black text-gray-900 dark:text-white">{celula.miembros.length}</p>
             </div>
             <div className="text-center">
               <p className="text-[10px] font-black text-green-400 uppercase">Presentes</p>
@@ -191,16 +191,16 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
                         <select
                           value={asistencia.motivoFalta || ''}
                           onChange={(e) => handleAnotacionEspecial(miembro.id, asistencia.anotacionEspecial || '', asistencia.prioridadAnotacion!, e.target.value as MotivoFalta)}
-                          className="text-sm font-bold p-2 border-2 border-gray-200 rounded-xl bg-white text-gray-900 outline-none focus:border-blue-500 min-w-[150px]"
+                          className="text-sm font-bold p-2 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:border-blue-500 min-w-[150px]"
                         >
-                          <option value="" className="text-gray-900">Seleccione motivo...</option>
-                          <option value="vacaciones" className="text-gray-900">Vacaciones</option>
-                          <option value="trabajo" className="text-gray-900">Trabajo</option>
-                          <option value="enfermedad" className="text-gray-900">Enfermedad</option>
-                          <option value="familia" className="text-gray-900">Asunto Familiar</option>
-                          <option value="viaje" className="text-gray-900">Viaje</option>
-                          <option value="otro" className="text-gray-900">Otro Motivo</option>
-                          <option value="sin-motivo" className="text-gray-900">Sin motivo específico</option>
+                          <option value="" className="text-gray-900 dark:text-white">Seleccione motivo...</option>
+                          <option value="vacaciones" className="text-gray-900 dark:text-white">Vacaciones</option>
+                          <option value="trabajo" className="text-gray-900 dark:text-white">Trabajo</option>
+                          <option value="enfermedad" className="text-gray-900 dark:text-white">Enfermedad</option>
+                          <option value="familia" className="text-gray-900 dark:text-white">Asunto Familiar</option>
+                          <option value="viaje" className="text-gray-900 dark:text-white">Viaje</option>
+                          <option value="otro" className="text-gray-900 dark:text-white">Otro Motivo</option>
+                          <option value="sin-motivo" className="text-gray-900 dark:text-white">Sin motivo específico</option>
                         </select>
                       )}
                     </div>
@@ -248,7 +248,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
         </div>
 
         {celula.miembros.length === 0 && (
-          <div className="text-center py-8 text-gray-600">
+          <div className="text-center py-8 text-gray-600 dark:text-gray-400">
             No hay miembros para tomar asistencia. Agrega miembros primero.
           </div>
         )}

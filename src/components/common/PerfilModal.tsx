@@ -193,7 +193,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-sky-600 text-white p-6 rounded-t-2xl flex justify-between items-center">
           <div className="flex items-center gap-3">
@@ -313,20 +313,20 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
             <form onSubmit={handleUpdateProfile} className="space-y-6">
               {/* Rol (solo lectura) */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Rol
                 </label>
                 <input
                   type="text"
                   value={user?.role.toUpperCase()}
                   disabled
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 text-gray-600 cursor-not-allowed"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 cursor-not-allowed"
                 />
               </div>
 
               {/* Nombre */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Nombre Completo
                 </label>
                 <div className="relative">
@@ -335,7 +335,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
                     type="text"
                     value={profileData.name}
                     onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   />
                 </div>
@@ -343,7 +343,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Correo Electrónico
                 </label>
                 <div className="relative">
@@ -352,7 +352,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
                     type="email"
                     value={profileData.email}
                     onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   />
                 </div>
@@ -363,7 +363,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition"
+                  className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:bg-gray-700 transition"
                 >
                   Cancelar
                 </button>
@@ -384,7 +384,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
             <form onSubmit={handleChangePassword} className="space-y-6">
               {/* Contraseña Actual */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Contraseña Actual
                 </label>
                 <div className="relative">
@@ -395,7 +395,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
                     onChange={(e) =>
                       setPasswordData({ ...passwordData, currentPassword: e.target.value })
                     }
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   />
                 </div>
@@ -403,7 +403,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
 
               {/* Nueva Contraseña */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Nueva Contraseña
                 </label>
                 <div className="relative">
@@ -414,17 +414,17 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
                     onChange={(e) =>
                       setPasswordData({ ...passwordData, newPassword: e.target.value })
                     }
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                     minLength={6}
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Mínimo 6 caracteres</p>
               </div>
 
               {/* Confirmar Contraseña */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                   Confirmar Nueva Contraseña
                 </label>
                 <div className="relative">
@@ -435,7 +435,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
                     onChange={(e) =>
                       setPasswordData({ ...passwordData, confirmPassword: e.target.value })
                     }
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   />
                 </div>
@@ -446,7 +446,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition"
+                  className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:bg-gray-700 transition"
                 >
                   Cancelar
                 </button>

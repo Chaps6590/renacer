@@ -82,7 +82,7 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg p-6 max-w-2xl w-full my-8">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full my-8">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-bold flex items-center gap-2">
             <Heart className="w-6 h-6 text-red-600" />
@@ -100,7 +100,7 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
             )}
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-lg"
+              className="p-2 hover:bg-gray-100 dark:bg-gray-800 rounded-lg"
             >
               <X className="w-5 h-5" />
             </button>
@@ -113,7 +113,7 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
             <h4 className="font-semibold text-blue-900 mb-4">Configuración de Donaciones</h4>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Alias de la Iglesia *
                 </label>
                 <input
@@ -121,12 +121,12 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                   value={nuevaConfiguracion.aliasIglesia}
                   onChange={(e) => setNuevaConfiguracion({ ...nuevaConfiguracion, aliasIglesia: e.target.value })}
                   placeholder="Ej: IGLESIA.RENACER.MP"
-                  className="w-full p-3 border border-gray-300 rounded-lg font-mono"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   CBU de la Iglesia (opcional)
                 </label>
                 <input
@@ -135,19 +135,19 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                   onChange={(e) => setNuevaConfiguracion({ ...nuevaConfiguracion, cbu: e.target.value })}
                   placeholder="22 dígitos"
                   maxLength={22}
-                  className="w-full p-3 border border-gray-300 rounded-lg font-mono"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Descripción
                 </label>
                 <textarea
                   value={nuevaConfiguracion.descripcion}
                   onChange={(e) => setNuevaConfiguracion({ ...nuevaConfiguracion, descripcion: e.target.value })}
                   placeholder="Descripción para las donaciones..."
-                  className="w-full p-3 border border-gray-300 rounded-lg resize-none"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none"
                   rows={2}
                 />
               </div>
@@ -179,14 +179,14 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
               </div>
             </div>
 
-            <h4 className="text-xl font-bold text-gray-900 mb-2">Apoya nuestra Iglesia</h4>
-            <p className="text-gray-700 mb-6 whitespace-pre-wrap">
+            <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Apoya nuestra Iglesia</h4>
+            <p className="text-gray-700 dark:text-gray-300 mb-6 whitespace-pre-wrap">
               {configuracionDonaciones.descripcion || 'Gracias por tu generosidad. Tu apoyo nos permite seguir creciendo y ayudando a más personas.'}
             </p>
 
-            <div className="bg-white border border-red-200 rounded-lg p-4 mb-4">
+            <div className="bg-white dark:bg-gray-800 border border-red-200 rounded-lg p-4 mb-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-600">Alias para transferencias:</span>
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Alias para transferencias:</span>
                 {configuracionDonaciones.aliasIglesia && (
                   <button
                     onClick={copiarAlias}

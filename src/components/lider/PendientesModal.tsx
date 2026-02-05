@@ -94,7 +94,7 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg p-6 max-w-4xl w-full my-8 border border-gray-200">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-4xl w-full my-8 border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-bold flex items-center gap-2">
             <AlertCircle className="w-6 h-6 text-yellow-600" />
@@ -102,7 +102,7 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
           </h3>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 dark:bg-gray-800 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -113,10 +113,10 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Users className="w-10 h-10 text-green-600" />
             </div>
-            <h4 className="text-xl font-bold text-gray-900 mb-2">
+            <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
               ¡Célula al día!
             </h4>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               No tienes motivos de falta pendientes por completar.
             </p>
           </div>
@@ -135,14 +135,14 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
             </div>
 
             {pendientesLider.map((pendiente) => (
-              <div key={pendiente.asistenciaId} className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                <div className="bg-gray-50 px-4 py-3 border-b flex items-center justify-between">
+              <div key={pendiente.asistenciaId} className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
+                <div className="bg-gray-50 dark:bg-gray-700 px-4 py-3 border-b flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Calendar className="w-5 h-5 text-blue-600" />
                     <div>
-                      <span className="font-bold text-gray-900">{pendiente.celulaNombre}</span>
+                      <span className="font-bold text-gray-900 dark:text-white">{pendiente.celulaNombre}</span>
                       <span className="mx-2 text-gray-400">|</span>
-                      <span className="text-sm text-gray-600 capitalize">
+                      <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">
                         {format(new Date(pendiente.fecha), 'EEEE, d MMMM yyyy', { locale: es })}
                       </span>
                     </div>
@@ -155,18 +155,18 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
                     const motivoSeleccionado = motivosSeleccionados[key];
 
                     return (
-                      <div key={miembro.miembroId} className="bg-white border-2 border-red-100 rounded-xl p-5 hover:border-red-200 transition-colors">
+                      <div key={miembro.miembroId} className="bg-white dark:bg-gray-800 border-2 border-red-100 rounded-xl p-5 hover:border-red-200 transition-colors">
                         <div className="flex flex-col lg:flex-row gap-6">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-4">
                               <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold">
                                 {miembro.miembroNombre.charAt(0)}
                               </div>
-                              <h5 className="font-bold text-gray-900 text-lg">{miembro.miembroNombre}</h5>
+                              <h5 className="font-bold text-gray-900 dark:text-white text-lg">{miembro.miembroNombre}</h5>
                             </div>
 
                             <div className="mb-4">
-                              <p className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">¿Por qué faltó?</p>
+                              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">¿Por qué faltó?</p>
                               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                 {motivosFalta.map((motivo) => (
                                   <label key={motivo.value} className={`flex items-center justify-center p-2 rounded-lg border cursor-pointer transition-all ${motivoSeleccionado?.motivo === motivo.value
@@ -189,18 +189,18 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
 
                             <div className="space-y-4">
                               <div>
-                                <p className="text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">Anotación / Comentario</p>
+                                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">Anotación / Comentario</p>
                                 <textarea
                                   value={motivoSeleccionado?.anotacionEspecial || ''}
                                   onChange={(e) => handleAnotacionChange(pendiente.asistenciaId, miembro.miembroId, e.target.value)}
                                   placeholder="¿Pudiste hablar con el hermano? ¿Necesita oración por algo?"
-                                  className="w-full p-3 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:ring-0 transition-all text-sm text-gray-900 font-bold placeholder-gray-400 bg-white"
+                                  className="w-full p-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl resize-none focus:border-blue-500 focus:ring-0 transition-all text-sm text-gray-900 dark:text-white font-bold placeholder-gray-400 bg-white dark:bg-gray-800"
                                   rows={2}
                                 />
                               </div>
 
                               <div className="flex flex-wrap items-center gap-4">
-                                <span className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Prioridad:</span>
+                                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Prioridad:</span>
                                 {(['alta', 'media', 'baja']).map(prioridad => (
                                   <label key={prioridad} className={`flex items-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer transition-all ${motivoSeleccionado?.prioridad === prioridad
                                     ? (prioridad === 'alta' ? 'bg-red-500 border-red-500 text-white' :
@@ -245,7 +245,7 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
         <div className="flex justify-end mt-8">
           <button
             onClick={onClose}
-            className="px-6 py-2 text-gray-600 font-bold hover:text-gray-900 transition-colors"
+            className="px-6 py-2 text-gray-600 dark:text-gray-400 font-bold hover:text-gray-900 dark:text-white transition-colors"
           >
             Cerrar
           </button>

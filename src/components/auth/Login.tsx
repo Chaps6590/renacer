@@ -43,11 +43,11 @@ export const Login: React.FC = () => {
         <div className="relative bg-gradient-to-r from-blue-600 to-sky-600 px-8 pt-12 pb-8 text-center">
           {/* Subtle Pattern Overlay */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-4 left-8 w-2 h-2 bg-white rounded-full"></div>
-            <div className="absolute top-8 left-16 w-1 h-1 bg-white rounded-full"></div>
-            <div className="absolute top-6 right-12 w-2 h-2 bg-white rounded-full"></div>
-            <div className="absolute bottom-8 right-8 w-1 h-1 bg-white rounded-full"></div>
-            <div className="absolute bottom-12 left-12 w-2 h-2 bg-white rounded-full"></div>
+            <div className="absolute top-4 left-8 w-2 h-2 bg-white dark:bg-gray-800 rounded-full"></div>
+            <div className="absolute top-8 left-16 w-1 h-1 bg-white dark:bg-gray-800 rounded-full"></div>
+            <div className="absolute top-6 right-12 w-2 h-2 bg-white dark:bg-gray-800 rounded-full"></div>
+            <div className="absolute bottom-8 right-8 w-1 h-1 bg-white dark:bg-gray-800 rounded-full"></div>
+            <div className="absolute bottom-12 left-12 w-2 h-2 bg-white dark:bg-gray-800 rounded-full"></div>
           </div>
           <div className="relative">
             <div className="inline-flex items-center justify-center w-32 h-32 mb-6 relative">
@@ -74,14 +74,14 @@ export const Login: React.FC = () => {
         {/* Form Container */}
         <div className="px-8 py-8">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Bienvenido de vuelta</h2>
-            <p className="text-gray-600">Inicia sesión para continuar</p>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Bienvenido de vuelta</h2>
+            <p className="text-gray-600 dark:text-gray-400">Inicia sesión para continuar</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Input */}
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Correo Electrónico
               </label>
               <div className="relative">
@@ -93,7 +93,7 @@ export const Login: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white text-gray-900 placeholder-gray-500"
+                  className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   placeholder="tu@email.com"
                   required
                 />
@@ -102,7 +102,7 @@ export const Login: React.FC = () => {
 
             {/* Password Input */}
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
+              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Contraseña
               </label>
               <div className="relative">
@@ -114,14 +114,14 @@ export const Login: React.FC = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white text-gray-900 placeholder-gray-500"
+                  className="w-full pl-12 pr-12 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   placeholder="••••••••"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition duration-200"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-400 transition duration-200"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>

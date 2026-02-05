@@ -377,17 +377,17 @@ export const PastorDashboard: React.FC = () => {
   const totalMiembros = estadisticas.reduce((sum, e) => sum + e.totalMiembros, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-700 dark:bg-gray-900">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Dashboard del Pastor</h2>
-          <p className="text-gray-600 dark:text-gray-400">Gestión de células y líderes</p>
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 dark:text-gray-100 mb-2">Dashboard del Pastor</h2>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400">Gestión de células y líderes</p>
         </div>
 
         {/* Navegación de vistas */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700 dark:border-gray-700 overflow-x-auto pb-1 scrollbar-hide">
           <button
             onClick={() => setView('dashboard')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${view === 'dashboard'
@@ -485,7 +485,7 @@ export const PastorDashboard: React.FC = () => {
                           return dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth();
                         }).length;
                         return cumpleanosHoy > 0 ? (
-                          <span className="ml-1 bg-white text-pink-600 rounded-full px-3 py-1 text-lg font-bold shadow">{cumpleanosHoy}</span>
+                          <span className="ml-1 bg-white dark:bg-gray-800 text-pink-600 rounded-full px-3 py-1 text-lg font-bold shadow">{cumpleanosHoy}</span>
                         ) : null;
                       })()}
                     </div>
@@ -515,7 +515,7 @@ export const PastorDashboard: React.FC = () => {
             {/* Controles */}
             <div className="flex flex-wrap gap-4 mb-6">
               <div className="flex gap-2 items-center">
-                <label className="text-sm font-medium text-gray-700">Período:</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Período:</label>
                 <select
                   value={timeframe}
                   onChange={(e) => setTimeframe(e.target.value as any)}
@@ -541,40 +541,40 @@ export const PastorDashboard: React.FC = () => {
               <h3 className="text-xl font-bold mb-4">Células y Estadísticas</h3>
 
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-700">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Célula
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Líder
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Miembros
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Asistencias
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Promedio
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {estadisticas.map((est) => (
-                      <tr key={est.celulaId} className="hover:bg-gray-50">
+                      <tr key={est.celulaId} className="hover:bg-gray-50 dark:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{est.celulaNombre}</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{est.celulaNombre}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{est.liderNombre}</div>
+                          <div className="text-sm text-gray-900 dark:text-white">{est.liderNombre}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{est.totalMiembros}</div>
+                          <div className="text-sm text-gray-900 dark:text-white">{est.totalMiembros}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{est.cantidadAsistencias}</div>
+                          <div className="text-sm text-gray-900 dark:text-white">{est.cantidadAsistencias}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${est.promedioAsistencia >= 80 ? 'bg-green-100 text-green-800' :
@@ -599,8 +599,8 @@ export const PastorDashboard: React.FC = () => {
             {loadingLideres && <div className="mb-4 text-blue-600">Cargando líderes...</div>}
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h3 className="text-xl font-bold text-gray-800">Gestión de Líderes</h3>
-                <p className="text-gray-600 text-sm">Total: {lideres.length} líderes</p>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Gestión de Líderes</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">Total: {lideres.length} líderes</p>
               </div>
               <button
                 onClick={() => setShowAddLider(true)}
@@ -615,49 +615,49 @@ export const PastorDashboard: React.FC = () => {
 
             {/* Tabla de líderes */}
             <div className="card">
-              <h4 className="font-semibold text-gray-900 mb-4">Todos los Líderes</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Todos los Líderes</h4>
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-700">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                         Nombre
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                         Email
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                         Teléfono
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                         Célula
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                         Estado
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                         Contraseña
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                         Acciones
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {lideres.map((lider) => (
-                      <tr key={lider.id} className="hover:bg-gray-50">
+                      <tr key={lider.id} className="hover:bg-gray-50 dark:bg-gray-700">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{lider.name}</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{lider.name}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">{lider.email}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">{lider.email}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-600">{(lider as any).telefono || '-'}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">{(lider as any).telefono || '-'}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {lider.nombreCelula ? (
-                            <span className="text-sm text-gray-900">{lider.nombreCelula}</span>
+                            <span className="text-sm text-gray-900 dark:text-white">{lider.nombreCelula}</span>
                           ) : (
                             <span className="text-sm text-gray-400">Sin asignar</span>
                           )}
@@ -674,7 +674,7 @@ export const PastorDashboard: React.FC = () => {
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <code className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-700">Renacer</code>
+                          <code className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-gray-700 dark:text-gray-300">Renacer</code>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex gap-2 justify-end">
                           <button
@@ -706,8 +706,8 @@ export const PastorDashboard: React.FC = () => {
           <>
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h3 className="text-xl font-bold text-gray-800">Gestión de Células</h3>
-                <p className="text-gray-600 text-sm">Total: {celulas.length} células</p>
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Gestión de Células</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">Total: {celulas.length} células</p>
               </div>
               <button
                 onClick={() => setShowAddCelula(true)}
@@ -723,8 +723,8 @@ export const PastorDashboard: React.FC = () => {
                 <div key={celula.id} className="card hover:shadow-lg transition-shadow">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h4 className="text-lg font-bold text-gray-900">{celula.name}</h4>
-                      <p className="text-sm text-gray-600">Líder: {celula.liderName}</p>
+                      <h4 className="text-lg font-bold text-gray-900 dark:text-white">{celula.name}</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Líder: {celula.liderName}</p>
                       <p className="text-sm text-blue-600 font-medium mt-1">
                         {celula.diaSemana} - {celula.horario}
                       </p>
@@ -748,20 +748,20 @@ export const PastorDashboard: React.FC = () => {
                   </div>
 
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between items-center bg-gray-50 p-2 rounded">
-                      <span className="text-gray-700 text-sm font-medium">Miembros:</span>
-                      <span className="bg-white px-2 py-1 rounded text-gray-900 font-bold shadow-sm border border-gray-200">
+                    <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-2 rounded">
+                      <span className="text-gray-700 dark:text-gray-300 text-sm font-medium">Miembros:</span>
+                      <span className="bg-white dark:bg-gray-800 px-2 py-1 rounded text-gray-900 dark:text-white font-bold shadow-sm border border-gray-200 dark:border-gray-700">
                         {celula.miembros.length}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center bg-gray-50 p-2 rounded">
-                      <span className="text-gray-700 text-sm font-medium">Colíderes:</span>
-                      <span className="bg-white px-2 py-1 rounded text-gray-900 font-bold shadow-sm border border-gray-200">
+                    <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-2 rounded">
+                      <span className="text-gray-700 dark:text-gray-300 text-sm font-medium">Colíderes:</span>
+                      <span className="bg-white dark:bg-gray-800 px-2 py-1 rounded text-gray-900 dark:text-white font-bold shadow-sm border border-gray-200 dark:border-gray-700">
                         {celula.coLideres.length}
                       </span>
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-                      <span className="text-gray-600">Creada:</span>
+                      <span className="text-gray-600 dark:text-gray-400">Creada:</span>
                       <span className="font-semibold">
                         {new Date(celula.createdAt).toLocaleDateString('es-AR')}
                       </span>
@@ -772,14 +772,14 @@ export const PastorDashboard: React.FC = () => {
                   {/* Modal de confirmación para eliminar célula */}
                   {showDeleteCelula && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                      <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
                         <div className="flex justify-between items-center mb-4">
                           <h3 className="text-xl font-bold">Eliminar Célula</h3>
-                          <button onClick={() => setShowDeleteCelula(false)} className="text-gray-400 hover:text-gray-600">
+                          <button onClick={() => setShowDeleteCelula(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-400">
                             <X className="w-5 h-5" />
                           </button>
                         </div>
-                        <p className="mb-6 text-gray-700">¿Estás seguro de que deseas eliminar esta célula? Esta acción no se puede deshacer.</p>
+                        <p className="mb-6 text-gray-700 dark:text-gray-300">¿Estás seguro de que deseas eliminar esta célula? Esta acción no se puede deshacer.</p>
                         <div className="flex gap-4 mt-6">
                           <button
                             onClick={confirmDeleteCelula}
@@ -804,17 +804,17 @@ export const PastorDashboard: React.FC = () => {
         {/* Modal Agregar Líder */}
         {showAddLider && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">Agregar Nuevo Líder</h3>
-                <button onClick={() => setShowAddLider(false)} className="text-gray-400 hover:text-gray-600">
+                <button onClick={() => setShowAddLider(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-400">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Nombre Completo *
                   </label>
                   <input
@@ -827,7 +827,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Email (opcional)
                   </label>
                   <input
@@ -837,13 +837,13 @@ export const PastorDashboard: React.FC = () => {
                     className="input"
                     placeholder="juan@email.com"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Si no se ingresa, se generará automáticamente
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Fecha de Nacimiento
                   </label>
                   <input
@@ -855,7 +855,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Teléfono
                   </label>
                   <input
@@ -904,8 +904,8 @@ export const PastorDashboard: React.FC = () => {
                 <Heart className="w-6 h-6 text-pink-500" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900">Cumpleaños de la Semana</h3>
-                <p className="text-gray-600">Próximos 7 días</p>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Cumpleaños de la Semana</h3>
+                <p className="text-gray-600 dark:text-gray-400">Próximos 7 días</p>
               </div>
             </div>
 
@@ -927,10 +927,10 @@ export const PastorDashboard: React.FC = () => {
                       }`}>
                       <div className="flex justify-between items-start">
                         <div>
-                          <h4 className="font-bold text-gray-900">{person.name}</h4>
-                          <p className="text-sm text-gray-600">{person.type}</p>
+                          <h4 className="font-bold text-gray-900 dark:text-white">{person.name}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{person.type}</p>
                           {person.celulaName && (
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                               {person.type === 'Miembro' ? `Célula: ${person.celulaName}` : person.celulaName}
                             </p>
                           )}
@@ -940,7 +940,7 @@ export const PastorDashboard: React.FC = () => {
                             }`}>
                             {dobParts ? dobParts.day : ''}
                           </span>
-                          <span className="text-xs uppercase text-gray-500">
+                          <span className="text-xs uppercase text-gray-500 dark:text-gray-400">
                             {dobParts ? ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][dobParts.month-1] : ''}
                           </span>
                         </div>
@@ -958,11 +958,11 @@ export const PastorDashboard: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-12">
-                <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
                   <Heart className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900">No hay cumpleaños cercanos</h3>
-                <p className="text-gray-500">No se encontraron cumpleaños en los próximos 7 días.</p>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">No hay cumpleaños cercanos</h3>
+                <p className="text-gray-500 dark:text-gray-400">No se encontraron cumpleaños en los próximos 7 días.</p>
               </div>
             )}
           </div>
@@ -971,14 +971,14 @@ export const PastorDashboard: React.FC = () => {
         {/* Modal de confirmación para eliminar líder */}
         {showDeleteLider && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">Eliminar Líder</h3>
-                <button onClick={() => setShowDeleteLider(false)} className="text-gray-400 hover:text-gray-600">
+                <button onClick={() => setShowDeleteLider(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-400">
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <p className="mb-6 text-gray-700">¿Estás seguro de que deseas eliminar este líder? Esta acción no se puede deshacer.</p>
+              <p className="mb-6 text-gray-700 dark:text-gray-300">¿Estás seguro de que deseas eliminar este líder? Esta acción no se puede deshacer.</p>
               <div className="flex gap-4 mt-6">
                 <button
                   onClick={confirmDeleteLider}
@@ -1000,17 +1000,17 @@ export const PastorDashboard: React.FC = () => {
         {/* Modal Editar Líder */}
         {showEditLider && editingLider && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">Editar Líder</h3>
-                <button onClick={() => setShowEditLider(false)} className="text-gray-400 hover:text-gray-600">
+                <button onClick={() => setShowEditLider(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-400">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Nombre Completo *
                   </label>
                   <input
@@ -1022,7 +1022,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Email
                   </label>
                   <input
@@ -1034,7 +1034,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Fecha de Nacimiento
                   </label>
                   <input
@@ -1046,7 +1046,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Teléfono
                   </label>
                   <input
@@ -1081,17 +1081,17 @@ export const PastorDashboard: React.FC = () => {
         {/* Modal Crear Célula */}
         {showAddCelula && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">Crear Nueva Célula</h3>
-                <button onClick={() => { setShowAddCelula(false); setColiderSearch(''); }} className="text-gray-400 hover:text-gray-600">
+                <button onClick={() => { setShowAddCelula(false); setColiderSearch(''); }} className="text-gray-400 hover:text-gray-600 dark:text-gray-400">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Nombre de la Célula *
                   </label>
                   <input
@@ -1104,7 +1104,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Día de la Semana *
                   </label>
                   <select
@@ -1124,7 +1124,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Horario *
                   </label>
                   <input
@@ -1136,7 +1136,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Asignar Líder Principal *
                   </label>
                   <select
@@ -1159,7 +1159,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Colíderes (opcional)
                   </label>
                   <input
@@ -1173,7 +1173,7 @@ export const PastorDashboard: React.FC = () => {
                     {lideresDisponibles
                       .filter(l => l.id !== newCelula.liderId && l.name.toLowerCase().includes(coliderSearch.toLowerCase()))
                       .map(lider => (
-                        <label key={lider.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                        <label key={lider.id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:bg-gray-700 p-2 rounded">
                           <input
                             type="checkbox"
                             checked={newCelula.coliderIds.includes(lider.id)}
@@ -1184,18 +1184,18 @@ export const PastorDashboard: React.FC = () => {
                                 setNewCelula({ ...newCelula, coliderIds: newCelula.coliderIds.filter(id => id !== lider.id) });
                               }
                             }}
-                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                            className="rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500"
                           />
-                          <span className="text-sm text-gray-700">{lider.name}</span>
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{lider.name}</span>
                         </label>
                       ))}
                     {lideresDisponibles.filter(l => l.id !== newCelula.liderId && l.name.toLowerCase().includes(coliderSearch.toLowerCase())).length === 0 && (
-                      <p className="text-xs text-gray-500 text-center py-2">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-2">
                         No se encontraron líderes disponibles
                       </p>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Selecciona uno o más colíderes para apoyar al líder principal
                   </p>
                 </div>
@@ -1223,17 +1223,17 @@ export const PastorDashboard: React.FC = () => {
         {/* Modal Editar Célula */}
         {showEditCelula && editingCelula && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">Editar Célula</h3>
-                <button onClick={() => { setShowEditCelula(false); setColiderSearch(''); }} className="text-gray-400 hover:text-gray-600">
+                <button onClick={() => { setShowEditCelula(false); setColiderSearch(''); }} className="text-gray-400 hover:text-gray-600 dark:text-gray-400">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Nombre de la Célula
                   </label>
                   <input
@@ -1245,7 +1245,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Día de la Semana
                   </label>
                   <select
@@ -1264,7 +1264,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Horario
                   </label>
                   <input
@@ -1276,7 +1276,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Líder Principal
                   </label>
                   <select
@@ -1298,7 +1298,7 @@ export const PastorDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Colíderes
                   </label>
                   <input
@@ -1328,9 +1328,9 @@ export const PastorDashboard: React.FC = () => {
                                 setEditingCelula({ ...editingCelula, coliderIds: editingCelula.coliderIds.filter(id => id !== lider.id) });
                               }
                             }}
-                            className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                            className="rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500"
                           />
-                          <span className="text-sm text-gray-700">
+                          <span className="text-sm text-gray-700 dark:text-gray-300">
                             {lider.name} {!!lider.celulaAsignada && !editingCelula.coliderIds.includes(lider.id) ? '(Ocupado)' : ''}
                           </span>
                         </label>
@@ -1391,8 +1391,8 @@ export const PastorDashboard: React.FC = () => {
                       <FileText className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Materiales</h3>
-                      <p className="text-sm text-gray-600">Gestionar mensajes y recursos</p>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Materiales</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Gestionar mensajes y recursos</p>
                     </div>
                   </div>
                   <div className="space-y-3">
@@ -1417,8 +1417,8 @@ export const PastorDashboard: React.FC = () => {
                       <Newspaper className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Noticias</h3>
-                      <p className="text-sm text-gray-600">Anuncios para la iglesia</p>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Noticias</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Anuncios para la iglesia</p>
                     </div>
                   </div>
                   <div className="space-y-3">
@@ -1444,8 +1444,8 @@ export const PastorDashboard: React.FC = () => {
                       <Heart className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Donaciones</h3>
-                      <p className="text-sm text-gray-600">Configurar métodos de donación</p>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Donaciones</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Configurar métodos de donación</p>
                     </div>
                   </div>
                   <div className="space-y-3">
@@ -1471,8 +1471,8 @@ export const PastorDashboard: React.FC = () => {
                       <AlertCircle className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Peticiones</h3>
-                      <p className="text-sm text-gray-600">Situaciones importantes</p>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Peticiones</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Situaciones importantes</p>
                     </div>
                   </div>
                   <div className="space-y-3">

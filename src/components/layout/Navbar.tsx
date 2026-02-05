@@ -33,12 +33,12 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="bg-white dark:bg-gray-800 shadow-md transition-colors duration-200">
+      <nav className="bg-white dark:bg-gray-800 dark:bg-gray-800 shadow-md transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-primary-600 dark:text-primary-400">Renacer</h1>
-              <span className="ml-4 text-gray-600 dark:text-gray-300">| {user?.name}</span>
+              <span className="ml-4 text-gray-600 dark:text-gray-400 dark:text-gray-300">| {user?.name}</span>
             </div>
 
             <div className="flex items-center gap-4">

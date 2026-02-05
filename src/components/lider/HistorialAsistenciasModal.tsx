@@ -59,7 +59,7 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full my-8 overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-5xl w-full my-8 overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-4 flex items-center justify-between text-white shrink-0">
                     <div className="flex items-center gap-3">
@@ -82,15 +82,15 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                 {/* Content */}
                 <div className="p-6 overflow-y-auto flex-1 bg-gray-50/50">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-20 text-gray-500">
+                        <div className="flex flex-col items-center justify-center py-20 text-gray-500 dark:text-gray-400">
                             <div className="w-12 h-12 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin mb-4"></div>
                             <p className="font-medium">Cargando registros históricos...</p>
                         </div>
                     ) : historial.length === 0 ? (
-                        <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300">
+                        <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600">
                             <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                            <h4 className="text-xl font-semibold text-gray-900 mb-2">No hay registros aún</h4>
-                            <p className="text-gray-500 max-w-sm mx-auto">
+                            <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No hay registros aún</h4>
+                            <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
                                 Las asistencias que registres aparecerán aquí ordenadas por fecha.
                             </p>
                         </div>
@@ -117,7 +117,7 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                 </div>
 
                                                 <div>
-                                                    <p className="font-bold text-gray-900 text-lg">
+                                                    <p className="font-bold text-gray-900 dark:text-white text-lg">
                                                         {format(new Date(registro.date), 'EEEE, d MMMM', { locale: es })}
                                                     </p>
                                                     <div className="flex items-center gap-3 mt-1 text-sm">
@@ -141,7 +141,7 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                             <div className="flex items-center gap-4">
                                                 <div className="text-right hidden sm:block">
                                                     <p className="text-xs text-gray-400 uppercase tracking-widest font-bold">Registrado por</p>
-                                                    <p className="text-sm font-semibold text-gray-600">{(registro as any).registradoPor?.name || 'Sistema'}</p>
+                                                    <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{(registro as any).registradoPor?.name || 'Sistema'}</p>
                                                 </div>
                                                 <div className={`p-2 rounded-full transition-colors ${isExpanded ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400 group-hover:bg-gray-200 group-hover:text-gray-600'}`}>
                                                     {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
@@ -163,11 +163,11 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                                 {/* Modal de confirmación */}
                                                                 {confirmOpen && (
                                                                     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                                                                        <div className="bg-white rounded-xl shadow-lg p-8 max-w-xs w-full flex flex-col items-center">
-                                                                            <p className="text-lg font-bold text-gray-800 mb-4 text-center">¿Estás seguro que deseas eliminar esta asistencia?</p>
+                                                                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-xs w-full flex flex-col items-center">
+                                                                            <p className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 text-center">¿Estás seguro que deseas eliminar esta asistencia?</p>
                                                                             <div className="flex gap-4 mt-2">
                                                                                 <button
-                                                                                    className="px-4 py-2 bg-gray-200 rounded-lg font-bold text-gray-700 hover:bg-gray-300"
+                                                                                    className="px-4 py-2 bg-gray-200 rounded-lg font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-300"
                                                                                     onClick={() => { setConfirmOpen(false); setDeletingId(null); }}
                                                                                 >
                                                                                     Cancelar
@@ -206,7 +206,7 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                                             <XCircle className="w-4 h-4" />
                                                                         </div>
                                                                     )}
-                                                                    <span className="font-bold text-gray-800">{(m as any).miembro?.nombre || 'Miembro'}</span>
+                                                                    <span className="font-bold text-gray-800 dark:text-gray-100">{(m as any).miembro?.nombre || 'Miembro'}</span>
                                                                 </div>
                                                                 <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${m.presente ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
                                                                     }`}>
@@ -235,7 +235,7 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                                                     }
                                                                                 </p>
                                                                             )}
-                                                                            <p className="text-sm text-gray-700 font-medium italic">
+                                                                            <p className="text-sm text-gray-700 dark:text-gray-300 font-medium italic">
                                                                                 {m.anotacionEspecial ? `"${m.anotacionEspecial}"` : 'Sin comentario detallado'}
                                                                             </p>
                                                                             {m.prioridadAnotacion && (
@@ -261,10 +261,10 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                     )}
                 </div>
 
-                <div className="p-6 border-t shrink-0 bg-white">
+                <div className="p-6 border-t shrink-0 bg-white dark:bg-gray-800">
                     <button
                         onClick={onClose}
-                        className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-colors tracking-wide"
+                        className="w-full py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 text-gray-700 dark:text-gray-300 font-bold rounded-xl transition-colors tracking-wide"
                     >
                         Cerrar Historial
                     </button>

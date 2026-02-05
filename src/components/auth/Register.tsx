@@ -76,13 +76,13 @@ export const Register: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-8">
         <div className="flex flex-col items-center mb-8">
           <div className="bg-primary-600 p-4 rounded-full mb-4">
             <Church className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800">Registro de Líderes</h1>
-          <p className="text-gray-600 mt-2 text-center">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Registro de Líderes</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2 text-center">
             Registro exclusivo para que cada líder pueda acceder a la aplicación
           </p>
         </div>
@@ -97,7 +97,7 @@ export const Register: React.FC = () => {
             </div>
             
             <div>
-              <label htmlFor="searchName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="searchName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Busca tu nombre
               </label>
               <div className="flex gap-2">
@@ -137,8 +137,8 @@ export const Register: React.FC = () => {
         {step === 'validate' && foundLider && (
           <div className="space-y-6">
             <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">¡Líder encontrado!</h2>
-              <p className="text-gray-600 mb-4">¿Eres tú?</p>
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">¡Líder encontrado!</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">¿Eres tú?</p>
               <p className="text-2xl font-bold text-primary-600">{foundLider.name}</p>
             </div>
 
@@ -166,13 +166,13 @@ export const Register: React.FC = () => {
         {step === 'form' && (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
                 <strong>Nombre:</strong> {foundLider?.name}
               </p>
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Correo Electrónico
               </label>
               <input
@@ -187,7 +187,7 @@ export const Register: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Teléfono (opcional)
               </label>
               <input
@@ -201,7 +201,7 @@ export const Register: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Contraseña
               </label>
               <input
@@ -216,7 +216,7 @@ export const Register: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Confirmar Contraseña
               </label>
               <input

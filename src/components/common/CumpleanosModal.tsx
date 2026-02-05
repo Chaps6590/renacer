@@ -107,7 +107,7 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full my-8 overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full my-8 overflow-hidden border border-gray-100 flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="bg-gradient-to-r from-pink-500 to-yellow-400 px-6 py-4 flex items-center justify-between text-white shrink-0">
           <div className="flex items-center gap-3">
@@ -129,23 +129,23 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
         {/* Content */}
         <div className="p-6 overflow-y-auto flex-1 bg-gray-50/50">
           {cumpleanieros.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300">
+            <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600">
               <Gift className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h4 className="text-xl font-semibold text-gray-900 mb-2">No hay cumpleaños registrados</h4>
-              <p className="text-gray-500 max-w-sm mx-auto">
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No hay cumpleaños registrados</h4>
+              <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
                 Los cumpleaños de los miembros aparecerán aquí.
               </p>
             </div>
           ) : (
-            <ul className="divide-y divide-gray-200">
+            <ul className="divide-y divide-gray-200 dark:divide-gray-700">
               {cumpleanieros.map(m => (
                 <li key={m.id} className="py-3 flex items-center gap-4">
                   <div className="bg-pink-100 text-pink-700 rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
                     {m.name?.[0] || '?'}
                   </div>
                   <div className="flex-1">
-                    <div className="font-bold text-gray-800">{m.name}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="font-bold text-gray-800 dark:text-gray-100">{m.name}</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                       {(() => {
                         if (!m.fechaNacimiento) return 'Sin fecha';
                         try {
@@ -166,10 +166,10 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
             </ul>
           )}
         </div>
-        <div className="p-6 border-t shrink-0 bg-white">
+        <div className="p-6 border-t shrink-0 bg-white dark:bg-gray-800">
           <button
             onClick={onClose}
-            className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-colors tracking-wide"
+            className="w-full py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 text-gray-700 dark:text-gray-300 font-bold rounded-xl transition-colors tracking-wide"
           >
             Cerrar
           </button>
