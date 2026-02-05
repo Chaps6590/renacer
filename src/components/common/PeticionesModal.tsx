@@ -106,7 +106,7 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto flex-1 bg-gray-50/50">
+          <div className="p-6 overflow-y-auto flex-1 bg-gray-50/50 dark:bg-gray-900/50">
           {/* Resumen de contadores */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
             <div className="bg-white dark:bg-gray-800 border-2 border-red-100 rounded-2xl p-4 shadow-sm text-center">
@@ -131,13 +131,13 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 shadow-sm mb-8 space-y-4">
             <div className="flex flex-wrap gap-6">
               <div className="space-y-2">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Resolución</span>
-                <div className="flex p-1 bg-gray-100 dark:bg-gray-800 rounded-xl w-fit">
+                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Resolución</span>
+                <div className="flex p-1 bg-gray-100 dark:bg-gray-700 rounded-xl w-fit">
                   {(['pendiente', 'resuelta', 'todas'] as const).map(f => (
                     <button
                       key={f}
                       onClick={() => setResolucionFiltro(f)}
-                      className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${resolucionFiltro === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                      className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${resolucionFiltro === f ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}
                         }`}
                     >
                       {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -147,13 +147,13 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
               </div>
 
               <div className="space-y-2">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Prioridad</span>
-                <div className="flex p-1 bg-gray-100 dark:bg-gray-800 rounded-xl w-fit">
+                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Prioridad</span>
+                <div className="flex p-1 bg-gray-100 dark:bg-gray-700 rounded-xl w-fit">
                   {(['todas', 'alta', 'media'] as const).map(f => (
                     <button
                       key={f}
                       onClick={() => setFiltroActivo(f)}
-                      className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filtroActivo === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                      className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${filtroActivo === f ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}
                         }`}
                     >
                       {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -176,7 +176,7 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
               </div>
             ) : (
               anotacionesFiltradas.map((anotacion) => (
-                <div key={anotacion.id} className={`bg-white rounded-2xl border-2 transition-all overflow-hidden ${anotacion.resuelta ? 'border-gray-100 opacity-75' : 'border-white shadow-sm hover:shadow-md'
+                <div key={anotacion.id} className={`bg-white dark:bg-gray-800 rounded-2xl border-2 transition-all overflow-hidden ${anotacion.resuelta ? 'border-gray-100 dark:border-gray-700 opacity-75' : 'border-white dark:border-gray-800 shadow-sm hover:shadow-md'}
                   }`}>
                   <div className="p-6">
                     <div className="flex flex-col lg:flex-row gap-6">
@@ -199,7 +199,7 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
                         </div>
 
                         <div className="flex items-center gap-4 mb-4">
-                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-black ${anotacion.resuelta ? 'bg-gray-100 text-gray-400' : 'bg-orange-100 text-orange-600'
+                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-black ${anotacion.resuelta ? 'bg-gray-100 dark:bg-gray-700 text-gray-400' : 'bg-orange-100 dark:bg-orange-900/50 text-orange-600'}
                             }`}>
                             {anotacion.miembroNombre.charAt(0)}
                           </div>
@@ -211,8 +211,8 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
 
                         <div className="space-y-3">
                           {anotacion.anotacion && (
-                            <div className="bg-gray-50 dark:bg-gray-700 rounded-2xl p-4 border border-gray-100 relative">
-                              <MessageSquare className="w-8 h-8 text-white absolute -top-2 -left-2 fill-gray-200" />
+                            <div className="bg-gray-50 dark:bg-gray-700 rounded-2xl p-4 border border-gray-100 dark:border-gray-600 relative">
+                              <MessageSquare className="w-8 h-8 text-white absolute -top-2 -left-2 fill-gray-200 dark:fill-gray-600" />
                               <div className="flex flex-col gap-1 relative z-10">
                                 <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Petición / Anotación</span>
                                 <p className="text-gray-700 dark:text-gray-300 text-sm font-medium leading-relaxed">

@@ -125,7 +125,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-4xl w-full my-8">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-bold flex items-center gap-2">
+          <h3 className="text-2xl font-bold flex items-center gap-2 text-gray-900 dark:text-white">
             <Newspaper className="w-6 h-6 text-blue-600" />
             Noticias de la Iglesia
           </h3>
@@ -141,17 +141,17 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
             )}
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 dark:bg-gray-800 rounded-lg"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 text-gray-700 dark:text-gray-300" />
             </button>
           </div>
         </div>
 
         {/* Formulario para crear/editar noticia */}
         {mostrandoCrear && esPastor && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <h4 className="font-semibold text-blue-900 mb-4">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+            <h4 className="font-semibold text-blue-900 dark:text-blue-200 mb-4">
               {editandoNoticia ? 'Editar Noticia' : 'Crear Nueva Noticia'}
             </h4>
             <div className="space-y-4">
@@ -164,7 +164,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                   value={nuevaNoticia.titulo}
                   onChange={(e) => setNuevaNoticia({ ...nuevaNoticia, titulo: e.target.value })}
                   placeholder="Ej: Conferencia especial este domingo"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 />
               </div>
 
@@ -176,7 +176,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                   value={nuevaNoticia.contenido}
                   onChange={(e) => setNuevaNoticia({ ...nuevaNoticia, contenido: e.target.value })}
                   placeholder="Detalle completo de la noticia..."
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   rows={4}
                 />
               </div>
@@ -186,7 +186,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                   Imagen (opcional)
                 </label>
                 <div className="flex items-center gap-4">
-                  <div className={`w-24 h-24 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50`}>
+                  <div className={`w-24 h-24 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center overflow-hidden bg-gray-50 dark:bg-gray-700`}>
                     {nuevaNoticia.imageUrl ? (
                       <img src={nuevaNoticia.imageUrl} alt="Vista previa" className="w-full h-full object-cover" />
                     ) : (
@@ -203,7 +203,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                     />
                     <label
                       htmlFor="news-image-upload"
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:bg-gray-700 cursor-pointer transition-colors"
+                      className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer transition-colors"
                     >
                       {cargandoImagen ? 'Procesando...' : (nuevaNoticia.imageUrl ? 'Cambiar Imagen' : 'Subir Imagen')}
                     </label>
@@ -231,7 +231,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                   type="date"
                   value={nuevaNoticia.fechaVencimiento}
                   onChange={(e) => setNuevaNoticia({ ...nuevaNoticia, fechaVencimiento: e.target.value })}
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                   Si se establece, la noticia se ocultará automáticamente después de esta fecha

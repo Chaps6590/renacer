@@ -84,7 +84,7 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full my-8">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-bold flex items-center gap-2">
+          <h3 className="text-2xl font-bold flex items-center gap-2 text-gray-900 dark:text-white">
             <Heart className="w-6 h-6 text-red-600" />
             Donaciones
           </h3>
@@ -100,17 +100,17 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
             )}
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 dark:bg-gray-800 rounded-lg"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 text-gray-700 dark:text-gray-300" />
             </button>
           </div>
         </div>
 
         {/* Formulario de configuración */}
         {mostrandoConfiguracion && esAdministrador && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <h4 className="font-semibold text-blue-900 mb-4">Configuración de Donaciones</h4>
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+            <h4 className="font-semibold text-blue-900 dark:text-blue-200 mb-4">Configuración de Donaciones</h4>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -121,7 +121,7 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                   value={nuevaConfiguracion.aliasIglesia}
                   onChange={(e) => setNuevaConfiguracion({ ...nuevaConfiguracion, aliasIglesia: e.target.value })}
                   placeholder="Ej: IGLESIA.RENACER.MP"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-mono"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-mono bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
 
@@ -135,7 +135,7 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                   onChange={(e) => setNuevaConfiguracion({ ...nuevaConfiguracion, cbu: e.target.value })}
                   placeholder="22 dígitos"
                   maxLength={22}
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-mono"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg font-mono bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
 
@@ -147,7 +147,7 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
                   value={nuevaConfiguracion.descripcion}
                   onChange={(e) => setNuevaConfiguracion({ ...nuevaConfiguracion, descripcion: e.target.value })}
                   placeholder="Descripción para las donaciones..."
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   rows={2}
                 />
               </div>
@@ -172,9 +172,9 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
 
         {/* Información de donaciones */}
         <div className="text-center">
-          <div className="bg-gradient-to-br from-red-50 to-pink-50 border-2 border-red-200 rounded-xl p-6 mb-6">
+          <div className="bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl p-6 mb-6">
             <div className="flex justify-center mb-4">
-              <div className="bg-red-100 p-3 rounded-full">
+              <div className="bg-red-100 dark:bg-red-900/50 p-3 rounded-full">
                 <Heart className="w-8 h-8 text-red-600" />
               </div>
             </div>
@@ -184,7 +184,7 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
               {configuracionDonaciones.descripcion || 'Gracias por tu generosidad. Tu apoyo nos permite seguir creciendo y ayudando a más personas.'}
             </p>
 
-            <div className="bg-white dark:bg-gray-800 border border-red-200 rounded-lg p-4 mb-4">
+            <div className="bg-white dark:bg-gray-700 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Alias para transferencias:</span>
                 {configuracionDonaciones.aliasIglesia && (
@@ -211,19 +211,19 @@ export const DonacionesModal: React.FC<DonacionesModalProps> = ({ isOpen, onClos
               </div>
 
               <div className="text-center">
-                <div className={`text-2xl font-bold font-mono py-3 px-4 rounded border ${configuracionDonaciones.aliasIglesia ? 'text-gray-900 bg-gray-50' : 'text-gray-400 bg-gray-100 italic'}`}>
+                <div className={`text-2xl font-bold font-mono py-3 px-4 rounded border ${configuracionDonaciones.aliasIglesia ? 'text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600' : 'text-gray-400 bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 italic'}`}>
                   {configuracionDonaciones.aliasIglesia || 'Sin alias configurado'}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
             <div className="flex items-center justify-center gap-2 mb-2">
               <DollarSign className="w-5 h-5 text-blue-600" />
-              <span className="font-semibold text-blue-900">Cómo donar</span>
+              <span className="font-semibold text-blue-900 dark:text-blue-200">Cómo donar</span>
             </div>
-            <div className="text-sm text-blue-800 space-y-1">
+            <div className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
               <p>1. Abre tu app bancaria o billetera digital</p>
               <p>2. Selecciona "Transferir" o "Enviar dinero"</p>
               <p>3. Ingresa el alias: <span className="font-mono font-bold">{configuracionDonaciones.aliasIglesia}</span></p>
