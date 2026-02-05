@@ -53,7 +53,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-      <div className="relative bg-white dark:bg-gray-800 dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 dark:border-gray-700 overflow-hidden">
+      <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-sky-600 px-6 py-4 text-center">
           <h3 className="text-xl font-bold text-white">Agregar Nueva Persona</h3>
@@ -63,12 +63,12 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Nombre Completo *
             </label>
             <input
               type="text"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:placeholder-gray-400"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               placeholder="Ej: Juan Carlos Pérez"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -77,12 +77,12 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Teléfono
             </label>
             <input
               type="tel"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:placeholder-gray-400"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               placeholder="Ej: +54 9 11 1234-5678"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -90,24 +90,24 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Fecha de Nacimiento
             </label>
             <input
               type="date"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:placeholder-gray-400"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               value={formData.fechaNacimiento}
               onChange={(e) => setFormData({ ...formData, fechaNacimiento: e.target.value })}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Correo Electrónico
             </label>
             <input
               type="email"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:placeholder-gray-400"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               placeholder="Ej: juan@email.com"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -116,12 +116,12 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
           {/* Dirección */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
               Dirección
             </label>
             <input
               type="text"
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-800 dark:bg-gray-700 text-gray-900 dark:text-white dark:text-white placeholder-gray-500 dark:placeholder-gray-400 dark:placeholder-gray-400"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               placeholder="Ej: Calle 123, Ciudad"
               value={formData.direccion}
               onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
@@ -129,7 +129,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
           </div>
 
           {/* Checkboxes */}
-          <div className="bg-gray-50 dark:bg-gray-700 dark:bg-gray-700/50 p-4 rounded-xl space-y-3">
+          <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl space-y-3">
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -138,7 +138,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
                 onChange={(e) => setFormData({ ...formData, isBautizado: e.target.checked })}
                 className="w-5 h-5 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <label htmlFor="isBautizado" className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-300">
+              <label htmlFor="isBautizado" className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">
                 ¿Está bautizado?
               </label>
             </div>
@@ -151,7 +151,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
                 onChange={(e) => setFormData({ ...formData, tieneDiscipulado: e.target.checked })}
                 className="w-5 h-5 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <label htmlFor="tieneDiscipulado" className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300 dark:text-gray-300">
+              <label htmlFor="tieneDiscipulado" className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">
                 ¿Tiene discipulado?
               </label>
             </div>
@@ -348,11 +348,11 @@ const LiderDashboard: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
-            <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-800 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+            <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
               <Users className="w-12 h-12 text-gray-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white dark:text-gray-100 mb-2">No tienes una célula asignada</h3>
-            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400">No se encontró una célula asignada a tu usuario.</p>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">No tienes una célula asignada</h3>
+            <p className="text-gray-600 dark:text-gray-400">No se encontró una célula asignada a tu usuario.</p>
           </div>
         </div>
       </div>
@@ -365,8 +365,8 @@ const LiderDashboard: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 dark:text-gray-100 mb-2">Mi Célula: {miCelula.name}</h2>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400">Gestiona tu célula y toma asistencia</p>
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Mi Célula: {miCelula.name}</h2>
+          <p className="text-gray-600 dark:text-gray-400">Gestiona tu célula y toma asistencia</p>
           <div className="mt-2 flex items-center gap-4">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
               📅 {miCelula.diaSemana}
@@ -570,18 +570,18 @@ const LiderDashboard: React.FC = () => {
 
         {/* Lista de Miembros */}
         <div className="card">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 dark:border-gray-700">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white dark:text-gray-100">Miembros de la Célula</h3>
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Miembros de la Célula</h3>
           </div>
 
           {miembrosOrdenados.length === 0 ? (
-            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400 text-center py-8">
+            <p className="text-gray-600 dark:text-gray-400 text-center py-8">
               No hay miembros registrados. Agrega el primer miembro.
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700 dark:bg-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-300 uppercase tracking-wider">
                       Nombre
@@ -613,13 +613,13 @@ const LiderDashboard: React.FC = () => {
                     )}
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 dark:divide-gray-700">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {miembrosOrdenados
                     .map((miembro) => (
-                      <tr key={miembro.id} className="hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-700">
+                      <tr key={miembro.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="text-sm font-medium text-gray-900 dark:text-white dark:text-gray-100">{miembro.name}</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{miembro.name}</div>
                           {miembro.rolCelula?.toLowerCase() === 'lider' && (
                             <Crown className="w-4 h-4 text-purple-500 ml-2" />
                           )}
@@ -637,12 +637,12 @@ const LiderDashboard: React.FC = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
+                        <div className="text-sm text-gray-900 dark:text-gray-300">
                           {'phone' in miembro ? (miembro.phone || '-') : '-'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white dark:text-gray-300">
+                        <div className="text-sm text-gray-900 dark:text-gray-300">
                           {'email' in miembro ? (miembro.email || '-') : '-'}
                         </div>
                       </td>
