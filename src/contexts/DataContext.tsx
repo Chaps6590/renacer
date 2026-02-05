@@ -106,11 +106,13 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           liderName: c.lider?.name || '',
           liderEmail: c.lider?.email || undefined,
           liderPhone: c.lider?.telefono || undefined,
+          liderFechaNacimiento: c.lider?.fechaNacimiento || undefined,
           diaSemana: c.dia,
           horario: c.horario,
           coLideres: (c.coLideres || []).map((col: any) => ({
             ...col,
-            phone: col.telefono
+            phone: col.telefono,
+            fechaNacimiento: col.fechaNacimiento
           })),
           miembros: (c.miembros || []).map((m: any) => ({
             ...m,
@@ -130,11 +132,13 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
             liderName: miCelula.lider?.name || '',
             liderEmail: miCelula.lider?.email || undefined,
             liderPhone: miCelula.lider?.telefono || undefined,
+            liderFechaNacimiento: miCelula.lider?.fechaNacimiento || undefined,
             diaSemana: miCelula.dia,
             horario: miCelula.horario,
             coLideres: (miCelula.coLideres || []).map((col: any) => ({
               ...col,
-              phone: col.telefono
+              phone: col.telefono,
+              fechaNacimiento: col.fechaNacimiento
             })),
             miembros: (miCelula.miembros || []).map((m: any) => ({
               ...m,
