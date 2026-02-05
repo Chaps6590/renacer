@@ -377,17 +377,17 @@ export const PastorDashboard: React.FC = () => {
   const totalMiembros = estadisticas.reduce((sum, e) => sum + e.totalMiembros, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-700 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 dark:text-gray-100 mb-2">Dashboard del Pastor</h2>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400">Gestión de células y líderes</p>
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Dashboard del Pastor</h2>
+          <p className="text-gray-600 dark:text-gray-400">Gestión de células y líderes</p>
         </div>
 
         {/* Navegación de vistas */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700 dark:border-gray-700 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700 overflow-x-auto pb-1 scrollbar-hide">
           <button
             onClick={() => setView('dashboard')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${view === 'dashboard'
