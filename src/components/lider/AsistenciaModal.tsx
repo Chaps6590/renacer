@@ -87,39 +87,39 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto font-sans">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-2xl w-full my-8 shadow-2xl border border-gray-100">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-2xl w-full my-8 shadow-2xl border border-gray-100 dark:border-gray-700">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Registrar Asistencia</h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:bg-gray-800 rounded-full transition-colors">
-            <X className="w-5 h-5 text-gray-400" />
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+            <X className="w-5 h-5 text-gray-400 dark:text-gray-500" />
           </button>
         </div>
 
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4 bg-gray-50 dark:bg-gray-700 p-4 rounded-xl">
           <div className="flex-1">
-            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1.5">
+            <label className="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5">
               Fecha de la Reunión
             </label>
             <input
               type="date"
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
-              className="w-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2 font-bold text-gray-700 dark:text-gray-300 focus:border-blue-500 focus:ring-0 transition-all"
+              className="w-full bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-600 rounded-xl px-4 py-2 font-bold text-gray-700 dark:text-gray-200 focus:border-blue-500 focus:ring-0 transition-all"
             />
           </div>
-          <div className="hidden sm:block h-10 w-px bg-gray-200 mx-2"></div>
+          <div className="hidden sm:block h-10 w-px bg-gray-200 dark:bg-gray-600 mx-2"></div>
           <div className="flex gap-4">
             <div className="text-center">
-              <p className="text-[10px] font-black text-gray-400 uppercase">Miembros</p>
+              <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase">Miembros</p>
               <p className="text-xl font-black text-gray-900 dark:text-white">{celula.miembros.length}</p>
             </div>
             <div className="text-center">
-              <p className="text-[10px] font-black text-green-400 uppercase">Presentes</p>
-              <p className="text-xl font-black text-green-600">{totalPresentes}</p>
+              <p className="text-[10px] font-black text-green-400 dark:text-green-500 uppercase">Presentes</p>
+              <p className="text-xl font-black text-green-600 dark:text-green-400">{totalPresentes}</p>
             </div>
             <div className="text-center">
-              <p className="text-[10px] font-black text-red-400 uppercase">Ausentes</p>
-              <p className="text-xl font-black text-red-600">{totalAusentes}</p>
+              <p className="text-[10px] font-black text-red-400 dark:text-red-500 uppercase">Ausentes</p>
+              <p className="text-xl font-black text-red-600 dark:text-red-400">{totalAusentes}</p>
             </div>
           </div>
         </div>
@@ -212,7 +212,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
                         placeholder={asistencia.presente
                           ? "Ej: Pidió oración por salud, agradecimiento, etc."
                           : "Escribe un comentario sobre su ausencia..."}
-                        className={`w-full p-3 bg-white border-2 rounded-2xl resize-none outline-none transition-all text-sm font-medium text-gray-900 placeholder-gray-400 ${!asistencia.presente && !asistencia.motivoCompletado ? 'border-red-200 focus:border-red-400' : 'border-gray-200 focus:border-blue-400'
+                        className={`w-full p-3 bg-white dark:bg-gray-700 border-2 rounded-2xl resize-none outline-none transition-all text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${!asistencia.presente && !asistencia.motivoCompletado ? 'border-red-200 dark:border-red-700 focus:border-red-400' : 'border-gray-200 dark:border-gray-600 focus:border-blue-400'
                           }`}
                         rows={2}
                       />
