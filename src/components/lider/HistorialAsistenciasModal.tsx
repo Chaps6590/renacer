@@ -242,9 +242,11 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                                                     }
                                                                                 </p>
                                                                             )}
-                                                                            <p className="text-sm text-gray-700 dark:text-gray-300 font-medium italic">
-                                                                                {m.anotacionEspecial ? `"${m.anotacionEspecial}"` : 'Sin comentario detallado'}
-                                                                            </p>
+                                                                            {m.anotacionEspecial && (
+                                                                                <p className="text-sm text-gray-700 dark:text-gray-300 font-medium italic">
+                                                                                    {`"${m.anotacionEspecial}"`}
+                                                                                </p>
+                                                                            )}
                                                                             {m.prioridadAnotacion && (
                                                                                 <div className="flex items-center gap-1 mt-2">
                                                                                     <Flag className={`w-3 h-3 ${m.prioridadAnotacion === 'alta' ? 'text-red-600 dark:text-red-400' :
