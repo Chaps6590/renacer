@@ -403,13 +403,13 @@ const LiderDashboard: React.FC = () => {
               <div className="w-px bg-purple-400/30 hidden md:block my-2"></div>
               <button
                 onClick={() => setShowHistorial(true)}
-                className="flex-1 flex items-center justify-between p-4 text-left hover:bg-white/10 rounded-xl transition-colors border-t md:border-t-0 border-purple-400/30"
+                className="flex-1 flex items-center justify-between p-4 text-left bg-sky-500/20 hover:bg-sky-500/30 rounded-xl transition-colors border-t md:border-t-0 border-sky-300/40"
               >
                 <div>
-                  <p className="text-purple-100 text-sm mb-1">Ver Reportes</p>
+                  <p className="text-sky-100 text-sm mb-1">Ver Reportes</p>
                   <p className="text-lg font-semibold">Historial</p>
                 </div>
-                <History className="w-10 h-10 text-purple-200" />
+                <History className="w-10 h-10 text-sky-200" />
               </button>
             </div>
           </div>
