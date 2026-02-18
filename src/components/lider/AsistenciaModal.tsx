@@ -48,17 +48,15 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
 
   const handleAnotacionEspecial = (miembroId: string, anotacion: string, prioridad: PrioridadAnotacion, motivoFalta?: MotivoFalta) => {
     setMiembrosAsistencia(prev => {
-      // Si selecciona "dejar-pendiente", convertirlo a undefined para que el backend lo trate como pendiente
-      const motivoReal = motivoFalta === 'dejar-pendiente' ? undefined : motivoFalta;
-      const motivo = motivoReal !== undefined ? motivoReal : prev[miembroId].motivoFalta;
+      const motivo = motivoFalta !== undefined ? motivoFalta : prev[miembroId].motivoFalta;
       
       // Motivos predefinidos que no necesitan detalles
       const motivosCompletos = ['vacaciones', 'trabajo', 'enfermedad', 'familia', 'viaje'];
       // Si seleccionó un motivo completo, ya está completo
       // Si seleccionó 'otro', necesita escribir el detalle
-      // Si no tiene motivo, queda pendiente
+      // Si seleccionó 'dejar-pendiente' o no tiene motivo, queda pendiente
       const esCompleto = prev[miembroId].presente ? true : 
-        (motivo && motivosCompletos.includes(motivo)) || 
+        (motivo && motivo !== 'dejar-pendiente' && motivosCompletos.includes(motivo)) || 
         (motivo === 'otro' && !!anotacion);
       
       return {
@@ -67,7 +65,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
           ...prev[miembroId],
           anotacionEspecial: anotacion,
           prioridadAnotacion: prioridad,
-          motivoFalta: motivoReal !== undefined ? motivoReal : prev[miembroId].motivoFalta,
+          motivoFalta: motivoFalta !== undefined ? motivoFalta : prev[miembroId].motivoFalta,
           motivoCompletado: esCompleto
         }
       };
@@ -75,16 +73,21 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
   };
 
   const handleGuardar = () => {
-    const miembros = Object.values(miembrosAsistencia);
-    const presentes = miembros.filter(m => m.presente).length;
-    const ausentes = miembros.filter(m => !m.presente).length;
-    const pendientesCompletar = miembros.filter(m => !m.presente && !m.motivoCompletado).length;
+    // Convertir 'dejar-pendiente' a undefined antes de enviar
+    const miembrosParaEnviar = Object.values(miembrosAsistencia).map(m => ({
+      ...m,
+      motivoFalta: m.motivoFalta === 'dejar-pendiente' ? undefined : m.motivoFalta
+    }));
+    
+    const presentes = miembrosParaEnviar.filter(m => m.presente).length;
+    const ausentes = miembrosParaEnviar.filter(m => !m.presente).length;
+    const pendientesCompletar = miembrosParaEnviar.filter(m => !m.presente && !m.motivoCompletado).length;
 
     const record: AsistenciaRecord = {
       id: Date.now().toString(),
       celulaId: celula.id,
       date: new Date(fecha),
-      miembros,
+      miembros: miembrosParaEnviar,
       totalPresentes: presentes,
       totalAusentes: ausentes,
       ofrenda: ofrenda || 0,
@@ -161,9 +164,11 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
         <div className="space-y-3 mb-6 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
           {celula.miembros.map((miembro) => {
             const asistencia = miembrosAsistencia[miembro.id];
-            // El panel se mantiene abierto si el usuario lo abrió manualmente (mostrandoDetalles)
-            // O si es ausente. Esto evita que se cierre al empezar a escribir.
-            const panelVisible = mostrandoDetalles === miembro.id || !asistencia.presente;
+            // El panel se mantiene abierto si:
+            // - El usuario lo abrió manualmente (mostrandoDetalles)
+            // - O si es ausente SIN motivo o con motivo 'otro' (para que complete detalles)
+            const panelVisible = mostrandoDetalles === miembro.id || 
+              (!asistencia.presente && (!asistencia.motivoFalta || asistencia.motivoFalta === 'otro'));
 
             return (
               <div key={miembro.id} className={`rounded-2xl border-2 transition-all duration-300 ${asistencia.presente
