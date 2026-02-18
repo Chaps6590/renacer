@@ -214,6 +214,7 @@ const LiderDashboard: React.FC = () => {
 
   // Verificar si el usuario es el líder principal
   const isLider = miCelula?.liderId === user?.id;
+  const canManageMembers = isLider || user?.role === 'colider';
 
   const getRolDisplay = (rol: string) => {
     if (!rol) return '-';
@@ -300,7 +301,23 @@ const LiderDashboard: React.FC = () => {
 
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const confirmDeleteMiembro = async () => {
-    if (selectedMiembro && miCelula && isLider) {
+    if (selectedMiembro && miCelula && canManageMembers) {
+      if (selectedMiembro.rolCelula?.toLowerCase() === 'lider') {
+        setDeleteError('No puedes eliminar al líder principal.');
+        setShowDeleteConfirm(false);
+        setSelectedMiembro(null);
+        setTimeout(() => setDeleteError(null), 6000);
+        return;
+      }
+
+      if (selectedMiembro.id === user?.id) {
+        setDeleteError('No puedes eliminarte a ti mismo.');
+        setShowDeleteConfirm(false);
+        setSelectedMiembro(null);
+        setTimeout(() => setDeleteError(null), 6000);
+        return;
+      }
+
       try {
         // Si es colíder, usar removeColiderFromCelula, si no, usar removeMiembroFromCelula
         if (selectedMiembro.rolCelula === 'colider') {
@@ -334,7 +351,7 @@ const LiderDashboard: React.FC = () => {
   };
 
   const confirmChangeRole = (newRole: string) => {
-    if (selectedMiembro && miCelula && isLider) {
+    if (selectedMiembro && miCelula && canManageMembers) {
       updateMiembroRol(miCelula.id, selectedMiembro.id, newRole as any);
     }
     setShowRoleDialog(false);
@@ -444,9 +461,9 @@ const LiderDashboard: React.FC = () => {
             )}
           </button>
 
-          {!isLider && (
+          {!isLider && user?.role === 'colider' && (
             <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded-lg flex items-center gap-2">
-              <span className="text-sm">Eres Colíder - No puedes cambiar roles</span>
+              <span className="text-sm">Eres Colíder - Puedes gestionar miembros, excepto líder y tu propio usuario</span>
             </div>
           )}
         </div>
@@ -603,7 +620,7 @@ const LiderDashboard: React.FC = () => {
                     <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Discipulado
                     </th>
-                    {isLider && (
+                    {canManageMembers && (
                       <>
                         <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                           Cambiar Rol
@@ -682,7 +699,7 @@ const LiderDashboard: React.FC = () => {
                           <span className="text-sm text-gray-400">-</span>
                         )}
                       </td>
-                      {isLider && (
+                      {canManageMembers && (
                         <>
                           {/* Columna Cambiar Rol */}
                           <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -718,10 +735,10 @@ const LiderDashboard: React.FC = () => {
                                 <Trash2 className="w-3 h-3 mr-1" />
                                 Eliminar
                               </button>
-                            ) : miembro.rolCelula === 'colider' ? (
+                            ) : miembro.id === user?.id ? (
                               <button
                                 className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed"
-                                title="Solo admin o pastor pueden eliminar colíderes"
+                                title="No puedes eliminarte a ti mismo"
                                 disabled
                               >
                                 <Trash2 className="w-3 h-3 mr-1" />
