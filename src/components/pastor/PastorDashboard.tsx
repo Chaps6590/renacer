@@ -135,7 +135,7 @@ export const PastorDashboard: React.FC = () => {
   const [editingCelula, setEditingCelula] = useState<{ id: string, name: string, liderId: string, diaSemana: string, horario: string, coliderIds: string[] } | null>(null);
   const [coliderSearch, setColiderSearch] = useState(''); // Estado para búsqueda de colíderes
 
-  const [timeframe, setTimeframe] = useState<'semanal' | 'mensual' | 'anual'>('semanal');
+  const [timeframe] = useState<'semanal' | 'mensual' | 'anual'>('semanal');
 
   // Función para agregar líder
   const handleAddLider = async () => {
