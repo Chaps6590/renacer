@@ -48,14 +48,14 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
 
   const handleAnotacionEspecial = (miembroId: string, anotacion: string, prioridad: PrioridadAnotacion, motivoFalta?: MotivoFalta) => {
     setMiembrosAsistencia(prev => {
-      const motivo = motivoFalta || prev[miembroId].motivoFalta;
+      const motivo = motivoFalta !== undefined ? motivoFalta : prev[miembroId].motivoFalta;
       // Motivos predefinidos que no necesitan detalles
       const motivosCompletos = ['vacaciones', 'trabajo', 'enfermedad', 'familia', 'viaje'];
       // Si seleccionó un motivo completo, ya está completo
       // Si seleccionó 'otro', necesita escribir el detalle
       // Si seleccionó 'dejar-pendiente' o no tiene motivo, queda pendiente
       const esCompleto = prev[miembroId].presente ? true : 
-        (motivo && motivosCompletos.includes(motivo)) || 
+        (motivo && motivo !== 'dejar-pendiente' && motivosCompletos.includes(motivo)) || 
         (motivo === 'otro' && !!anotacion);
       
       return {
@@ -64,7 +64,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
           ...prev[miembroId],
           anotacionEspecial: anotacion,
           prioridadAnotacion: prioridad,
-          motivoFalta: motivoFalta,
+          motivoFalta: motivoFalta !== undefined ? motivoFalta : prev[miembroId].motivoFalta,
           motivoCompletado: esCompleto
         }
       };
