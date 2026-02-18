@@ -1,6 +1,6 @@
 export type UserRole = 'admin' | 'pastor' | 'lider' | 'colider' | 'timoteo';
 
-export type MotivoFalta = 'vacaciones' | 'trabajo' | 'enfermedad' | 'familia' | 'viaje' | 'sin-motivo' | 'otro';
+export type MotivoFalta = 'vacaciones' | 'trabajo' | 'enfermedad' | 'familia' | 'viaje' | 'sin-motivo' | 'otro' | 'dejar-pendiente';
 
 export type PrioridadAnotacion = 'alta' | 'media' | 'baja';
 
