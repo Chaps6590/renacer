@@ -236,7 +236,8 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                                                             'familia': 'Asunto Familiar',
                                                                                             'viaje': 'Viaje',
                                                                                             'sin-motivo': 'Sin motivo específico',
-                                                                                            'otro': 'Otro'
+                                                                                            'otro': 'Otro',
+                                                                                            'dejar-pendiente': 'Dejar pendiente'
                                                                                         }[m.motivoFalta] || m.motivoFalta
                                                                                     }
                                                                                 </p>
