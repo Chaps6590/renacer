@@ -33,7 +33,6 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
     { value: 'vacaciones', label: 'Vacaciones' },
     { value: 'familia', label: 'Asunto familiar' },
     { value: 'viaje', label: 'Viaje' },
-    { value: 'sin-motivo', label: 'Sin motivo' },
     { value: 'otro', label: 'Otro (especificar)' }
   ];
 
@@ -188,16 +187,21 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
                             </div>
 
                             <div className="space-y-4">
-                              <div>
-                                <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">Anotación / Comentario</p>
-                                <textarea
-                                  value={motivoSeleccionado?.anotacionEspecial || ''}
-                                  onChange={(e) => handleAnotacionChange(pendiente.asistenciaId, miembro.miembroId, e.target.value)}
-                                  placeholder="¿Pudiste hablar con el hermano? ¿Necesita oración por algo?"
-                                  className="w-full p-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl resize-none focus:border-blue-500 focus:ring-0 transition-all text-sm text-gray-900 dark:text-white font-bold placeholder-gray-400 bg-white dark:bg-gray-800"
-                                  rows={2}
-                                />
-                              </div>
+                              {/* Mostrar textarea solo cuando selecciona 'otro' */}
+                              {motivoSeleccionado?.motivo === 'otro' && (
+                                <div>
+                                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">Especificar Motivo *</p>
+                                  <textarea
+                                    value={motivoSeleccionado?.anotacionEspecial || ''}
+                                    onChange={(e) => handleAnotacionChange(pendiente.asistenciaId, miembro.miembroId, e.target.value)}
+                                    placeholder="Especifica cuál fue el motivo de la ausencia..."
+                                    className={`w-full p-3 border-2 rounded-xl resize-none focus:border-blue-500 focus:ring-0 transition-all text-sm text-gray-900 dark:text-white font-bold placeholder-gray-400 bg-white dark:bg-gray-800 ${
+                                      !motivoSeleccionado?.anotacionEspecial?.trim() ? 'border-red-200 dark:border-red-700' : 'border-gray-200 dark:border-gray-700'
+                                    }`}
+                                    rows={2}
+                                  />
+                                </div>
+                              )}
 
                               <div className="flex flex-wrap items-center gap-4">
                                 <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Prioridad:</span>
@@ -225,7 +229,7 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
                           <div className="flex lg:flex-col items-center justify-center lg:border-l lg:pl-6 border-gray-100">
                             <button
                               onClick={() => guardarMotivo(pendiente.asistenciaId, miembro.miembroId)}
-                              disabled={!motivoSeleccionado?.motivo || !motivoSeleccionado?.anotacionEspecial?.trim()}
+                              disabled={!motivoSeleccionado?.motivo || (motivoSeleccionado?.motivo === 'otro' && !motivoSeleccionado?.anotacionEspecial?.trim())}
                               className="w-full lg:w-32 group inline-flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold rounded-xl transition duration-300 shadow-md hover:shadow-lg disabled:from-gray-400 disabled:to-gray-500"
                             >
                               <Save className="w-5 h-5 group-hover:scale-110 transition-transform" />
