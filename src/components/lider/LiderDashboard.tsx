@@ -388,11 +388,11 @@ const LiderDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-            <div className="h-full flex flex-col md:flex-row gap-2 p-1">
+          <div className="space-y-4">
+            <div className="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
               <button
                 onClick={() => setShowAsistencia(true)}
-                className="flex-1 flex items-center justify-between p-4 text-left hover:bg-white/10 rounded-xl transition-colors"
+                className="w-full flex items-center justify-between p-4 text-left hover:bg-white/10 rounded-xl transition-colors"
               >
                 <div>
                   <p className="text-purple-100 text-sm mb-1">Tomar Asistencia</p>
@@ -400,16 +400,18 @@ const LiderDashboard: React.FC = () => {
                 </div>
                 <Calendar className="w-10 h-10 text-purple-200" />
               </button>
-              <div className="w-px bg-purple-400/30 hidden md:block my-2"></div>
+            </div>
+
+            <div className="card bg-gradient-to-br from-indigo-500 to-sky-600 text-white">
               <button
                 onClick={() => setShowHistorial(true)}
-                className="flex-1 flex items-center justify-between p-4 text-left bg-sky-500/20 hover:bg-sky-500/30 rounded-xl transition-colors border-t md:border-t-0 border-sky-300/40"
+                className="w-full flex items-center justify-between p-4 text-left hover:bg-white/10 rounded-xl transition-colors"
               >
                 <div>
                   <p className="text-sky-100 text-sm mb-1">Ver Reportes</p>
                   <p className="text-lg font-semibold">Historial</p>
                 </div>
-                <History className="w-10 h-10 text-sky-200" />
+                <History className="w-10 h-10 text-sky-100" />
               </button>
             </div>
           </div>
