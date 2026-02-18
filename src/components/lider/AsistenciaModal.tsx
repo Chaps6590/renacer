@@ -164,9 +164,11 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
         <div className="space-y-3 mb-6 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
           {celula.miembros.map((miembro) => {
             const asistencia = miembrosAsistencia[miembro.id];
-            // El panel se mantiene abierto si el usuario lo abrió manualmente (mostrandoDetalles)
-            // O si es ausente. Esto evita que se cierre al empezar a escribir.
-            const panelVisible = mostrandoDetalles === miembro.id || !asistencia.presente;
+            // El panel se mantiene abierto si:
+            // - El usuario lo abrió manualmente (mostrandoDetalles)
+            // - O si es ausente SIN motivo o con motivo 'otro' (para que complete detalles)
+            const panelVisible = mostrandoDetalles === miembro.id || 
+              (!asistencia.presente && (!asistencia.motivoFalta || asistencia.motivoFalta === 'otro'));
 
             return (
               <div key={miembro.id} className={`rounded-2xl border-2 transition-all duration-300 ${asistencia.presente
