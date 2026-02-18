@@ -32,12 +32,15 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
   const handleToggleAsistencia = (miembroId: string) => {
     setMiembrosAsistencia(prev => {
       const isPresent = !prev[miembroId].presente;
+      const motivo = prev[miembroId].motivoFalta;
+      // "dejar-pendiente" se trata como si no tuviera motivo
+      const tieneMotivo = motivo && motivo !== 'dejar-pendiente';
       return {
         ...prev,
         [miembroId]: {
           ...prev[miembroId],
           presente: isPresent,
-          motivoCompletado: isPresent ? true : !!(prev[miembroId].anotacionEspecial || prev[miembroId].motivoFalta),
+          motivoCompletado: isPresent ? true : !!(prev[miembroId].anotacionEspecial || tieneMotivo),
         }
       };
     });
