@@ -48,14 +48,17 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
 
   const handleAnotacionEspecial = (miembroId: string, anotacion: string, prioridad: PrioridadAnotacion, motivoFalta?: MotivoFalta) => {
     setMiembrosAsistencia(prev => {
-      const motivo = motivoFalta !== undefined ? motivoFalta : prev[miembroId].motivoFalta;
+      // Si selecciona "dejar-pendiente", convertirlo a undefined para que el backend lo trate como pendiente
+      const motivoReal = motivoFalta === 'dejar-pendiente' ? undefined : motivoFalta;
+      const motivo = motivoReal !== undefined ? motivoReal : prev[miembroId].motivoFalta;
+      
       // Motivos predefinidos que no necesitan detalles
       const motivosCompletos = ['vacaciones', 'trabajo', 'enfermedad', 'familia', 'viaje'];
       // Si seleccionó un motivo completo, ya está completo
       // Si seleccionó 'otro', necesita escribir el detalle
-      // Si seleccionó 'dejar-pendiente' o no tiene motivo, queda pendiente
+      // Si no tiene motivo, queda pendiente
       const esCompleto = prev[miembroId].presente ? true : 
-        (motivo && motivo !== 'dejar-pendiente' && motivosCompletos.includes(motivo)) || 
+        (motivo && motivosCompletos.includes(motivo)) || 
         (motivo === 'otro' && !!anotacion);
       
       return {
@@ -64,7 +67,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
           ...prev[miembroId],
           anotacionEspecial: anotacion,
           prioridadAnotacion: prioridad,
-          motivoFalta: motivoFalta !== undefined ? motivoFalta : prev[miembroId].motivoFalta,
+          motivoFalta: motivoReal !== undefined ? motivoReal : prev[miembroId].motivoFalta,
           motivoCompletado: esCompleto
         }
       };
