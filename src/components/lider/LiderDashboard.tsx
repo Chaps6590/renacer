@@ -214,7 +214,7 @@ const LiderDashboard: React.FC = () => {
 
   // Verificar si el usuario es el líder principal
   const isLider = miCelula?.liderId === user?.id;
-  const canManageMembers = isLider || user?.role === 'colider';
+  const canManageMembers = isLider || user?.role?.toLowerCase() === 'colider';
 
   const getRolDisplay = (rol: string) => {
     if (!rol) return '-';
@@ -461,7 +461,7 @@ const LiderDashboard: React.FC = () => {
             )}
           </button>
 
-          {!isLider && user?.role === 'colider' && (
+          {!isLider && user?.role?.toLowerCase() === 'colider' && (
             <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded-lg flex items-center gap-2">
               <span className="text-sm">Eres Colíder - Puedes gestionar miembros, excepto líder y tu propio usuario</span>
             </div>

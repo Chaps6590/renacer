@@ -35,7 +35,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const savedUser = localStorage.getItem('user');
       const savedToken = localStorage.getItem('token');
       if (savedUser && savedToken) {
-        setUser(JSON.parse(savedUser));
+        try {
+          const parsedUser = JSON.parse(savedUser);
+          const normalizedUser: User = {
+            ...parsedUser,
+            role: String(parsedUser.role || '').toLowerCase() as UserRole,
+          };
+          setUser(normalizedUser);
+          localStorage.setItem('user', JSON.stringify(normalizedUser));
+        } catch (error) {
+          console.warn('[AuthContext] Invalid saved user, clearing session...');
+          localStorage.removeItem('user');
+          localStorage.removeItem('token');
+          setUser(null);
+        }
       } else if (savedUser || savedToken) {
         // Si solo hay uno de los dos, la sesión está corrupta
         console.warn('[AuthContext] Incomplete session found, clearing...');
