@@ -68,6 +68,28 @@ function App() {
     };
   }, []);
 
+  // Capturar el prompt de instalación PWA de forma global
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      (window as any).__renacerDeferredPrompt = e;
+      window.dispatchEvent(new CustomEvent('renacer-install-prompt-ready'));
+    };
+
+    const handleAppInstalled = () => {
+      (window as any).__renacerDeferredPrompt = null;
+      window.dispatchEvent(new CustomEvent('renacer-install-prompt-cleared'));
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
   return (
     <Router>
       <AuthProvider>

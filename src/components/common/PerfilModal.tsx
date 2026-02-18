@@ -41,17 +41,28 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
       console.log('App corriendo en modo standalone (instalada)');
     }
 
-    const handler = (e: any) => {
-      e.preventDefault();
-      console.log('✅ beforeinstallprompt capturado - puede instalarse');
-      setDeferredPrompt(e);
+    // Tomar prompt global capturado en App.tsx (puede haberse disparado antes de abrir este modal)
+    const existingPrompt = (window as any).__renacerDeferredPrompt;
+    if (existingPrompt) {
+      setDeferredPrompt(existingPrompt);
+    }
+
+    const handlePromptReady = () => {
+      const prompt = (window as any).__renacerDeferredPrompt;
+      setDeferredPrompt(prompt || null);
     };
 
-    window.addEventListener('beforeinstallprompt', handler);
+    const handlePromptCleared = () => {
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('renacer-install-prompt-ready', handlePromptReady as EventListener);
+    window.addEventListener('renacer-install-prompt-cleared', handlePromptCleared as EventListener);
 
     // Log para debugging
     setTimeout(() => {
-      if (!deferredPrompt && !standalone) {
+      const prompt = (window as any).__renacerDeferredPrompt;
+      if (!prompt && !standalone) {
         console.log('⚠️ No se capturó beforeinstallprompt. Posibles razones:');
         console.log('- App ya instalada previamente');
         console.log('- Navegador no compatible');
@@ -61,7 +72,8 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
     }, 2000);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('renacer-install-prompt-ready', handlePromptReady as EventListener);
+      window.removeEventListener('renacer-install-prompt-cleared', handlePromptCleared as EventListener);
     };
   }, []);
 
@@ -98,6 +110,8 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
         } else {
           setMessage({ type: 'error', text: 'Instalación cancelada' });
         }
+        (window as any).__renacerDeferredPrompt = null;
+        window.dispatchEvent(new CustomEvent('renacer-install-prompt-cleared'));
         setDeferredPrompt(null);
       } catch (error) {
         console.error('❌ Error al instalar:', error);
