@@ -44,16 +44,28 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
   };
 
   const handleAnotacionEspecial = (miembroId: string, anotacion: string, prioridad: PrioridadAnotacion, motivoFalta?: MotivoFalta) => {
-    setMiembrosAsistencia(prev => ({
-      ...prev,
-      [miembroId]: {
-        ...prev[miembroId],
-        anotacionEspecial: anotacion,
-        prioridadAnotacion: prioridad,
-        motivoFalta: motivoFalta,
-        motivoCompletado: prev[miembroId].presente ? true : !!(anotacion || motivoFalta)
-      }
-    }));
+    setMiembrosAsistencia(prev => {
+      const motivo = motivoFalta || prev[miembroId].motivoFalta;
+      // Motivos predefinidos que no necesitan detalles
+      const motivosCompletos = ['vacaciones', 'trabajo', 'enfermedad', 'familia', 'viaje'];
+      // Si seleccionó un motivo completo, ya está completo
+      // Si seleccionó 'otro', necesita escribir el detalle
+      // Si seleccionó 'dejar-pendiente' o no tiene motivo, queda pendiente
+      const esCompleto = prev[miembroId].presente ? true : 
+        (motivo && motivosCompletos.includes(motivo)) || 
+        (motivo === 'otro' && !!anotacion);
+      
+      return {
+        ...prev,
+        [miembroId]: {
+          ...prev[miembroId],
+          anotacionEspecial: anotacion,
+          prioridadAnotacion: prioridad,
+          motivoFalta: motivoFalta,
+          motivoCompletado: esCompleto
+        }
+      };
+    });
   };
 
   const handleGuardar = () => {
@@ -215,23 +227,26 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
                           <option value="enfermedad" className="text-gray-900 dark:text-white">Enfermedad</option>
                           <option value="familia" className="text-gray-900 dark:text-white">Asunto Familiar</option>
                           <option value="viaje" className="text-gray-900 dark:text-white">Viaje</option>
-                          <option value="otro" className="text-gray-900 dark:text-white">Otro Motivo</option>
-                          <option value="sin-motivo" className="text-gray-900 dark:text-white">Sin motivo específico</option>
+                          <option value="otro" className="text-gray-900 dark:text-white">Otro Motivo (especificar)</option>
+                          <option value="dejar-pendiente" className="text-gray-900 dark:text-white">⏳ Dejar pendiente</option>
                         </select>
                       )}
                     </div>
 
                     <div className="space-y-4">
-                      <textarea
-                        value={asistencia.anotacionEspecial || ''}
-                        onChange={(e) => handleAnotacionEspecial(miembro.id, e.target.value, asistencia.prioridadAnotacion!, asistencia.motivoFalta)}
-                        placeholder={asistencia.presente
-                          ? "Ej: Pidió oración por salud, agradecimiento, etc."
-                          : "Escribe un comentario sobre su ausencia..."}
-                        className={`w-full p-3 bg-white dark:bg-gray-700 border-2 rounded-2xl resize-none outline-none transition-all text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${!asistencia.presente && !asistencia.motivoCompletado ? 'border-red-200 dark:border-red-700 focus:border-red-400' : 'border-gray-200 dark:border-gray-600 focus:border-blue-400'
-                          }`}
-                        rows={2}
-                      />
+                      {/* Mostrar textarea solo si está presente (notas de oración) o si seleccionó 'otro' motivo */}
+                      {(asistencia.presente || asistencia.motivoFalta === 'otro') && (
+                        <textarea
+                          value={asistencia.anotacionEspecial || ''}
+                          onChange={(e) => handleAnotacionEspecial(miembro.id, e.target.value, asistencia.prioridadAnotacion!, asistencia.motivoFalta)}
+                          placeholder={asistencia.presente
+                            ? "Ej: Pidió oración por salud, agradecimiento, etc."
+                            : "Especifica cuál es el otro motivo de ausencia..."}
+                          className={`w-full p-3 bg-white dark:bg-gray-700 border-2 rounded-2xl resize-none outline-none transition-all text-sm font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 ${!asistencia.presente && asistencia.motivoFalta === 'otro' && !asistencia.anotacionEspecial ? 'border-red-200 dark:border-red-700 focus:border-red-400' : 'border-gray-200 dark:border-gray-600 focus:border-blue-400'
+                            }`}
+                          rows={2}
+                        />
+                      )}
 
                       <div className="flex flex-wrap items-center gap-4">
                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Prioridad de Cuidado:</span>
