@@ -537,19 +537,6 @@ export const PastorDashboard: React.FC = () => {
 
             {/* Controles */}
             <div className="flex flex-wrap gap-4 mb-6">
-              <div className="flex gap-2 items-center">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Período:</label>
-                <select
-                  value={timeframe}
-                  onChange={(e) => setTimeframe(e.target.value as any)}
-                  className="input py-2"
-                >
-                  <option value="semanal">Semanal</option>
-                  <option value="mensual">Mensual</option>
-                  <option value="anual">Anual</option>
-                </select>
-              </div>
-
               <button
                 onClick={exportToPDF}
                 className="btn btn-secondary flex items-center gap-2 ml-auto"
