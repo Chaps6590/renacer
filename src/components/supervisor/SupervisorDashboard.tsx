@@ -249,7 +249,7 @@ const SupervisorDashboard: React.FC = () => {
         />
       )}
 
-      {showPeticiones && <PeticionesModal isOpen={showPeticiones} onClose={() => setShowPeticiones(false)} />}
+      {showPeticiones && <PeticionesModal isOpen={showPeticiones} onClose={() => setShowPeticiones(false)} pendientesAsistencia={peticionesPastor} />}
       {showMateriales && <MaterialesModal isOpen={showMateriales} onClose={() => setShowMateriales(false)} />}
       {showNoticias && <NoticiasModal isOpen={showNoticias} onClose={() => setShowNoticias(false)} />}
       {showDonaciones && <DonacionesModal isOpen={showDonaciones} onClose={() => setShowDonaciones(false)} />}
