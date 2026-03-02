@@ -9,7 +9,7 @@ interface SupervisoresAdminProps {
 
 const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
   const [supervisores, setSupervisores] = useState<User[]>([]);
-  const [form, setForm] = useState({ name: '', email: '', password: '', telefono: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: '', telefono: '', fechaNacimiento: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -44,7 +44,7 @@ const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
     try {
       await api.createUser({ ...form, role: 'SUPERVISOR' });
       setSuccess('Supervisor creado exitosamente');
-      setForm({ name: '', email: '', password: '', telefono: '' });
+      setForm({ name: '', email: '', password: '', telefono: '', fechaNacimiento: '' });
       fetchSupervisores();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
@@ -172,7 +172,7 @@ const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -191,6 +191,20 @@ const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
                 onChange={handleChange}
                 className="input"
                 placeholder="+54 9 11 1234-5678"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="fechaNacimiento" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Fecha de Nacimiento
+              </label>
+              <input
+                id="fechaNacimiento"
+                type="date"
+                name="fechaNacimiento"
+                value={form.fechaNacimiento}
+                onChange={handleChange}
+                className="input"
               />
             </div>
           </div>
