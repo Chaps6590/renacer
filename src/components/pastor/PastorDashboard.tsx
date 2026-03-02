@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useData } from '../../contexts/DataContext';
-import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, Trash2, FileText, Newspaper, Heart, AlertCircle, Gift, Shield } from 'lucide-react';
+import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, Trash2, FileText, Newspaper, Heart, AlertCircle, Gift } from 'lucide-react';
 import { Navbar } from '../layout/Navbar';
 import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
