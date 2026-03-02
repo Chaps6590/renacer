@@ -215,10 +215,10 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       // Cargar configuración de donaciones
       try {
         const configData = await api.getConfiguracionDonaciones() as any;
-        if (configData) {
+        if (configData && configData.alias) {
           setConfiguracionDonaciones({
-            aliasIglesia: configData.alias || configData.aliasIglesia || '',
-            cbu: configData.cbuOriginal || configData.cbuIglesia || '',
+            aliasIglesia: configData.alias || '',
+            cbu: configData.cbuOriginal || '',
             descripcion: configData.descripcion || '',
             activo: true,
             fechaActualizacion: new Date(),
