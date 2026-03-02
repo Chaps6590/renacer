@@ -669,22 +669,22 @@ const LiderDashboard: React.FC = () => {
 
                       {/* Acciones */}
                       {canManageMembers && (
-                        <div className="flex flex-col gap-1.5 shrink-0">
+                        <div className="flex flex-col gap-2 shrink-0">
                           <button
                             onClick={() => canEditThis ? handleChangeRole(miembro) : undefined}
                             disabled={!canEditThis}
-                            className={`p-1.5 rounded-lg transition-colors ${canEditThis ? 'text-blue-600 bg-blue-50 hover:bg-blue-100' : 'text-gray-300 bg-gray-50 cursor-not-allowed'}`}
+                            className={`p-3 rounded-xl transition-colors ${canEditThis ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 active:bg-blue-200' : 'text-gray-300 bg-gray-50 cursor-not-allowed'}`}
                             title="Cambiar Rol"
                           >
-                            <Edit className="w-4 h-4" />
+                            <Edit className="w-5 h-5" />
                           </button>
                           <button
                             onClick={() => canDeleteThis ? handleDeleteMiembro(miembro) : undefined}
                             disabled={!canDeleteThis}
-                            className={`p-1.5 rounded-lg transition-colors ${canDeleteThis ? 'text-red-600 bg-red-50 hover:bg-red-100' : 'text-gray-300 bg-gray-50 cursor-not-allowed'}`}
+                            className={`p-3 rounded-xl transition-colors ${canDeleteThis ? 'text-red-600 bg-red-50 hover:bg-red-100 active:bg-red-200' : 'text-gray-300 bg-gray-50 cursor-not-allowed'}`}
                             title="Eliminar"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-5 h-5" />
                           </button>
                         </div>
                       )}
