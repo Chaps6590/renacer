@@ -251,8 +251,8 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         console.error('Error fetching asistencias:', err);
       }
 
-      // Cargar peticiones pendientes (solo para admin/pastor)
-      if (user?.role === 'admin' || user?.role === 'pastor') {
+      // Cargar peticiones pendientes (para admin/pastor/supervisor)
+      if (user?.role === 'admin' || user?.role === 'pastor' || user?.role === 'supervisor') {
         try {
           const dataPeticiones = await api.getPeticionesPastor() as PeticionPastor[];
           setPeticionesPastor(dataPeticiones);

@@ -6,18 +6,18 @@ import { HistorialAsistenciasModal } from '../lider/HistorialAsistenciasModal';
 import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
-import { Users, Calendar, BarChart3, Eye, FileText, Newspaper, Heart, TrendingUp, UserCheck } from 'lucide-react';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { PeticionesModal } from '../common/PeticionesModal';
+import { Users, BarChart3, Eye, FileText, Newspaper, Heart, TrendingUp, UserCheck, Bell } from 'lucide-react';
 
 const SupervisorDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { celulas, noticias } = useData();
+  const { celulas, peticionesPastor } = useData();
   const [showHistorial, setShowHistorial] = useState(false);
   const [selectedCelulaId, setSelectedCelulaId] = useState<string | null>(null);
   const [showMateriales, setShowMateriales] = useState(false);
   const [showNoticias, setShowNoticias] = useState(false);
   const [showDonaciones, setShowDonaciones] = useState(false);
+  const [showPeticiones, setShowPeticiones] = useState(false);
 
   // Filtrar las células que supervisa el usuario
   const misCelulas = celulas.filter(c => c.supervisorId === user?.id);
@@ -27,10 +27,8 @@ const SupervisorDashboard: React.FC = () => {
   const totalMiembros = misCelulas.reduce((sum, c) => sum + c.miembros.length, 0);
   const promedioMiembrosPorCelula = totalCelulas > 0 ? Math.round(totalMiembros / totalCelulas) : 0;
 
-  // Noticias importantes no leídas
-  const noticiasImportantes = noticias.filter(n =>
-    n.visible && n.importante && (!n.fechaVencimiento || new Date(n.fechaVencimiento) > new Date())
-  ).length;
+  // Peticiones pendientes de mis células supervisadas
+  const peticionesPendientes = peticionesPastor.filter(p => !p.resuelta).length;
 
   const handleVerHistorial = (celulaId: string) => {
     setSelectedCelulaId(celulaId);
@@ -90,21 +88,34 @@ const SupervisorDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-orange-500">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-yellow-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Noticias</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{noticiasImportantes}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Peticiones</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{peticionesPendientes}</p>
               </div>
-              <div className="bg-orange-100 dark:bg-orange-900 p-3 rounded-lg">
-                <Newspaper className="w-8 h-8 text-orange-600 dark:text-orange-300" />
+              <div className="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-lg">
+                <Bell className="w-8 h-8 text-yellow-600 dark:text-yellow-300" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Acciones rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+          <button
+            onClick={() => setShowPeticiones(true)}
+            className="bg-gradient-to-br from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl relative"
+          >
+            <Bell className="w-6 h-6" />
+            <span className="font-semibold">Peticiones</span>
+            {peticionesPendientes > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                {peticionesPendientes}
+              </span>
+            )}
+          </button>
+
           <button
             onClick={() => setShowNoticias(true)}
             className="bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl"
@@ -238,6 +249,7 @@ const SupervisorDashboard: React.FC = () => {
         />
       )}
 
+      {showPeticiones && <PeticionesModal isOpen={showPeticiones} onClose={() => setShowPeticiones(false)} />}
       {showMateriales && <MaterialesModal isOpen={showMateriales} onClose={() => setShowMateriales(false)} />}
       {showNoticias && <NoticiasModal isOpen={showNoticias} onClose={() => setShowNoticias(false)} />}
       {showDonaciones && <DonacionesModal isOpen={showDonaciones} onClose={() => setShowDonaciones(false)} />}
