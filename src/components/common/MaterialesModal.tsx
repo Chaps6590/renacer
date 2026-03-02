@@ -14,7 +14,7 @@ interface MaterialesModalProps {
 
 export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
-  const { materiales, subirMaterial, eliminarMaterial } = useData();
+  const { materiales, celulas, subirMaterial, eliminarMaterial } = useData();
   const [mostrandoSubir, setMostrandoSubir] = useState(false);
   const [nuevoMaterial, setNuevoMaterial] = useState({
     titulo: '',
@@ -23,10 +23,19 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
   });
   const [archivoSeleccionado, setArchivoSeleccionado] = useState<File | null>(null);
   const [cargandoDescarga, setCargandoDescarga] = useState<string | null>(null);
+  const [esGeneral, setEsGeneral] = useState(true);
+  const [celulasSeleccionadas, setCelulasSeleccionadas] = useState<string[]>([]);
 
   if (!isOpen) return null;
 
   const esPastor = user?.role === 'pastor' || user?.role === 'admin';
+  const esSupervisor = user?.role === 'supervisor';
+  const puedeSubir = esPastor || esSupervisor;
+
+  // Obtener células según el rol
+  const misCelulas = esSupervisor 
+    ? celulas.filter(c => c.supervisorId === user?.id)
+    : celulas;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -70,25 +79,39 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
       return;
     }
 
+    // Validar células si es específico
+    if (!esGeneral && celulasSeleccionadas.length === 0 && !esSupervisor) {
+      alert('Debes seleccionar al menos una célula para material específico');
+      return;
+    }
+
     try {
       const reader = new FileReader();
       reader.onloadend = async () => {
         const contenidoBase64 = reader.result as string;
 
-        const materialData = {
+        const materialData: any = {
           titulo: nuevoMaterial.titulo.trim(),
           descripcion: nuevoMaterial.descripcion.trim(),
           nombreArchivo: archivoSeleccionado.name,
           tipoArchivo: archivoSeleccionado.type,
           tamanoArchivo: archivoSeleccionado.size,
           contenidoBase64: contenidoBase64,
+          esGeneral: esSupervisor ? false : esGeneral,
         };
 
-        await subirMaterial(materialData as any);
+        // Agregar células si no es general
+        if (!materialData.esGeneral && celulasSeleccionadas.length > 0) {
+          materialData.celulasIds = celulasSeleccionadas;
+        }
+
+        await subirMaterial(materialData);
 
         // Limpiar formulario
         setNuevoMaterial({ titulo: '', descripcion: '', fechaParaUsar: '' });
         setArchivoSeleccionado(null);
+        setCelulasSeleccionadas([]);
+        setEsGeneral(true);
         setMostrandoSubir(false);
         alert('Material subido exitosamente');
       };
@@ -112,7 +135,7 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
             Materiales para Células
           </h3>
           <div className="flex items-center gap-2">
-            {esPastor && (
+            {puedeSubir && (
               <button
                 onClick={() => setMostrandoSubir(!mostrandoSubir)}
                 className="btn btn-primary flex items-center gap-2"
@@ -131,9 +154,11 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
         </div>
 
         {/* Formulario para subir material */}
-        {mostrandoSubir && esPastor && (
+        {mostrandoSubir && puedeSubir && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <h4 className="font-semibold text-blue-900 mb-4">Subir Nuevo Material</h4>
+            <h4 className="font-semibold text-blue-900 mb-4">
+              {esSupervisor ? 'Subir Material para tus Células' : 'Subir Nuevo Material'}
+            </h4>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -190,6 +215,59 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
                 )}
               </div>
 
+              {/* Selector de tipo y células */}
+              {esPastor && (
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <input
+                      type="checkbox"
+                      checked={esGeneral}
+                      onChange={(e) => {
+                        setEsGeneral(e.target.checked);
+                        if (e.target.checked) setCelulasSeleccionadas([]);
+                      }}
+                      className="w-4 h-4"
+                    />
+                    Material General (visible para todas las células)
+                  </label>
+                </div>
+              )}
+
+              {/* Selector de células (pastor cuando es específico, o supervisor siempre) */}
+              {(esSupervisor || (esPastor && !esGeneral)) && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {esSupervisor 
+                      ? 'Células que verán este material (deja vacío para todas tus células)'
+                      : 'Seleccionar células *'}
+                  </label>
+                  <div className="max-h-40 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-lg p-2 space-y-2">
+                    {misCelulas.map(celula => (
+                      <label key={celula.id} className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={celulasSeleccionadas.includes(celula.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setCelulasSeleccionadas([...celulasSeleccionadas, celula.id]);
+                            } else {
+                              setCelulasSeleccionadas(celulasSeleccionadas.filter(id => id !== celula.id));
+                            }
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <span className="text-sm">{celula.name} - {celula.liderName}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {celulasSeleccionadas.length > 0 && (
+                    <p className="text-sm text-blue-600 mt-2">
+                      {celulasSeleccionadas.length} {celulasSeleccionadas.length === 1 ? 'célula seleccionada' : 'células seleccionadas'}
+                    </p>
+                  )}
+                </div>
+              )}
+
               <div className="flex gap-3">
                 <button
                   onClick={handleSubirMaterial}
@@ -203,6 +281,8 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
                     setMostrandoSubir(false);
                     setNuevoMaterial({ titulo: '', descripcion: '', fechaParaUsar: '' });
                     setArchivoSeleccionado(null);
+                    setCelulasSeleccionadas([]);
+                    setEsGeneral(true);
                   }}
                   className="btn btn-secondary"
                 >
@@ -222,9 +302,9 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
                 No hay materiales disponibles
               </h4>
               <p className="text-gray-500 dark:text-gray-400">
-                {esPastor
-                  ? 'Sube el primer material para que los líderes puedan descargarlo.'
-                  : 'Los materiales aparecerán aquí cuando el pastor los suba.'}
+                {puedeSubir
+                  ? 'Sube el primer material para compartirlo.'
+                  : 'Los materiales aparecerán aquí cuando estén disponibles.'}
               </p>
             </div>
           ) : (
