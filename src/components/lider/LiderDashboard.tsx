@@ -205,7 +205,7 @@ const LiderDashboard: React.FC = () => {
     n.visible && n.importante && (!n.fechaVencimiento || new Date(n.fechaVencimiento) > new Date())
   ).length;
 
-  // Encontrar la célula donde el usuario es líder, colíder o timoteo
+  // Encontrar la célula donde el usuario es líder, colíder o líder colab.
   const miCelula = celulas.find(c =>
     c.liderId === user?.id ||
     c.coLideres.some(col => col.id === user?.id) ||
@@ -221,7 +221,7 @@ const LiderDashboard: React.FC = () => {
     const roles: Record<string, string> = {
       lider: 'Líder',
       colider: 'Colíder',
-      timoteo: 'Timoteo',
+      timoteo: 'Líder Colab.',
       miembro: 'Miembro',
       nuevo: 'Nuevo'
     };
@@ -265,7 +265,7 @@ const LiderDashboard: React.FC = () => {
       m.id !== miCelula.liderId &&
       !miCelula.coLideres.some(col => col.id === m.id)
     ).sort((a, b) => {
-      // Orden por nivel: Timoteo > Miembro > Nuevo
+      // Orden por nivel: Líder Colab. > Miembro > Nuevo
       const priority: Record<string, number> = { TIMOTEO: 1, MIEMBRO: 2, NUEVO: 3 };
       const pA = priority[(a.rolCelula || 'nuevo').toUpperCase()] || 4;
       const pB = priority[(b.rolCelula || 'nuevo').toUpperCase()] || 4;
@@ -884,8 +884,8 @@ const LiderDashboard: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 bg-orange-500 rounded-full group-hover:scale-110 transition duration-200"></div>
                     <div>
-                      <div className="font-semibold text-gray-900 dark:text-white">Timoteo</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Ayudante en formación</div>
+                      <div className="font-semibold text-gray-900 dark:text-white">Líder Colab.</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Líder colaborador</div>
                     </div>
                   </div>
                 </button>
