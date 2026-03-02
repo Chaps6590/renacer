@@ -605,8 +605,9 @@ const LiderDashboard: React.FC = () => {
 
         {/* Lista de Miembros */}
         <div ref={tablaMiembrosRef} className="card transition-all duration-500">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Miembros de la Célula</h3>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{miembrosOrdenados.length} miembros</span>
           </div>
 
           {miembrosOrdenados.length === 0 ? (
@@ -614,170 +615,175 @@ const LiderDashboard: React.FC = () => {
               No hay miembros registrados. Agrega el primer miembro.
             </p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Nombre
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Rol
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Teléfono
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Email
-                    </th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Bautizado
-                    </th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Discipulado
-                    </th>
-                    {canManageMembers && (
-                      <>
-                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                          Cambiar Rol
-                        </th>
-                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                          Eliminar
-                        </th>
-                      </>
-                    )}
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {miembrosOrdenados
-                    .map((miembro) => (
-                      <tr key={miembro.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{miembro.name}</div>
-                          {miembro.rolCelula?.toLowerCase() === 'lider' && (
-                            <Crown className="w-4 h-4 text-purple-500 ml-2" />
+            <>
+              {/* ── VISTA MÓVIL: tarjetas ── */}
+              <div className="md:hidden divide-y divide-gray-100 dark:divide-gray-700">
+                {miembrosOrdenados.map((miembro) => {
+                  const initials = miembro.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase();
+                  const isLiderPrincipal = miembro.rolCelula === 'lider';
+                  const isMe = miembro.id === user?.id;
+                  const canEditThis = canManageMembers && !isLiderPrincipal && miembro.rolCelula !== 'colider';
+                  const canDeleteThis = canManageMembers && !isLiderPrincipal && !isMe;
+
+                  const avatarColor: Record<string, string> = {
+                    lider: 'bg-purple-100 text-purple-700',
+                    colider: 'bg-blue-100 text-blue-700',
+                    timoteo: 'bg-orange-100 text-orange-700',
+                    miembro: 'bg-gray-100 text-gray-600',
+                    nuevo: 'bg-green-100 text-green-700',
+                  };
+                  const avatarCls = avatarColor[miembro.rolCelula?.toLowerCase() ?? ''] ?? 'bg-gray-100 text-gray-600';
+
+                  return (
+                    <div key={miembro.id} className="p-4 flex items-center gap-3">
+                      {/* Avatar */}
+                      <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${avatarCls}`}>
+                        {initials}
+                      </div>
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-semibold text-gray-900 dark:text-white text-sm truncate">{miembro.name}</span>
+                          {isLiderPrincipal && <Crown className="w-3.5 h-3.5 text-purple-500 shrink-0" />}
+                          {miembro.rolCelula?.toLowerCase() === 'colider' && <Star className="w-3.5 h-3.5 text-blue-500 shrink-0" />}
+                          {miembro.rolCelula?.toLowerCase() === 'timoteo' && <Star className="w-3.5 h-3.5 text-orange-500 fill-orange-200 shrink-0" />}
+                        </div>
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
+                          <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${getRolColor(miembro.rolCelula)}`}>
+                            {getRolDisplay(miembro.rolCelula)}
+                          </span>
+                          {'isBautizado' in miembro && miembro.isBautizado && (
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-medium">Baut.</span>
                           )}
-                          {miembro.rolCelula?.toLowerCase() === 'colider' && (
-                            <Star className="w-4 h-4 text-blue-500 ml-2" />
-                          )}
-                          {miembro.rolCelula?.toLowerCase() === 'timoteo' && (
-                            <Star className="w-4 h-4 text-orange-500 ml-2 fill-orange-200" />
+                          {'tieneDiscipulado' in miembro && miembro.tieneDiscipulado && (
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-sky-100 text-sky-700 font-medium">Discip.</span>
                           )}
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getRolColor(miembro.rolCelula)}`}>
-                          {getRolDisplay(miembro.rolCelula)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-gray-300">
-                          {'phone' in miembro ? (miembro.phone || '-') : '-'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-gray-300">
-                          {'email' in miembro ? (miembro.email || '-') : '-'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        {'isBautizado' in miembro ? (
-                          miembro.isBautizado ? (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                              <CheckCircle2 className="w-3 h-3 mr-1" />
-                              Sí
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-                              <XCircle className="w-3 h-3 mr-1" />
-                              No
-                            </span>
-                          )
-                        ) : (
-                          <span className="text-sm text-gray-400">-</span>
+                        {'phone' in miembro && miembro.phone && (
+                          <a href={`tel:${miembro.phone}`} className="text-xs text-blue-600 dark:text-blue-400 mt-0.5 block truncate">
+                            📞 {miembro.phone}
+                          </a>
                         )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        {'tieneDiscipulado' in miembro ? (
-                          miembro.tieneDiscipulado ? (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                              <CheckCircle2 className="w-3 h-3 mr-1" />
-                              Sí
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-                              <XCircle className="w-3 h-3 mr-1" />
-                              No
-                            </span>
-                          )
-                        ) : (
-                          <span className="text-sm text-gray-400">-</span>
-                        )}
-                      </td>
+                      </div>
+
+                      {/* Acciones */}
+                      {canManageMembers && (
+                        <div className="flex flex-col gap-1.5 shrink-0">
+                          <button
+                            onClick={() => canEditThis ? handleChangeRole(miembro) : undefined}
+                            disabled={!canEditThis}
+                            className={`p-1.5 rounded-lg transition-colors ${canEditThis ? 'text-blue-600 bg-blue-50 hover:bg-blue-100' : 'text-gray-300 bg-gray-50 cursor-not-allowed'}`}
+                            title="Cambiar Rol"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => canDeleteThis ? handleDeleteMiembro(miembro) : undefined}
+                            disabled={!canDeleteThis}
+                            className={`p-1.5 rounded-lg transition-colors ${canDeleteThis ? 'text-red-600 bg-red-50 hover:bg-red-100' : 'text-gray-300 bg-gray-50 cursor-not-allowed'}`}
+                            title="Eliminar"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* ── VISTA DESKTOP: tabla ── */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nombre</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Rol</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Teléfono</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                      <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Bautizado</th>
+                      <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Discipulado</th>
                       {canManageMembers && (
                         <>
-                          {/* Columna Cambiar Rol */}
-                          <td className="px-6 py-4 whitespace-nowrap text-center">
-                            {miembro.rolCelula === 'lider' || miembro.rolCelula === 'colider' ? (
-                              <button
-                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed"
-                                title={miembro.rolCelula === 'lider' ? "No puedes cambiar el rol del líder principal" : "No puedes cambiar el rol de los colíderes"}
-                                disabled
-                              >
-                                <Edit className="w-3 h-3 mr-1" />
-                                Cambiar
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => handleChangeRole(miembro)}
-                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition duration-200"
-                                title="Cambiar Rol"
-                              >
-                                <Edit className="w-3 h-3 mr-1" />
-                                Cambiar
-                              </button>
-                            )}
-                          </td>
-
-                          {/* Columna Eliminar */}
-                          <td className="px-6 py-4 whitespace-nowrap text-center">
-                            {miembro.rolCelula === 'lider' ? (
-                              <button
-                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed"
-                                title="No puedes eliminar al líder principal"
-                                disabled
-                              >
-                                <Trash2 className="w-3 h-3 mr-1" />
-                                Eliminar
-                              </button>
-                            ) : miembro.id === user?.id ? (
-                              <button
-                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed"
-                                title="No puedes eliminarte a ti mismo"
-                                disabled
-                              >
-                                <Trash2 className="w-3 h-3 mr-1" />
-                                Eliminar
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => handleDeleteMiembro(miembro)}
-                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition duration-200"
-                                title="Eliminar Miembro"
-                              >
-                                <Trash2 className="w-3 h-3 mr-1" />
-                                Eliminar
-                              </button>
-                            )}
-                          </td>
+                          <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cambiar Rol</th>
+                          <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Eliminar</th>
                         </>
                       )}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    {miembrosOrdenados.map((miembro) => (
+                      <tr key={miembro.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{miembro.name}</div>
+                            {miembro.rolCelula?.toLowerCase() === 'lider' && <Crown className="w-4 h-4 text-purple-500 ml-2" />}
+                            {miembro.rolCelula?.toLowerCase() === 'colider' && <Star className="w-4 h-4 text-blue-500 ml-2" />}
+                            {miembro.rolCelula?.toLowerCase() === 'timoteo' && <Star className="w-4 h-4 text-orange-500 ml-2 fill-orange-200" />}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getRolColor(miembro.rolCelula)}`}>
+                            {getRolDisplay(miembro.rolCelula)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
+                          {'phone' in miembro ? (miembro.phone || '-') : '-'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
+                          {'email' in miembro ? (miembro.email || '-') : '-'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                          {'isBautizado' in miembro ? (
+                            miembro.isBautizado
+                              ? <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800"><CheckCircle2 className="w-3 h-3 mr-1" />Sí</span>
+                              : <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"><XCircle className="w-3 h-3 mr-1" />No</span>
+                          ) : <span className="text-sm text-gray-400">-</span>}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                          {'tieneDiscipulado' in miembro ? (
+                            miembro.tieneDiscipulado
+                              ? <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800"><CheckCircle2 className="w-3 h-3 mr-1" />Sí</span>
+                              : <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"><XCircle className="w-3 h-3 mr-1" />No</span>
+                          ) : <span className="text-sm text-gray-400">-</span>}
+                        </td>
+                        {canManageMembers && (
+                          <>
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              {miembro.rolCelula === 'lider' || miembro.rolCelula === 'colider' ? (
+                                <button disabled className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed">
+                                  <Edit className="w-3 h-3 mr-1" />Cambiar
+                                </button>
+                              ) : (
+                                <button onClick={() => handleChangeRole(miembro)} className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition duration-200">
+                                  <Edit className="w-3 h-3 mr-1" />Cambiar
+                                </button>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              {miembro.rolCelula === 'lider' ? (
+                                <button disabled className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed">
+                                  <Trash2 className="w-3 h-3 mr-1" />Eliminar
+                                </button>
+                              ) : miembro.id === user?.id ? (
+                                <button disabled className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed">
+                                  <Trash2 className="w-3 h-3 mr-1" />Eliminar
+                                </button>
+                              ) : (
+                                <button onClick={() => handleDeleteMiembro(miembro)} className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition duration-200">
+                                  <Trash2 className="w-3 h-3 mr-1" />Eliminar
+                                </button>
+                              )}
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
 
