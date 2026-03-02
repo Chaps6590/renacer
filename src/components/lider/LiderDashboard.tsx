@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useData } from '../../contexts/DataContext';
 import { Navbar } from '../layout/Navbar';
@@ -190,6 +190,18 @@ const LiderDashboard: React.FC = () => {
   const [showDonaciones, setShowDonaciones] = useState(false);
   const [showHistorial, setShowHistorial] = useState(false);
   const [showCumpleanos, setShowCumpleanos] = useState(false);
+
+  const tablaMiembrosRef = useRef<HTMLDivElement>(null);
+
+  const scrollToTabla = () => {
+    tablaMiembrosRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Efecto de highlight temporal
+    const el = tablaMiembrosRef.current;
+    if (el) {
+      el.classList.add('ring-4', 'ring-blue-400', 'ring-offset-2', 'rounded-xl');
+      setTimeout(() => el.classList.remove('ring-4', 'ring-blue-400', 'ring-offset-2', 'rounded-xl'), 1500);
+    }
+  };
 
   // Estados para modales de confirmación y acciones
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -395,15 +407,19 @@ const LiderDashboard: React.FC = () => {
         </div>
         {/* Estadísticas de la Célula */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="card bg-gradient-to-br from-primary-500 to-primary-600 text-white">
+          <button
+            onClick={scrollToTabla}
+            className="card bg-gradient-to-br from-primary-500 to-primary-600 text-white w-full text-left hover:from-primary-600 hover:to-primary-700 transition-all duration-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-primary-100 text-sm mb-1">Total Miembros</p>
                 <p className="text-4xl font-bold">{miCelula.miembros.length + 1 + (miCelula.coLideres ? miCelula.coLideres.length : 0)}</p>
+                <p className="text-primary-200 text-xs mt-1">Ver lista ↓</p>
               </div>
               <Users className="w-12 h-12 text-primary-200" />
             </div>
-          </div>
+          </button>
 
           <div className="space-y-4">
             <div className="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
@@ -588,7 +604,7 @@ const LiderDashboard: React.FC = () => {
         </div>
 
         {/* Lista de Miembros */}
-        <div className="card">
+        <div ref={tablaMiembrosRef} className="card transition-all duration-500">
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Miembros de la Célula</h3>
           </div>

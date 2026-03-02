@@ -19,6 +19,18 @@ interface PerfilModalProps {
 
 export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
   const { user } = useAuth();
+
+  const getRolLabel = (role?: string) => {
+    const map: Record<string, string> = {
+      timoteo: 'Líder Col.',
+      colider: 'Co-Líder',
+      lider: 'Líder',
+      pastor: 'Pastor',
+      supervisor: 'Supervisor',
+      admin: 'Admin',
+    };
+    return map[role?.toLowerCase() ?? ''] ?? role ?? '';
+  };
   const [activeTab, setActiveTab] = useState<'info' | 'password'>('info');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -332,7 +344,7 @@ export const PerfilModal: React.FC<PerfilModalProps> = ({ onClose }) => {
                 </label>
                 <input
                   type="text"
-                  value={user?.role.toUpperCase()}
+                  value={getRolLabel(user?.role)}
                   disabled
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 cursor-not-allowed"
                 />

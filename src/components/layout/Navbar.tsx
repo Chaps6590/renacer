@@ -8,6 +8,18 @@ export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showPerfil, setShowPerfil] = useState(false);
+
+  const getRolLabel = (role?: string) => {
+    const map: Record<string, string> = {
+      timoteo: 'Líder Col.',
+      colider: 'Co-Líder',
+      lider: 'Líder',
+      pastor: 'Pastor',
+      supervisor: 'Supervisor',
+      admin: 'Admin',
+    };
+    return map[role?.toLowerCase() ?? ''] ?? role ?? '';
+  };
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode');
     return saved === 'true' || false;
@@ -43,13 +55,13 @@ export const Navbar: React.FC = () => {
               </div>
 
               <span className="sm:hidden px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-xs font-medium capitalize ml-2">
-                {user?.role}
+                {getRolLabel(user?.role)}
               </span>
             </div>
 
             <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-3 w-full sm:w-auto">
               <span className="hidden sm:inline-flex px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-sm font-medium capitalize">
-                {user?.role}
+                {getRolLabel(user?.role)}
               </span>
               <button
                 onClick={toggleDarkMode}
