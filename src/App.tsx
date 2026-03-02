@@ -63,6 +63,24 @@ function App() {
     };
   }, []);
 
+  // Interceptar botón "Atrás" de Android en modo PWA para ir al home en vez de salir
+  useEffect(() => {
+    // Empujar un estado inicial para que siempre haya historial
+    window.history.pushState({ page: 'home' }, '', window.location.href);
+
+    const handlePopState = (e: PopStateEvent) => {
+      // Volver a empujar el estado para evitar que se vacíe el historial
+      window.history.pushState({ page: 'home' }, '', '/dashboard');
+      // Navegar al dashboard
+      window.location.replace('/dashboard');
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
   // Capturar el prompt de instalación PWA de forma global
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {

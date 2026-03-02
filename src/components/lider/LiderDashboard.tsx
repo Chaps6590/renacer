@@ -117,7 +117,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
           {/* Dirección */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Dirección
+              Dirección (opcional)
             </label>
             <input
               type="text"
