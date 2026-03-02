@@ -92,6 +92,46 @@ select {
     animation: shake 0.5s ease-in-out;
   }
 
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes shimmerText {
+    0%   { background-position: -300% center; }
+    100% { background-position: 300% center; }
+  }
+
+  @keyframes softPulseGlow {
+    0%, 100% { text-shadow: 0 0 8px rgba(255,255,255,0.3); }
+    50%       { text-shadow: 0 0 18px rgba(255,255,255,0.7), 0 0 30px rgba(186,230,253,0.4); }
+  }
+
+  .verse-animate {
+    animation: fadeInUp 1s ease-out 0.4s both;
+  }
+
+  .verse-glow {
+    animation: softPulseGlow 3.5s ease-in-out infinite;
+  }
+
+  @keyframes spinRing {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes loaderFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .loader-container {
+    animation: loaderFadeIn 0.4s ease-out both;
+  }
+
+  .spin-ring {
+    animation: spinRing 1s linear infinite;
+  }
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }

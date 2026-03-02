@@ -68,7 +68,7 @@ function App() {
     // Empujar un estado inicial para que siempre haya historial
     window.history.pushState({ page: 'home' }, '', window.location.href);
 
-    const handlePopState = (e: PopStateEvent) => {
+    const handlePopState = (_e: PopStateEvent) => {
       // Volver a empujar el estado para evitar que se vacíe el historial
       window.history.pushState({ page: 'home' }, '', '/dashboard');
       // Navegar al dashboard

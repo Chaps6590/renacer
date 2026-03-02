@@ -356,7 +356,7 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
                       )}
                     </button>
 
-                    {(esPastor || (esSupervisor && material.subidoPor?.id === user?.id)) && (
+                    {(esPastor || (esSupervisor && (typeof material.subidoPor === 'object' ? material.subidoPor.id : material.subidoPor) === user?.id)) && (
                       <button
                         onClick={() => {
                           if (confirm(`¿Eliminar "${material.titulo}"?`)) {

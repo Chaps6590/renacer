@@ -71,7 +71,7 @@ export const Login: React.FC = () => {
               <div className="absolute top-6 left-8 w-8 h-8 bg-white/20 rounded-full blur-sm"></div>
             </div>
             <h1 className="text-3xl font-bold text-white mb-3 tracking-wide">Favor y Influencia</h1>
-            <p className="text-blue-100 text-base leading-relaxed px-4 font-medium italic">
+            <p className="verse-animate verse-glow text-blue-100 text-base leading-relaxed px-4 font-medium italic">
               "Entonces alcanzarás el favor de Dios y tu influencia será determinada entre los hombres"
             </p>
           </div>

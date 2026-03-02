@@ -117,7 +117,7 @@ export interface MaterialCelula {
   archivoUrl: string;
   nombreArchivo: string;
   fechaSubida: Date;
-  subidoPor: string; // ID del pastor/admin
+  subidoPor: { id: string; name: string } | string;
   fechaParaUsar?: Date;
   activo: boolean;
 }
