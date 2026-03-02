@@ -242,7 +242,12 @@ export const PeticionesModal: React.FC<PeticionesModalProps> = ({ isOpen, onClos
                           <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
                             <h6 className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Acción Realizada</h6>
                             <p className="text-sm font-bold text-blue-900 mb-2 italic">"{anotacion.accionPastoral}"</p>
-                            <p className="text-[10px] text-blue-400">Atendido el {anotacion.fechaResolucion ? format(new Date(anotacion.fechaResolucion), 'dd/MM HH:mm') : '-'}</p>
+                            <p className="text-[10px] text-blue-400">
+                              Atendido el {anotacion.fechaResolucion ? format(new Date(anotacion.fechaResolucion), 'dd/MM HH:mm') : '-'}
+                              {(anotacion as any).resueltaPorNombre && (
+                                <span className="ml-1 font-bold">por {(anotacion as any).resueltaPorNombre}</span>
+                              )}
+                            </p>
                           </div>
                         ) : (
                           <div className="space-y-3">
