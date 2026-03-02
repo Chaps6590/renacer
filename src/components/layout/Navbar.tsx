@@ -46,44 +46,43 @@ export const Navbar: React.FC = () => {
   return (
     <>
       <nav className="bg-white dark:bg-gray-800 shadow-md transition-colors duration-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-3 sm:py-0 sm:h-16 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-            <div className="flex items-center justify-between min-w-0">
-              <div className="flex items-center min-w-0">
-                <h1 className="text-2xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400">Renacer</h1>
-                <span className="ml-2 sm:ml-4 text-sm sm:text-base text-gray-600 dark:text-gray-300 truncate">| {user?.name}</span>
-              </div>
-
-              <span className="sm:hidden px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-xs font-medium capitalize ml-2">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="h-14 sm:h-16 flex items-center justify-between gap-2 overflow-hidden">
+            {/* Izquierda: logo + nombre */}
+            <div className="flex items-center gap-1 sm:gap-3 min-w-0 flex-1">
+              <h1 className="text-lg sm:text-2xl font-bold text-primary-600 dark:text-primary-400 shrink-0">Renacer</h1>
+              <span className="text-gray-400 dark:text-gray-500 shrink-0 text-sm">|</span>
+              <span className="text-xs sm:text-base text-gray-600 dark:text-gray-300 truncate">{user?.name}</span>
+              <span className="shrink-0 px-1.5 py-0.5 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-xs font-medium">
                 {getRolLabel(user?.role)}
               </span>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-3 w-full sm:w-auto">
-              <span className="hidden sm:inline-flex px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-sm font-medium capitalize">
+            {/* Derecha: acciones — solo íconos en móvil */}
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+              <span className="hidden sm:inline-flex px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-sm font-medium">
                 {getRolLabel(user?.role)}
               </span>
               <button
                 onClick={toggleDarkMode}
-                className="btn btn-secondary flex items-center justify-center gap-2 text-sm"
-                title={isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+                className="p-2 sm:px-3 sm:py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                title={isDarkMode ? 'Modo claro' : 'Modo oscuro'}
               >
                 {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                <span className="hidden sm:inline">Tema</span>
               </button>
               <button
                 onClick={() => setShowPerfil(true)}
-                className="btn btn-secondary flex items-center justify-center gap-2 text-sm"
+                className="p-2 sm:px-3 sm:py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-1"
               >
                 <User className="w-4 h-4" />
-                Perfil
+                <span className="hidden sm:inline text-sm font-medium">Perfil</span>
               </button>
               <button
                 onClick={handleLogout}
-                className="btn btn-secondary flex items-center justify-center gap-2 text-sm"
+                className="p-2 sm:px-3 sm:py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-1"
               >
                 <LogOut className="w-4 h-4" />
-                Salir
+                <span className="hidden sm:inline text-sm font-medium">Salir</span>
               </button>
             </div>
           </div>
