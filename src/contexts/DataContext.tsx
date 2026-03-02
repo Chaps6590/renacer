@@ -107,6 +107,38 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           liderEmail: c.lider?.email || undefined,
           liderPhone: c.lider?.telefono || undefined,
           liderFechaNacimiento: c.lider?.fechaNacimiento || undefined,
+          supervisorId: c.supervisorId || undefined,
+          supervisorName: c.supervisor?.name || undefined,
+          supervisorEmail: c.supervisor?.email || undefined,
+          diaSemana: c.dia,
+          horario: c.horario,
+          coLideres: (c.coLideres || []).map((col: any) => ({
+            ...col,
+            phone: col.telefono,
+            fechaNacimiento: col.fechaNacimiento
+          })),
+          miembros: (c.miembros || []).map((m: any) => ({
+            ...m,
+            name: m.nombre,
+            phone: m.telefono
+          })),
+          createdAt: new Date(c.createdAt)
+        }));
+        setCelulas(celulasTransformadas);
+      } else if (user?.role === 'supervisor') {
+        // Los supervisores cargan sus células asignadas
+        const celulasData = await api.getCelulas() as any[];
+        const celulasTransformadas = celulasData.map((c: any) => ({
+          id: c.id,
+          name: c.nombre,
+          liderId: c.liderId,
+          liderName: c.lider?.name || '',
+          liderEmail: c.lider?.email || undefined,
+          liderPhone: c.lider?.telefono || undefined,
+          liderFechaNacimiento: c.lider?.fechaNacimiento || undefined,
+          supervisorId: c.supervisorId || undefined,
+          supervisorName: c.supervisor?.name || undefined,
+          supervisorEmail: c.supervisor?.email || undefined,
           diaSemana: c.dia,
           horario: c.horario,
           coLideres: (c.coLideres || []).map((col: any) => ({

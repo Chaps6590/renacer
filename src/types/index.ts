@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'pastor' | 'lider' | 'colider' | 'timoteo';
+export type UserRole = 'admin' | 'pastor' | 'supervisor' | 'lider' | 'colider' | 'timoteo';
 
 export type MotivoFalta = 'vacaciones' | 'trabajo' | 'enfermedad' | 'familia' | 'viaje' | 'sin-motivo' | 'otro' | 'dejar-pendiente';
 
@@ -24,6 +24,9 @@ export interface Celula {
   liderEmail?: string;
   liderPhone?: string;
   liderFechaNacimiento?: string; // Fecha de nacimiento del líder principal
+  supervisorId?: string; // ID del supervisor asignado
+  supervisorName?: string; // Nombre del supervisor
+  supervisorEmail?: string; // Email del supervisor
   diaSemana: string;
   horario: string;
   coLideres: CoLider[];

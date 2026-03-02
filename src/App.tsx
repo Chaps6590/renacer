@@ -9,6 +9,7 @@ import { Register } from './components/auth/Register';
 import { PastorDashboard } from './components/pastor/PastorDashboard';
 import AdminDashboard from './components/admin/AdminDashboard';
 import LiderDashboard from './components/lider/LiderDashboard';
+import SupervisorDashboard from './components/supervisor/SupervisorDashboard';
 
 const Dashboard: React.FC = () => {
   // Este componente redirige según el rol del usuario
@@ -23,17 +24,11 @@ const Dashboard: React.FC = () => {
     return <AdminDashboard />;
   } else if (user.role === 'pastor') {
     return <PastorDashboard />;
+  } else if (user.role === 'supervisor') {
+    return <SupervisorDashboard />;
   } else if (user.role === 'lider' || user.role === 'colider' || user.role === 'timoteo') {
     return <LiderDashboard />;
   }
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute allowedRoles={['admin']}>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
   
   return <Navigate to="/login" />;
 };
@@ -112,6 +107,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['pastor']}>
                   <PastorDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/supervisor"
+              element={
+                <ProtectedRoute allowedRoles={['supervisor']}>
+                  <SupervisorDashboard />
                 </ProtectedRoute>
               }
             />

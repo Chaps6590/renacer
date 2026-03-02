@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useData } from '../../contexts/DataContext';
-import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, Trash2, FileText, Newspaper, Heart, AlertCircle, Gift } from 'lucide-react';
+import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, Trash2, FileText, Newspaper, Heart, AlertCircle, Gift, Shield } from 'lucide-react';
 import { Navbar } from '../layout/Navbar';
 import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
 import { PeticionesModal } from '../common/PeticionesModal';
 import { CumpleanosModal } from '../common/CumpleanosModal';
+import SupervisoresAdmin from './SupervisoresAdmin';
 import { User } from '../../types';
 import { api } from '../../services/api';
 import jsPDF from 'jspdf';
@@ -61,7 +62,7 @@ export const PastorDashboard: React.FC = () => {
     }
   };
 // ...resto del componente...
-  const [view, setView] = useState<'dashboard' | 'lideres' | 'celulas' | 'recursos' | 'cumpleanos'>('dashboard');
+  const [view, setView] = useState<'dashboard' | 'lideres' | 'supervisores' | 'celulas' | 'recursos' | 'cumpleanos'>('dashboard');
 
   // Estados para modales de recursos
   const [showMateriales, setShowMateriales] = useState(false);
@@ -423,6 +424,15 @@ export const PastorDashboard: React.FC = () => {
             Líderes
           </button>
           <button
+            onClick={() => setView('supervisores')}
+            className={`px-4 py-2 font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${view === 'supervisores'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-600 hover:text-gray-800'
+              }`}
+          >
+            Supervisores
+          </button>
+          <button
             onClick={() => setView('celulas')}
             className={`px-4 py-2 font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${view === 'celulas'
               ? 'border-blue-500 text-blue-600'
@@ -709,6 +719,11 @@ export const PastorDashboard: React.FC = () => {
               </div>
             </div>
           </>
+        )}
+
+        {/* Vista Supervisores */}
+        {view === 'supervisores' && (
+          <SupervisoresAdmin celulas={celulas} />
         )}
 
         {/* Vista Células */}

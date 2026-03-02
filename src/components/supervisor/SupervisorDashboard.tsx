@@ -1,0 +1,248 @@
+import React, { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { useData } from '../../contexts/DataContext';
+import { Navbar } from '../layout/Navbar';
+import { HistorialAsistenciasModal } from '../lider/HistorialAsistenciasModal';
+import { MaterialesModal } from '../common/MaterialesModal';
+import { NoticiasModal } from '../common/NoticiasModal';
+import { DonacionesModal } from '../common/DonacionesModal';
+import { Users, Calendar, BarChart3, Eye, FileText, Newspaper, Heart, TrendingUp, UserCheck } from 'lucide-react';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+
+const SupervisorDashboard: React.FC = () => {
+  const { user } = useAuth();
+  const { celulas, noticias } = useData();
+  const [showHistorial, setShowHistorial] = useState(false);
+  const [selectedCelulaId, setSelectedCelulaId] = useState<string | null>(null);
+  const [showMateriales, setShowMateriales] = useState(false);
+  const [showNoticias, setShowNoticias] = useState(false);
+  const [showDonaciones, setShowDonaciones] = useState(false);
+
+  // Filtrar las células que supervisa el usuario
+  const misCelulas = celulas.filter(c => c.supervisorId === user?.id);
+
+  // Calcular estadísticas generales
+  const totalCelulas = misCelulas.length;
+  const totalMiembros = misCelulas.reduce((sum, c) => sum + c.miembros.length, 0);
+  const promedioMiembrosPorCelula = totalCelulas > 0 ? Math.round(totalMiembros / totalCelulas) : 0;
+
+  // Noticias importantes no leídas
+  const noticiasImportantes = noticias.filter(n =>
+    n.visible && n.importante && (!n.fechaVencimiento || new Date(n.fechaVencimiento) > new Date())
+  ).length;
+
+  const handleVerHistorial = (celulaId: string) => {
+    setSelectedCelulaId(celulaId);
+    setShowHistorial(true);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Navbar />
+      
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            Panel de Supervisor
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Bienvenido, {user?.name} - Supervisando {totalCelulas} {totalCelulas === 1 ? 'célula' : 'células'}
+          </p>
+        </div>
+
+        {/* Tarjetas de estadísticas */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-blue-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Células</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{totalCelulas}</p>
+              </div>
+              <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
+                <Users className="w-8 h-8 text-blue-600 dark:text-blue-300" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-green-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Total Miembros</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{totalMiembros}</p>
+              </div>
+              <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
+                <UserCheck className="w-8 h-8 text-green-600 dark:text-green-300" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-purple-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Promedio/Célula</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{promedioMiembrosPorCelula}</p>
+              </div>
+              <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
+                <TrendingUp className="w-8 h-8 text-purple-600 dark:text-purple-300" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-orange-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Noticias</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{noticiasImportantes}</p>
+              </div>
+              <div className="bg-orange-100 dark:bg-orange-900 p-3 rounded-lg">
+                <Newspaper className="w-8 h-8 text-orange-600 dark:text-orange-300" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Acciones rápidas */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <button
+            onClick={() => setShowNoticias(true)}
+            className="bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl"
+          >
+            <Newspaper className="w-6 h-6" />
+            <span className="font-semibold">Ver Noticias</span>
+          </button>
+
+          <button
+            onClick={() => setShowMateriales(true)}
+            className="bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl"
+          >
+            <FileText className="w-6 h-6" />
+            <span className="font-semibold">Materiales</span>
+          </button>
+
+          <button
+            onClick={() => setShowDonaciones(true)}
+            className="bg-gradient-to-br from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl"
+          >
+            <Heart className="w-6 h-6" />
+            <span className="font-semibold">Ofrendar</span>
+          </button>
+
+          <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-xl p-4 flex items-center gap-3">
+            <BarChart3 className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+            <span className="font-semibold text-gray-700 dark:text-gray-200">Estadísticas</span>
+          </div>
+        </div>
+
+        {/* Lista de Células */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <Users className="w-6 h-6 text-blue-600" />
+              Células Supervisadas
+            </h2>
+          </div>
+
+          {misCelulas.length === 0 ? (
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+              <Users className="w-16 h-16 mx-auto mb-4 opacity-50" />
+              <p className="text-lg font-medium">No tienes células asignadas</p>
+              <p className="text-sm mt-2">Contacta al pastor para que te asignen células a supervisar</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {misCelulas.map((celula) => (
+                <div
+                  key={celula.id}
+                  className="border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-blue-300 dark:hover:border-blue-600 transition-all hover:shadow-md"
+                >
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-lg">
+                          <Users className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-gray-900 dark:text-white">{celula.name}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {celula.diaSemana} • {celula.horario}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-gray-700 dark:text-gray-300">Líder:</span>
+                          <span className="text-gray-600 dark:text-gray-400">{celula.liderName}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-gray-700 dark:text-gray-300">Miembros:</span>
+                          <span className="text-gray-600 dark:text-gray-400">{celula.miembros.length}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-gray-700 dark:text-gray-300">Colíderes:</span>
+                          <span className="text-gray-600 dark:text-gray-400">{celula.coLideres.length}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => handleVerHistorial(celula.id)}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+                      >
+                        <Eye className="w-4 h-4" />
+                        Ver Historial
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Lista de miembros (colapsable o siempre visible) */}
+                  {celula.miembros.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Miembros de la célula:</p>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                        {celula.miembros.slice(0, 8).map((miembro) => (
+                          <div
+                            key={miembro.id}
+                            className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg"
+                          >
+                            {miembro.name}
+                          </div>
+                        ))}
+                        {celula.miembros.length > 8 && (
+                          <div className="text-sm text-gray-500 dark:text-gray-400 px-3 py-1">
+                            +{celula.miembros.length - 8} más
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Modales */}
+      {showHistorial && selectedCelulaId && (
+        <HistorialAsistenciasModal
+          celulaId={selectedCelulaId}
+          isOpen={showHistorial}
+          onClose={() => {
+            setShowHistorial(false);
+            setSelectedCelulaId(null);
+          }}
+        />
+      )}
+
+      {showMateriales && <MaterialesModal isOpen={showMateriales} onClose={() => setShowMateriales(false)} />}
+      {showNoticias && <NoticiasModal isOpen={showNoticias} onClose={() => setShowNoticias(false)} />}
+      {showDonaciones && <DonacionesModal isOpen={showDonaciones} onClose={() => setShowDonaciones(false)} />}
+    </div>
+  );
+};
+
+export default SupervisorDashboard;

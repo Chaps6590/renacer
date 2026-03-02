@@ -47,6 +47,7 @@ export const capitalize = (str: string): string => {
 export const getRoleDisplay = (role: string): string => {
   const roles: Record<string, string> = {
     pastor: 'Pastor',
+    supervisor: 'Supervisor',
     lider: 'Líder',
     colider: 'Colíder',
     timoteo: 'Líder Colab.',
