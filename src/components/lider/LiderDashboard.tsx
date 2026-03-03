@@ -622,9 +622,6 @@ const LiderDashboard: React.FC = () => {
                 {miembrosOrdenados.map((miembro) => {
                   const initials = miembro.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase();
                   const isLiderPrincipal = miembro.rolCelula === 'lider';
-                  const isMe = miembro.id === user?.id;
-                  const canEditThis = canManageMembers && !isLiderPrincipal && miembro.rolCelula !== 'colider';
-                  const canDeleteThis = canManageMembers && !isLiderPrincipal && !isMe;
 
                   const avatarColor: Record<string, string> = {
                     lider: 'bg-purple-100 text-purple-700',
@@ -672,27 +669,6 @@ const LiderDashboard: React.FC = () => {
                         </div>
                       </button>
 
-                      {/* Acciones */}
-                      {canManageMembers && (
-                        <div className="flex flex-col gap-2 shrink-0">
-                          <button
-                            onClick={() => canEditThis ? handleChangeRole(miembro) : undefined}
-                            disabled={!canEditThis}
-                            className={`p-3 rounded-xl transition-colors ${canEditThis ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 active:bg-blue-200' : 'text-gray-300 bg-gray-50 cursor-not-allowed'}`}
-                            title="Cambiar Rol"
-                          >
-                            <Edit className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() => canDeleteThis ? handleDeleteMiembro(miembro) : undefined}
-                            disabled={!canDeleteThis}
-                            className={`p-3 rounded-xl transition-colors ${canDeleteThis ? 'text-red-600 bg-red-50 hover:bg-red-100 active:bg-red-200' : 'text-gray-300 bg-gray-50 cursor-not-allowed'}`}
-                            title="Eliminar"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
@@ -1085,10 +1061,52 @@ const LiderDashboard: React.FC = () => {
                   )}
                 </div>
 
+                {/* Acciones de gestión */}
+                {canManageMembers && (() => {
+                  const canEditThisDetalle = miembroDetalle.rolCelula !== 'lider' && miembroDetalle.rolCelula !== 'colider';
+                  const canDeleteThisDetalle = miembroDetalle.rolCelula !== 'lider' && miembroDetalle.id !== user?.id;
+                  return (
+                    <div className="flex gap-3">
+                      <button
+                        disabled={!canEditThisDetalle}
+                        onClick={() => {
+                          if (!canEditThisDetalle) return;
+                          setMiembroDetalle(null);
+                          handleChangeRole(miembroDetalle);
+                        }}
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm active:scale-95 transition-transform ${
+                          canEditThisDetalle
+                            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-700'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                        }`}
+                      >
+                        <Edit className="w-4 h-4" />
+                        Cambiar Rol
+                      </button>
+                      <button
+                        disabled={!canDeleteThisDetalle}
+                        onClick={() => {
+                          if (!canDeleteThisDetalle) return;
+                          setMiembroDetalle(null);
+                          handleDeleteMiembro(miembroDetalle);
+                        }}
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm active:scale-95 transition-transform ${
+                          canDeleteThisDetalle
+                            ? 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-700'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                        }`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Eliminar
+                      </button>
+                    </div>
+                  );
+                })()}
+
                 {/* Botón cerrar */}
                 <button
                   onClick={() => setMiembroDetalle(null)}
-                  className="w-full mt-2 py-3 rounded-2xl bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-sm active:scale-95 transition-transform"
+                  className="w-full py-3 rounded-2xl bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-sm active:scale-95 transition-transform"
                 >
                   Cerrar
                 </button>
