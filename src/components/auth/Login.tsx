@@ -35,16 +35,16 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-blue-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
       {/* Background Pattern */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-4 -left-4 w-24 h-24 bg-sky-200 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-blue-300 rounded-full opacity-15 animate-pulse delay-1000"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-20 h-20 bg-sky-400 rounded-full opacity-10 animate-pulse delay-2000"></div>
+        <div className="absolute -top-4 -left-4 w-24 h-24 bg-sky-200 dark:bg-sky-900 rounded-full opacity-20 animate-pulse"></div>
+        <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-blue-300 dark:bg-blue-900 rounded-full opacity-15 animate-pulse delay-1000"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-20 h-20 bg-sky-400 dark:bg-sky-800 rounded-full opacity-10 animate-pulse delay-2000"></div>
       </div>
 
       {/* Main Container */}
-      <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 w-full max-w-md overflow-hidden">
+      <div className="relative bg-white/80 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700 w-full max-w-md overflow-hidden">
         {/* Header with Gradient */}
         <div className="relative bg-gradient-to-r from-blue-600 to-sky-600 px-8 pt-12 pb-8 text-center">
           {/* Subtle Pattern Overlay */}
@@ -136,7 +136,7 @@ export const Login: React.FC = () => {
 
             {/* Error Message */}
             {error && (
-              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-r-lg animate-shake">
+              <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 dark:border-red-400 text-red-700 dark:text-red-300 px-4 py-3 rounded-r-lg animate-shake">
                 <div className="flex">
                   <div className="ml-3">
                     <p className="text-sm font-medium">{error}</p>
