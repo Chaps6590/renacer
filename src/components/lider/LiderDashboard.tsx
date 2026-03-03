@@ -11,7 +11,7 @@ import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
 import { CumpleanosModal } from '../common/CumpleanosModal';
 
-import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart, History } from 'lucide-react';
+import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart, History, Phone, Mail, MapPin, X } from 'lucide-react';
 
 interface AddMiembroModalProps {
   isOpen: boolean;
@@ -190,6 +190,7 @@ const LiderDashboard: React.FC = () => {
   const [showDonaciones, setShowDonaciones] = useState(false);
   const [showHistorial, setShowHistorial] = useState(false);
   const [showCumpleanos, setShowCumpleanos] = useState(false);
+  const [miembroDetalle, setMiembroDetalle] = useState<any>(null);
 
   const tablaMiembrosRef = useRef<HTMLDivElement>(null);
 
@@ -635,14 +636,23 @@ const LiderDashboard: React.FC = () => {
                   const avatarCls = avatarColor[miembro.rolCelula?.toLowerCase() ?? ''] ?? 'bg-gray-100 text-gray-600';
 
                   return (
-                    <div key={miembro.id} className="p-4 flex items-center gap-3">
-                      {/* Avatar */}
-                      <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${avatarCls}`}>
+                    <div
+                      key={miembro.id}
+                      className="p-4 flex items-center gap-3 active:bg-gray-50 dark:active:bg-gray-700 transition-colors"
+                    >
+                      {/* Avatar — click abre detalle */}
+                      <button
+                        onClick={() => setMiembroDetalle(miembro)}
+                        className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${avatarCls}`}
+                      >
                         {initials}
-                      </div>
+                      </button>
 
-                      {/* Info */}
-                      <div className="flex-1 min-w-0">
+                      {/* Info — click abre detalle */}
+                      <button
+                        onClick={() => setMiembroDetalle(miembro)}
+                        className="flex-1 min-w-0 text-left"
+                      >
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="font-semibold text-gray-900 dark:text-white text-sm truncate">{miembro.name}</span>
                           {isLiderPrincipal && <Crown className="w-3.5 h-3.5 text-purple-500 shrink-0" />}
@@ -660,12 +670,7 @@ const LiderDashboard: React.FC = () => {
                             <span className="px-2 py-0.5 text-xs rounded-full bg-sky-100 text-sky-700 font-medium">Discip.</span>
                           )}
                         </div>
-                        {'phone' in miembro && miembro.phone && (
-                          <a href={`tel:${miembro.phone}`} className="text-xs text-blue-600 dark:text-blue-400 mt-0.5 block truncate">
-                            📞 {miembro.phone}
-                          </a>
-                        )}
-                      </div>
+                      </button>
 
                       {/* Acciones */}
                       {canManageMembers && (
@@ -975,6 +980,122 @@ const LiderDashboard: React.FC = () => {
           isOpen={showCumpleanos}
           onClose={() => setShowCumpleanos(false)}
         />
+
+        {/* Modal de detalle de miembro (móvil) */}
+        {miembroDetalle && (
+          <div
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm"
+            onClick={() => setMiembroDetalle(null)}
+          >
+            <div
+              className="w-full sm:max-w-sm bg-white dark:bg-gray-800 rounded-t-3xl sm:rounded-2xl shadow-2xl pb-safe overflow-hidden"
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Header con avatar */}
+              <div className="relative bg-gradient-to-br from-blue-500 to-indigo-600 pt-8 pb-6 px-6 flex flex-col items-center gap-2">
+                <button
+                  onClick={() => setMiembroDetalle(null)}
+                  className="absolute top-3 right-3 p-1.5 rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+                {/* Avatar grande */}
+                <div className={`w-20 h-20 rounded-full flex items-center justify-center font-bold text-2xl text-white border-4 border-white/40 shadow-lg ${
+                  (() => {
+                    const rol = miembroDetalle.rolCelula?.toLowerCase();
+                    if (rol === 'lider') return 'bg-purple-500';
+                    if (rol === 'colider') return 'bg-blue-500';
+                    if (rol === 'timoteo') return 'bg-orange-400';
+                    return 'bg-green-500';
+                  })()
+                }`}>
+                  {miembroDetalle.name?.split(' ').slice(0,2).map((p: string) => p[0]).join('').toUpperCase()}
+                </div>
+                <h2 className="text-white font-bold text-lg text-center leading-tight">{miembroDetalle.name}</h2>
+                <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${getRolColor(miembroDetalle.rolCelula)}`}>
+                  {getRolDisplay(miembroDetalle.rolCelula)}
+                </span>
+              </div>
+
+              {/* Cuerpo del modal */}
+              <div className="px-6 py-5 space-y-4">
+
+                {/* Teléfono */}
+                {'phone' in miembroDetalle && miembroDetalle.phone ? (
+                  <a
+                    href={`tel:${miembroDetalle.phone}`}
+                    className="flex items-center gap-3 w-full bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-2xl px-4 py-3 text-green-700 dark:text-green-300 font-semibold active:scale-95 transition-transform"
+                  >
+                    <span className="w-9 h-9 rounded-full bg-green-100 dark:bg-green-800 flex items-center justify-center shrink-0">
+                      <Phone className="w-5 h-5 text-green-600 dark:text-green-300" />
+                    </span>
+                    <span className="text-base">{miembroDetalle.phone}</span>
+                    <span className="ml-auto text-xs text-green-500">Llamar</span>
+                  </a>
+                ) : (
+                  <div className="flex items-center gap-3 w-full bg-gray-50 dark:bg-gray-700/40 rounded-2xl px-4 py-3">
+                    <span className="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center shrink-0">
+                      <Phone className="w-5 h-5 text-gray-400" />
+                    </span>
+                    <span className="text-sm text-gray-400 italic">Sin teléfono registrado</span>
+                  </div>
+                )}
+
+                {/* Email */}
+                {'email' in miembroDetalle && miembroDetalle.email && (
+                  <div className="flex items-center gap-3 w-full bg-gray-50 dark:bg-gray-700/40 rounded-2xl px-4 py-3">
+                    <span className="w-9 h-9 rounded-full bg-blue-50 dark:bg-blue-900/40 flex items-center justify-center shrink-0">
+                      <Mail className="w-5 h-5 text-blue-500" />
+                    </span>
+                    <span className="text-sm text-gray-700 dark:text-gray-200 truncate">{miembroDetalle.email}</span>
+                  </div>
+                )}
+
+                {/* Dirección */}
+                {'address' in miembroDetalle && miembroDetalle.address && (
+                  <div className="flex items-start gap-3 w-full bg-gray-50 dark:bg-gray-700/40 rounded-2xl px-4 py-3">
+                    <span className="w-9 h-9 rounded-full bg-amber-50 dark:bg-amber-900/40 flex items-center justify-center shrink-0 mt-0.5">
+                      <MapPin className="w-5 h-5 text-amber-500" />
+                    </span>
+                    <span className="text-sm text-gray-700 dark:text-gray-200">{miembroDetalle.address}</span>
+                  </div>
+                )}
+
+                {/* Badges bautizado / discipulado */}
+                <div className="flex gap-2">
+                  {'isBautizado' in miembroDetalle && (
+                    <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
+                      miembroDetalle.isBautizado
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
+                        : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
+                    }`}>
+                      {miembroDetalle.isBautizado ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                      Bautizado
+                    </span>
+                  )}
+                  {'tieneDiscipulado' in miembroDetalle && (
+                    <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
+                      miembroDetalle.tieneDiscipulado
+                        ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300'
+                        : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
+                    }`}>
+                      {miembroDetalle.tieneDiscipulado ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                      Discipulado
+                    </span>
+                  )}
+                </div>
+
+                {/* Botón cerrar */}
+                <button
+                  onClick={() => setMiembroDetalle(null)}
+                  className="w-full mt-2 py-3 rounded-2xl bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-sm active:scale-95 transition-transform"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
