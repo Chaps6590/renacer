@@ -10,9 +10,10 @@ interface HistorialAsistenciasModalProps {
     celulaId: string;
     isOpen: boolean;
     onClose: () => void;
+    readOnly?: boolean; // Cuando es true, solo permite ver, no eliminar
 }
 
-export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps> = ({ celulaId, isOpen, onClose }) => {
+export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps> = ({ celulaId, isOpen, onClose, readOnly = false }) => {
     const { getHistorialAsistencias } = useData();
     const [historial, setHistorial] = useState<AsistenciaRecord[]>([]);
     const [loading, setLoading] = useState(true);
@@ -155,17 +156,19 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                             </div>
                                         </div>
 
-                                        {/* Botón eliminar */}
+                                        {/* Botón eliminar - Solo para líderes */}
                                         {isExpanded && (
                                             <div className="border-t border-gray-100 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-900/30 p-5 animate-in fade-in duration-300">
-                                                <div className="flex justify-end mb-2">
-                                                    <button
-                                                        className="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg font-bold hover:bg-red-200 dark:hover:bg-red-800 transition-colors text-sm"
-                                                        onClick={() => handleDelete(registro.id)}
-                                                    >
-                                                        Eliminar asistencia
-                                                    </button>
-                                                </div>
+                                                {!readOnly && (
+                                                    <div className="flex justify-end mb-2">
+                                                        <button
+                                                            className="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg font-bold hover:bg-red-200 dark:hover:bg-red-800 transition-colors text-sm"
+                                                            onClick={() => handleDelete(registro.id)}
+                                                        >
+                                                            Eliminar asistencia
+                                                        </button>
+                                                    </div>
+                                                )}
                                                                 {/* Modal de confirmación */}
                                                                 {confirmOpen && (
                                                                     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">

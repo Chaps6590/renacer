@@ -330,8 +330,8 @@ export const PastorDashboard: React.FC = () => {
   const getEstadisticas = () => {
     return celulas.map(celula => {
       const celasAsistencias = asistencias.filter(a => a.celulaId === celula.id);
-      // Contar miembros + líder + colíderes
-      const totalMiembros = celula.miembros.length + 1 + (celula.coLideres ? celula.coLideres.length : 0);
+      // Contar solo miembros registrados (el líder y colíderes no registran su propia asistencia)
+      const totalMiembros = celula.miembros.length;
 
       const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
       const promedioAsistencia = celasAsistencias.length > 0 && totalMiembros > 0

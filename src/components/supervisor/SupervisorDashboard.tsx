@@ -19,8 +19,10 @@ const SupervisorDashboard: React.FC = () => {
   const [showDonaciones, setShowDonaciones] = useState(false);
   const [showPeticiones, setShowPeticiones] = useState(false);
 
-  // Filtrar las células que supervisa el usuario
-  const misCelulas = celulas.filter(c => c.supervisorId === user?.id);
+  // Filtrar y ordenar las células que supervisa el usuario
+  const misCelulas = celulas
+    .filter(c => c.supervisorId === user?.id)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   // Calcular estadísticas generales
   const totalCelulas = misCelulas.length;
@@ -246,6 +248,7 @@ const SupervisorDashboard: React.FC = () => {
             setShowHistorial(false);
             setSelectedCelulaId(null);
           }}
+          readOnly={true}
         />
       )}
 
