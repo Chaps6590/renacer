@@ -19,6 +19,7 @@ const SupervisorDashboard: React.FC = () => {
   const [showDonaciones, setShowDonaciones] = useState(false);
   const [showPeticiones, setShowPeticiones] = useState(false);
   const [showEstadisticas, setShowEstadisticas] = useState(false);
+  const [showCumpleanos, setShowCumpleanos] = useState(false);
 
   // Filtrar y ordenar las células que supervisa el usuario
   const misCelulas = celulas
@@ -64,6 +65,82 @@ const SupervisorDashboard: React.FC = () => {
   // Peticiones pendientes de mis células supervisadas
   const peticionesPendientes = peticionesPastor.filter(p => !p.resuelta).length;
 
+  // Lógica de cumpleaños
+  const getUpcomingBirthdays = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalizar a medianoche
+
+    const getDayMonth = (dateString?: string) => {
+      if (!dateString) return null;
+      const clean = dateString.slice(0, 10); // Solo 'YYYY-MM-DD'
+      const [year, month, day] = clean.split('-').map(Number);
+      if (!year || !month || !day) return null;
+      return { day, month };
+    };
+
+    // Calcular cuántos días faltan para el cumpleaños (0-7 para esta semana)
+    const getDaysUntilBirthday = (dateString?: string): number | null => {
+      const dob = getDayMonth(dateString);
+      if (!dob) return null;
+      
+      for (let i = 0; i <= 7; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(today.getDate() + i);
+        if (dob.day === checkDate.getDate() && dob.month === checkDate.getMonth() + 1) {
+          return i;
+        }
+      }
+      return null;
+    };
+
+    // Recolectar todos los cumpleaños próximos de las células supervisadas
+    const allBirthdays: any[] = [];
+
+    // Miembros de células supervisadas
+    misCelulas.forEach(c => {
+      c.miembros.forEach(m => {
+        const daysUntil = getDaysUntilBirthday(m.fechaNacimiento);
+        if (daysUntil !== null) {
+          allBirthdays.push({ ...m, type: 'Miembro', celulaName: c.name, liderName: c.liderName, daysUntil });
+        }
+      });
+    });
+
+    // Líderes de células supervisadas
+    misCelulas.forEach(c => {
+      const daysUntil = getDaysUntilBirthday(c.liderFechaNacimiento);
+      if (daysUntil !== null) {
+        allBirthdays.push({ 
+          id: c.liderId, 
+          name: c.liderName, 
+          fechaNacimiento: c.liderFechaNacimiento,
+          type: 'Líder', 
+          celulaName: c.name, 
+          daysUntil 
+        });
+      }
+    });
+
+    // Colíderes de células supervisadas
+    misCelulas.forEach(c => {
+      c.coLideres?.forEach(cl => {
+        const daysUntil = getDaysUntilBirthday(cl.fechaNacimiento);
+        if (daysUntil !== null) {
+          allBirthdays.push({ ...cl, type: 'Colíder', celulaName: c.name, liderName: c.liderName, daysUntil });
+        }
+      });
+    });
+
+    // Ordenar por días próximos (0 = hoy primero, luego 1, 2, etc.)
+    return allBirthdays.sort((a, b) => {
+      if (a.daysUntil !== b.daysUntil) return a.daysUntil - b.daysUntil;
+      // Si es el mismo día, ordenar alfabéticamente por nombre
+      return (a.name || '').localeCompare(b.name || '');
+    });
+  };
+
+  const birthdays = getUpcomingBirthdays();
+
   const handleVerHistorial = (celulaId: string) => {
     setSelectedCelulaId(celulaId);
     setShowHistorial(true);
@@ -85,7 +162,7 @@ const SupervisorDashboard: React.FC = () => {
         </div>
 
         {/* Tarjetas de estadísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-blue-500">
             <div className="flex items-center justify-between">
               <div>
@@ -147,10 +224,49 @@ const SupervisorDashboard: React.FC = () => {
               </div>
             </div>
           </div>
+
+          <div 
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-pink-500 cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => setShowCumpleanos(true)}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Cumpleaños</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-3xl">🎂</span>
+                  {(() => {
+                    const cumpleanosHoy = birthdays.filter(b => b.daysUntil === 0).length;
+                    return cumpleanosHoy > 0 ? (
+                      <span className="bg-pink-500 text-white rounded-full px-3 py-1 text-lg font-bold shadow">{cumpleanosHoy}</span>
+                    ) : (
+                      <span className="text-3xl font-bold text-gray-900 dark:text-white">{birthdays.length}</span>
+                    );
+                  })()}
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Próximos 7 días</p>
+              </div>
+              <div className="bg-pink-100 dark:bg-pink-900 p-3 rounded-lg">
+                <Heart className="w-8 h-8 text-pink-600 dark:text-pink-300" />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Acciones rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8">
+          <button
+            onClick={() => setShowCumpleanos(true)}
+            className="bg-gradient-to-br from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl relative"
+          >
+            <Heart className="w-6 h-6" />
+            <span className="font-semibold">Cumpleaños</span>
+            {birthdays.filter(b => b.daysUntil === 0).length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+                {birthdays.filter(b => b.daysUntil === 0).length}
+              </span>
+            )}
+          </button>
+
           <button
             onClick={() => setShowPeticiones(true)}
             className="bg-gradient-to-br from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl relative"
@@ -307,6 +423,125 @@ const SupervisorDashboard: React.FC = () => {
       {showMateriales && <MaterialesModal isOpen={showMateriales} onClose={() => setShowMateriales(false)} />}
       {showNoticias && <NoticiasModal isOpen={showNoticias} onClose={() => setShowNoticias(false)} />}
       {showDonaciones && <DonacionesModal isOpen={showDonaciones} onClose={() => setShowDonaciones(false)} />}
+
+      {/* Modal de Cumpleaños */}
+      {showCumpleanos && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden border border-gray-100 dark:border-gray-700">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-pink-500 to-pink-600 px-6 py-4 flex items-center justify-between text-white">
+              <div className="flex items-center gap-3">
+                <div className="bg-white/20 p-2 rounded-lg">
+                  <Heart className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold">Cumpleaños de la Semana</h3>
+                  <p className="text-pink-100 text-xs uppercase tracking-wider font-semibold">Próximos 7 días</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowCumpleanos(false)}
+                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+              {birthdays.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {birthdays.map((person: any) => {
+                    const dobParts = (() => {
+                      if (!person.fechaNacimiento) return null;
+                      const [datePart] = person.fechaNacimiento.split(' ');
+                      const [year, month, day] = datePart.split('-').map(Number);
+                      if (!year || !month || !day) return null;
+                      return { day, month };
+                    })();
+                    const today = new Date();
+                    const isToday = dobParts && dobParts.day === today.getDate() && dobParts.month === (today.getMonth() + 1);
+
+                    const daysLabel = (() => {
+                      if (person.daysUntil === 0) return 'Hoy';
+                      if (person.daysUntil === 1) return 'Mañana';
+                      return `En ${person.daysUntil} días`;
+                    })();
+
+                    return (
+                      <div key={`${person.id}-${person.type}`} className={`p-4 rounded-lg border ${
+                        isToday 
+                          ? 'bg-pink-50 dark:bg-pink-900/20 border-pink-200 dark:border-pink-700' 
+                          : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600'
+                      }`}>
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h4 className="font-bold text-gray-900 dark:text-white">{person.name}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{person.type}</p>
+                            {person.celulaName && (
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {person.type === 'Miembro' || person.type === 'Colíder' ? `Célula: ${person.celulaName}` : person.celulaName}
+                              </p>
+                            )}
+                            <div className="mt-2">
+                              <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
+                                person.daysUntil === 0 
+                                  ? 'bg-pink-500 text-white' 
+                                  : person.daysUntil === 1
+                                  ? 'bg-purple-500 text-white'
+                                  : 'bg-blue-500 text-white'
+                              }`}>
+                                {daysLabel}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <span className={`block text-lg font-bold ${
+                              isToday 
+                                ? 'text-pink-600 dark:text-pink-400' 
+                                : 'text-gray-700 dark:text-gray-300'
+                            }`}>
+                              {dobParts ? dobParts.day : ''}
+                            </span>
+                            <span className="text-xs uppercase text-gray-500 dark:text-gray-400">
+                              {dobParts ? ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][dobParts.month-1] : ''}
+                            </span>
+                          </div>
+                        </div>
+                        {isToday && (
+                          <div className="mt-3 text-center">
+                            <span className="inline-block px-3 py-1 bg-pink-500 text-white text-xs font-bold rounded-full animate-pulse">
+                              ¡Es hoy!
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <Heart className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">No hay cumpleaños cercanos</h3>
+                  <p className="text-gray-500 dark:text-gray-400">No se encontraron cumpleaños en los próximos 7 días.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+              <button
+                onClick={() => setShowCumpleanos(false)}
+                className="w-full py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl transition-colors"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Estadísticas */}
       {showEstadisticas && (
