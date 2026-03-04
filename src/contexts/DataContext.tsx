@@ -26,7 +26,7 @@ interface DataContextType {
 
   // Funciones de asistencia
   registrarAsistencia: (asistencia: AsistenciaRecord) => Promise<void>;
-  actualizarMotivoFalta: (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string, anotacionEspecial?: string) => Promise<void>;
+  actualizarMotivoFalta: (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string, anotacionEspecial?: string, prioridadAnotacion?: string) => Promise<void>;
   registrarAccionPastoral: (asistenciaId: string, miembroId: string, accion: string, resuelta: boolean) => Promise<void>;
   marcarAsistenciaCompletada: (asistenciaId: string) => Promise<void>;
   getHistorialAsistencias: (celulaId: string) => Promise<any[]>;
@@ -530,13 +530,14 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     }
   };
 
-  const actualizarMotivoFalta = async (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string, anotacionEspecial?: string) => {
+  const actualizarMotivoFalta = async (asistenciaId: string, miembroId: string, motivo: MotivoFalta, motivoPersonalizado?: string, anotacionEspecial?: string, prioridadAnotacion?: string) => {
     try {
       await api.updateMotivoAsistencia(asistenciaId, {
         miembroId,
         motivoFalta: motivo,
         motivoPersonalizado,
-        anotacionEspecial
+        anotacionEspecial,
+        prioridadAnotacion
       });
 
       // Actualizar estado local de asistencias
@@ -549,6 +550,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
                 motivoFalta: motivo,
                 motivoPersonalizado,
                 anotacionEspecial,
+                prioridadAnotacion: prioridadAnotacion as any,
                 motivoCompletado: true
               };
             }
@@ -571,7 +573,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       const dataPendientes = await api.getPendientesAsistencia() as any[];
       setPendientesAsistencia(dataPendientes);
 
-      if (user?.role === 'admin' || user?.role === 'pastor') {
+      if (user?.role === 'admin' || user?.role === 'pastor' || user?.role === 'supervisor') {
         const dataPeticiones = await api.getPeticionesPastor() as PeticionPastor[];
         setPeticionesPastor(dataPeticiones);
       }

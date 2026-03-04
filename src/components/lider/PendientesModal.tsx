@@ -75,12 +75,16 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
 
     if (!motivoData || !motivoData.motivo) return;
 
+    // Si no seleccionó prioridad, establecer 'media' por defecto para que se visualice como petición
+    const prioridad = motivoData.prioridad || 'media';
+
     actualizarMotivoFalta(
       asistenciaId,
       miembroId,
       motivoData.motivo,
       motivoData.personalizado,
-      motivoData.anotacionEspecial
+      motivoData.anotacionEspecial,
+      prioridad
     );
 
     // Limpiar el motivo guardado
@@ -203,25 +207,30 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
                                 </div>
                               )}
 
-                              <div className="flex flex-wrap items-center gap-4">
-                                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Prioridad:</span>
-                                {(['alta', 'media', 'baja']).map(prioridad => (
-                                  <label key={prioridad} className={`flex items-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer transition-all ${motivoSeleccionado?.prioridad === prioridad
-                                    ? (prioridad === 'alta' ? 'bg-red-500 border-red-500 text-white' :
-                                      prioridad === 'media' ? 'bg-yellow-500 border-yellow-500 text-white' :
-                                        'bg-green-500 border-green-500 text-white')
-                                    : 'bg-gray-100 border-gray-200 text-gray-600'
-                                    }`}>
-                                    <input
-                                      type="radio"
-                                      name={`prioridad-${key}`}
-                                      checked={motivoSeleccionado?.prioridad === prioridad}
-                                      onChange={() => handlePrioridadChange(pendiente.asistenciaId, miembro.miembroId, prioridad)}
-                                      className="sr-only"
-                                    />
-                                    <span className="text-xs font-bold capitalize">{prioridad}</span>
-                                  </label>
-                                ))}
+                              <div>
+                                <div className="flex flex-wrap items-center gap-4 mb-2">
+                                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Prioridad:</span>
+                                  {(['alta', 'media', 'baja']).map(prioridad => (
+                                    <label key={prioridad} className={`flex items-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer transition-all ${motivoSeleccionado?.prioridad === prioridad
+                                      ? (prioridad === 'alta' ? 'bg-red-500 border-red-500 text-white' :
+                                        prioridad === 'media' ? 'bg-yellow-500 border-yellow-500 text-white' :
+                                          'bg-green-500 border-green-500 text-white')
+                                      : 'bg-gray-100 border-gray-200 text-gray-600'
+                                      }`}>
+                                      <input
+                                        type="radio"
+                                        name={`prioridad-${key}`}
+                                        checked={motivoSeleccionado?.prioridad === prioridad}
+                                        onChange={() => handlePrioridadChange(pendiente.asistenciaId, miembro.miembroId, prioridad)}
+                                        className="sr-only"
+                                      />
+                                      <span className="text-xs font-bold capitalize">{prioridad}</span>
+                                    </label>
+                                  ))}
+                                </div>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                  {!motivoSeleccionado?.prioridad && '⚠️ Se asignará prioridad media para seguimiento pastoral'}
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -249,7 +258,7 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
         <div className="flex justify-end mt-8">
           <button
             onClick={onClose}
-            className="px-6 py-2 text-gray-600 dark:text-gray-400 font-bold hover:text-gray-900 dark:text-white transition-colors"
+            className="px-6 py-2 text-gray-600 dark:text-gray-400 font-bold hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             Cerrar
           </button>
