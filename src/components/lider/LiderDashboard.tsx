@@ -685,7 +685,7 @@ const LiderDashboard: React.FC = () => {
                           <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${getRolColor(miembro.rolCelula)}`}>
                             {getRolDisplay(miembro.rolCelula)}
                           </span>
-                          {miembro.rolCelula?.toLowerCase() === 'visita' && miembro.contadorAsistencias > 0 && (
+                          {miembro.rolCelula?.toLowerCase() === 'visita' && 'contadorAsistencias' in miembro && miembro.contadorAsistencias > 0 && (
                             <span className="px-2 py-0.5 text-xs rounded-full bg-pink-50 text-pink-700 font-semibold border border-pink-200">
                               {miembro.contadorAsistencias} {miembro.contadorAsistencias === 1 ? 'asistencia' : 'asistencias'}
                             </span>
@@ -739,7 +739,7 @@ const LiderDashboard: React.FC = () => {
                             <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getRolColor(miembro.rolCelula)}`}>
                               {getRolDisplay(miembro.rolCelula)}
                             </span>
-                            {miembro.rolCelula?.toLowerCase() === 'visita' && miembro.contadorAsistencias > 0 && (
+                            {miembro.rolCelula?.toLowerCase() === 'visita' && 'contadorAsistencias' in miembro && miembro.contadorAsistencias > 0 && (
                               <span className="px-2 py-0.5 text-xs rounded-full bg-pink-50 text-pink-700 font-semibold border border-pink-200">
                                 {miembro.contadorAsistencias}
                               </span>
@@ -1029,7 +1029,7 @@ const LiderDashboard: React.FC = () => {
                   <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${getRolColor(miembroDetalle.rolCelula)}`}>
                     {getRolDisplay(miembroDetalle.rolCelula)}
                   </span>
-                  {miembroDetalle.rolCelula?.toLowerCase() === 'visita' && miembroDetalle.contadorAsistencias > 0 && (
+                  {miembroDetalle.rolCelula?.toLowerCase() === 'visita' && 'contadorAsistencias' in miembroDetalle && miembroDetalle.contadorAsistencias > 0 && (
                     <span className="px-2 py-1 text-xs rounded-full bg-white/90 text-pink-700 font-bold border border-pink-300">
                       {miembroDetalle.contadorAsistencias} {miembroDetalle.contadorAsistencias === 1 ? 'visita' : 'visitas'}
                     </span>
