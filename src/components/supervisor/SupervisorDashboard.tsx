@@ -7,7 +7,8 @@ import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
 import { PeticionesModal } from '../common/PeticionesModal';
-import { Users, BarChart3, Eye, FileText, Newspaper, Heart, TrendingUp, UserCheck, Bell, X } from 'lucide-react';
+import { CumpleanosModal } from '../common/CumpleanosModal';
+import { Users, BarChart3, Eye, FileText, Newspaper, Heart, TrendingUp, UserCheck, Bell, X, Calendar } from 'lucide-react';
 
 const SupervisorDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -20,6 +21,7 @@ const SupervisorDashboard: React.FC = () => {
   const [showPeticiones, setShowPeticiones] = useState(false);
   const [showEstadisticas, setShowEstadisticas] = useState(false);
   const [showCumpleanos, setShowCumpleanos] = useState(false);
+  const [showTodosCumpleanos, setShowTodosCumpleanos] = useState(false);
 
   // Filtrar y ordenar las células que supervisa el usuario
   const misCelulas = celulas
@@ -253,7 +255,7 @@ const SupervisorDashboard: React.FC = () => {
         </div>
 
         {/* Acciones rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 mb-8">
           <button
             onClick={() => setShowCumpleanos(true)}
             className="bg-gradient-to-br from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl relative"
@@ -298,10 +300,18 @@ const SupervisorDashboard: React.FC = () => {
 
           <button
             onClick={() => setShowDonaciones(true)}
-            className="bg-gradient-to-br from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl"
+            className="bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl"
           >
             <Heart className="w-6 h-6" />
             <span className="font-semibold">Ofrendar</span>
+          </button>
+
+          <button
+            onClick={() => setShowTodosCumpleanos(true)}
+            className="bg-gradient-to-br from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl"
+          >
+            <Calendar className="w-6 h-6" />
+            <span className="font-semibold">Todos Cumpleaños</span>
           </button>
 
           <button
@@ -423,6 +433,7 @@ const SupervisorDashboard: React.FC = () => {
       {showMateriales && <MaterialesModal isOpen={showMateriales} onClose={() => setShowMateriales(false)} />}
       {showNoticias && <NoticiasModal isOpen={showNoticias} onClose={() => setShowNoticias(false)} />}
       {showDonaciones && <DonacionesModal isOpen={showDonaciones} onClose={() => setShowDonaciones(false)} />}
+      {showTodosCumpleanos && <CumpleanosModal isOpen={showTodosCumpleanos} onClose={() => setShowTodosCumpleanos(false)} />}
 
       {/* Modal de Cumpleaños */}
       {showCumpleanos && (

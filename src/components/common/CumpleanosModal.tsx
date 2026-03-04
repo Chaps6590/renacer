@@ -29,6 +29,38 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
       }).catch(error => {
         console.error('Error cargando usuarios:', error);
       });
+    } else if (user?.role?.toLowerCase() === 'supervisor') {
+      // Si es supervisor, obtener líderes y colíderes de células supervisadas
+      const celulasDelSupervisor = celulas.filter(c => c.supervisorId === user.id);
+      const lideresTemp: User[] = [];
+      
+      celulasDelSupervisor.forEach(celula => {
+        // Agregar líder principal
+        if (celula.liderId && celula.liderName) {
+          lideresTemp.push({
+            id: celula.liderId,
+            name: celula.liderName,
+            email: celula.liderEmail || '',
+            role: 'lider',
+            phone: celula.liderPhone,
+            fechaNacimiento: celula.liderFechaNacimiento
+          });
+        }
+        
+        // Agregar colíderes
+        celula.coLideres.forEach(col => {
+          lideresTemp.push({
+            id: col.id,
+            name: col.name,
+            email: col.email,
+            role: 'colider',
+            phone: col.phone,
+            fechaNacimiento: col.fechaNacimiento
+          });
+        });
+      });
+      
+      setLideres(lideresTemp);
     } else if (user?.role?.toLowerCase() === 'lider') {
       // Si es líder, usar los datos directamente de la célula (sin llamar a la API)
       const miCelula = celulas.find(c => c.liderId === user.id || c.coLideres.some(col => col.id === user.id));
@@ -72,12 +104,22 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
     ? celulas.find(c => c.liderId === user.id || c.coLideres.some(col => col.id === user.id))
     : null;
 
+  // Obtener células supervisadas si es supervisor
+  const misCelulas = user?.role?.toLowerCase() === 'supervisor'
+    ? celulas.filter(c => c.supervisorId === user.id)
+    : [];
+
   // Obtener todos los miembros
   let miembros = celulas.flatMap(c => c.miembros || []);
   
   // Si es líder, filtrar solo su célula
   if (user?.role?.toLowerCase() === 'lider' && miCelula) {
     miembros = miCelula.miembros || [];
+  }
+  
+  // Si es supervisor, filtrar solo sus células supervisadas
+  if (user?.role?.toLowerCase() === 'supervisor') {
+    miembros = misCelulas.flatMap(c => c.miembros || []);
   }
 
   // Construir la lista de todas las personas (usando tipo genérico para compatibilidad)

@@ -139,7 +139,7 @@ function App() {
             <Route
               path="/lider"
               element={
-                <ProtectedRoute allowedRoles={['lider', 'colider', 'timoteo']}>
+                <ProtectedRoute allowedRoles={['lider', 'colider', 'timoteo', 'supervisor']}>
                   <LiderDashboard />
                 </ProtectedRoute>
               }

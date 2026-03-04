@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { LogOut, User, Moon, Sun } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useData } from '../../contexts/DataContext';
+import { LogOut, User, Moon, Sun, ArrowLeftRight } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { PerfilModal } from '../common/PerfilModal';
 
 export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
+  const { celulas } = useData();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPerfil, setShowPerfil] = useState(false);
+
+  // Detectar si el usuario es supervisor Y también líder de una célula
+  const isSupervisor = user?.role?.toLowerCase() === 'supervisor';
+  const esLiderDeCelula = celulas.some(c => 
+    c.liderId === user?.id || c.coLideres.some(col => col.id === user?.id)
+  );
+  const tieneDualRole = isSupervisor && esLiderDeCelula;
 
   const getRolLabel = (role?: string) => {
     const map: Record<string, string> = {
@@ -43,6 +53,21 @@ export const Navbar: React.FC = () => {
     navigate('/login');
   };
 
+  const cambiarVista = () => {
+    // Si está en /supervisor, ir a /lider. Si está en /lider, ir a /supervisor
+    if (location.pathname === '/supervisor') {
+      navigate('/lider');
+    } else {
+      navigate('/supervisor');
+    }
+  };
+
+  const getVistaActual = () => {
+    if (location.pathname === '/lider') return 'Líder';
+    if (location.pathname === '/supervisor') return 'Supervisor';
+    return 'Supervisor';
+  };
+
   return (
     <>
       <nav className="bg-white dark:bg-gray-800 shadow-md transition-colors duration-200">
@@ -61,6 +86,16 @@ export const Navbar: React.FC = () => {
 
             {/* Solo en desktop: badge + botones en la misma fila */}
             <div className="hidden sm:flex items-center gap-2">
+              {tieneDualRole && (
+                <button 
+                  onClick={cambiarVista}
+                  className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors flex items-center gap-2"
+                  title="Cambiar vista"
+                >
+                  <ArrowLeftRight className="w-4 h-4" />
+                  Vista: {getVistaActual()}
+                </button>
+              )}
               <span className="px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-sm font-medium">
                 {getRolLabel(user?.role)}
               </span>
@@ -80,7 +115,17 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Fila inferior solo en móvil: 3 botones con texto */}
-          <div className="sm:hidden grid grid-cols-3 gap-2 pb-2">
+          <div className="sm:hidden grid gap-2 pb-2" style={{ gridTemplateColumns: tieneDualRole ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)' }}>
+            {tieneDualRole && (
+              <button 
+                onClick={cambiarVista}
+                className="btn btn-secondary flex items-center justify-center gap-1 text-xs"
+                title="Cambiar vista"
+              >
+                <ArrowLeftRight className="w-3 h-3" />
+                {getVistaActual()}
+              </button>
+            )}
             <button onClick={toggleDarkMode} className="btn btn-secondary flex items-center justify-center gap-2 text-sm">
               {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               Tema
