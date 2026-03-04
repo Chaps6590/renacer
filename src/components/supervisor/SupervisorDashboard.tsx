@@ -8,7 +8,7 @@ import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
 import { PeticionesModal } from '../common/PeticionesModal';
 import { CumpleanosModal } from '../common/CumpleanosModal';
-import { Users, BarChart3, Eye, FileText, Newspaper, Heart, TrendingUp, UserCheck, Bell, X, Calendar } from 'lucide-react';
+import { Users, BarChart3, Eye, FileText, Newspaper, Heart, TrendingUp, UserCheck, Bell, X } from 'lucide-react';
 
 const SupervisorDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -226,10 +226,7 @@ const SupervisorDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div 
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-pink-500 cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => setShowTodosCumpleanos(true)}
-          >
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-pink-500">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Cumpleaños</p>
@@ -254,7 +251,7 @@ const SupervisorDashboard: React.FC = () => {
         </div>
 
         {/* Acciones rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
           <button
             onClick={() => setShowPeticiones(true)}
             className="bg-gradient-to-br from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl relative"
@@ -293,20 +290,48 @@ const SupervisorDashboard: React.FC = () => {
           </button>
 
           <button
-            onClick={() => setShowTodosCumpleanos(true)}
-            className="bg-gradient-to-br from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl"
-          >
-            <Calendar className="w-6 h-6" />
-            <span className="font-semibold">Todos Cumpleaños</span>
-          </button>
-
-          <button
             onClick={() => setShowEstadisticas(true)}
             className="bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl"
           >
             <BarChart3 className="w-6 h-6" />
             <span className="font-semibold">Estadísticas</span>
           </button>
+        </div>
+
+        {/* Cumpleaños próximos */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Cumpleaños Próximos</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Próximos 7 días en tus células supervisadas</p>
+            </div>
+            <button
+              onClick={() => setShowTodosCumpleanos(true)}
+              className="btn btn-primary sm:w-auto"
+            >
+              Ver todos
+            </button>
+          </div>
+
+          {birthdays.length === 0 ? (
+            <div className="text-sm text-gray-500 dark:text-gray-400 italic">No hay cumpleaños cercanos.</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {birthdays.slice(0, 6).map((person: any, idx: number) => (
+                <div key={`${person.id || person.name}-${idx}`} className="border border-pink-100 dark:border-pink-900 rounded-lg p-3 bg-pink-50/50 dark:bg-pink-900/10">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">{person.name}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">{person.type} • {person.celulaName}</p>
+                    </div>
+                    <span className="text-xs font-bold px-2 py-1 rounded-full bg-pink-500 text-white">
+                      {person.daysUntil === 0 ? 'Hoy' : person.daysUntil === 1 ? 'Mañana' : `En ${person.daysUntil} días`}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Lista de Células */}

@@ -304,11 +304,17 @@ export const PastorDashboard: React.FC = () => {
       });
     });
 
-    // Líderes
+    // Líderes y supervisores
     lideres.forEach(l => {
       const daysUntil = getDaysUntilBirthday(l.fechaNacimiento);
       if (daysUntil !== null) {
-        allBirthdays.push({ ...l, type: 'Líder', celulaName: l.nombreCelula || 'Sin asignar', daysUntil });
+        const esSupervisor = (l.role || '').toLowerCase() === 'supervisor';
+        allBirthdays.push({
+          ...l,
+          type: esSupervisor ? 'Supervisor' : 'Líder',
+          celulaName: l.nombreCelula || 'Sin asignar',
+          daysUntil
+        });
       }
     });
 
