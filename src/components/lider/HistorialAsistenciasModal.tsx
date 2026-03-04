@@ -109,19 +109,19 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                         {/* Fila colapsada */}
                                         <div
                                             onClick={() => setExpandedId(isExpanded ? null : registro.id)}
-                                            className="p-5 flex items-center justify-between cursor-pointer group"
+                                            className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 cursor-pointer group"
                                         >
-                                            <div className="flex items-center gap-6">
+                                            <div className="flex items-start sm:items-center gap-4 sm:gap-6 min-w-0">
                                                 <div className="flex flex-col items-center justify-center min-w-[70px] py-1 bg-blue-50 dark:bg-blue-900 rounded-lg text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800 font-bold group-hover:bg-blue-100 dark:group-hover:bg-blue-800 transition-colors">
                                                     <span className="text-xs uppercase leading-none mb-1">{format(new Date(registro.date), 'MMM', { locale: es })}</span>
                                                     <span className="text-2xl leading-none">{format(new Date(registro.date), 'dd')}</span>
                                                 </div>
 
-                                                <div>
+                                                <div className="min-w-0 flex-1">
                                                     <p className="font-bold text-gray-900 dark:text-white text-lg">
                                                         {format(new Date(registro.date), 'EEEE, d MMMM', { locale: es })}
                                                     </p>
-                                                    <div className="flex items-center gap-3 mt-1 text-sm">
+                                                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-sm">
                                                         <span className="flex items-center gap-1.5 px-2 py-0.5 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold rounded-md border border-green-100 dark:border-green-800">
                                                             <CheckCircle2 className="w-3 h-3" />
                                                             {registro.totalPresentes} Presentes
@@ -145,7 +145,7 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-4">
+                                            <div className="flex items-center justify-end gap-3 sm:gap-4 w-full sm:w-auto">
                                                 <div className="text-right hidden sm:block">
                                                     <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-widest font-bold">Registrado por</p>
                                                     <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{(registro as any).registradoPor?.name || 'Sistema'}</p>
