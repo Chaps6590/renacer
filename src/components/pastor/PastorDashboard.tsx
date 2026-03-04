@@ -988,7 +988,19 @@ export const PastorDashboard: React.FC = () => {
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <h4 className="font-bold text-gray-900 dark:text-white">{person.name}</h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">{person.type}</p>
+                          <div className="mt-1">
+                            <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
+                              person.type === 'Supervisor'
+                                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
+                                : person.type === 'Líder'
+                                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
+                                : person.type === 'Colíder'
+                                ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300'
+                                : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+                            }`}>
+                              {person.type}
+                            </span>
+                          </div>
                           {person.celulaName && (
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                               {person.type === 'Miembro' ? `Célula: ${person.celulaName}` : person.celulaName}
