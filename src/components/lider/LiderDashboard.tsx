@@ -16,7 +16,7 @@ import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCi
 interface AddMiembroModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (miembro: { name: string; phone?: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean }) => void;
+  on Add: (miembro: { name: string; phone?: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' }) => void;
 }
 
 const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAdd }) => {
@@ -28,7 +28,8 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
     isBautizado: false,
     tieneDiscipulado: false,
     fechaNacimiento: '',
-    isRegistered: true
+    isRegistered: true,
+    rolCelula: 'nuevo' as 'nuevo' | 'visita'
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -42,9 +43,10 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
         isBautizado: formData.isBautizado,
         tieneDiscipulado: formData.tieneDiscipulado,
         fechaNacimiento: formData.fechaNacimiento || undefined,
-        isRegistered: formData.isRegistered
+        isRegistered: formData.isRegistered,
+        rolCelula: formData.rolCelula
       });
-      setFormData({ name: '', phone: '', email: '', direccion: '', isBautizado: false, tieneDiscipulado: false, fechaNacimiento: '', isRegistered: true });
+      setFormData({ name: '', phone: '', email: '', direccion: '', isBautizado: false, tieneDiscipulado: false, fechaNacimiento: '', isRegistered: true, rolCelula: 'nuevo' });
       onClose();
     }
   };
@@ -130,6 +132,26 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
           {/* Checkboxes */}
           <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl space-y-3">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Tipo de persona
+              </label>
+              <select
+                value={formData.rolCelula}
+                onChange={(e) => setFormData({ ...formData, rolCelula: e.target.value as 'nuevo' | 'visita' })}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
+                <option value="visita">Visitante (primera vez)</option>
+                <option value="nuevo">Nuevo (ya asistió 3+ veces)</option>
+              </select>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                { formData.rolCelula === 'visita' 
+                  ? '⭐ Las visitas se convierten en "Nuevos" automáticamente después de 3 asistencias'
+                  : '✅ Los nuevos ya son miembros activos de la célula'
+                }
+              </p>
+            </div>
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -236,7 +258,8 @@ const LiderDashboard: React.FC = () => {
       colider: 'Colíder',
       timoteo: 'Líder Colab.',
       miembro: 'Miembro',
-      nuevo: 'Nuevo'
+      nuevo: 'Nuevo',
+      visita: 'Visita'
     };
     return roles[rol.toLowerCase()] || rol;
   };
@@ -248,7 +271,8 @@ const LiderDashboard: React.FC = () => {
       colider: 'bg-blue-100 text-blue-800 border-blue-300',
       timoteo: 'bg-orange-100 text-orange-800 border-orange-300',
       miembro: 'bg-green-100 text-green-800 border-green-300',
-      nuevo: 'bg-yellow-100 text-yellow-800 border-yellow-300'
+      nuevo: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+      visita: 'bg-pink-100 text-pink-800 border-pink-300'
     };
     return colors[rol.toLowerCase()] || 'bg-gray-100 text-gray-800 border-gray-300';
   };
@@ -286,7 +310,7 @@ const LiderDashboard: React.FC = () => {
     })
   ].filter(Boolean) : [];
 
-  const handleAddMiembro = (miembroData: { name: string; phone?: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean }) => {
+  const handleAddMiembro = (miembroData: { name: string; phone?: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' }) => {
     if (miCelula) {
       const nuevoMiembro = {
         id: `member-${Date.now()}`,
@@ -295,7 +319,8 @@ const LiderDashboard: React.FC = () => {
         email: miembroData.email,
         direccion: miembroData.direccion,
         addedAt: new Date(),
-        rolCelula: 'nuevo' as const,
+        rolCelula: miembroData.rolCelula,
+        contadorAsistencias: miembroData.rolCelula === 'visita' ? 0 : undefined,
         isBautizado: miembroData.isBautizado,
         tieneDiscipulado: miembroData.tieneDiscipulado,
         fechaNacimiento: miembroData.fechaNacimiento,
@@ -660,6 +685,11 @@ const LiderDashboard: React.FC = () => {
                           <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${getRolColor(miembro.rolCelula)}`}>
                             {getRolDisplay(miembro.rolCelula)}
                           </span>
+                          {miembro.rolCelula?.toLowerCase() === 'visita' && (
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-pink-50 text-pink-700 font-semibold border border-pink-200">
+                              {miembro.contadorAsistencias || 0}/3 visitas
+                            </span>
+                          )}
                           {'isBautizado' in miembro && miembro.isBautizado && (
                             <span className="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-medium">Baut.</span>
                           )}
@@ -705,9 +735,16 @@ const LiderDashboard: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getRolColor(miembro.rolCelula)}`}>
-                            {getRolDisplay(miembro.rolCelula)}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getRolColor(miembro.rolCelula)}`}>
+                              {getRolDisplay(miembro.rolCelula)}
+                            </span>
+                            {miembro.rolCelula?.toLowerCase() === 'visita' && (
+                              <span className="px-2 py-0.5 text-xs rounded-full bg-pink-50 text-pink-700 font-semibold border border-pink-200">
+                                {miembro.contadorAsistencias || 0}/3
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
                           {'phone' in miembro ? (miembro.phone || '-') : '-'}
@@ -988,9 +1025,16 @@ const LiderDashboard: React.FC = () => {
                   {miembroDetalle.name?.split(' ').slice(0,2).map((p: string) => p[0]).join('').toUpperCase()}
                 </div>
                 <h2 className="text-white font-bold text-lg text-center leading-tight">{miembroDetalle.name}</h2>
-                <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${getRolColor(miembroDetalle.rolCelula)}`}>
-                  {getRolDisplay(miembroDetalle.rolCelula)}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${getRolColor(miembroDetalle.rolCelula)}`}>
+                    {getRolDisplay(miembroDetalle.rolCelula)}
+                  </span>
+                  {miembroDetalle.rolCelula?.toLowerCase() === 'visita' && (
+                    <span className="px-2 py-1 text-xs rounded-full bg-white/90 text-pink-700 font-bold border border-pink-300">
+                      {miembroDetalle.contadorAsistencias || 0}/3 visitas
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Cuerpo del modal */}

@@ -43,7 +43,7 @@ export interface CoLider {
   addedAt: Date;
 }
 
-export type RolCelula = 'lider' | 'colider' | 'timoteo' | 'miembro' | 'nuevo';
+export type RolCelula = 'lider' | 'colider' | 'timoteo' | 'miembro' | 'nuevo' | 'visita';
 
 export interface Miembro {
   id: string;
@@ -53,6 +53,7 @@ export interface Miembro {
   fechaNacimiento?: string; // Fecha de nacimiento opcional
   direccion?: string; // Dirección opcional
   rolCelula: RolCelula;
+  contadorAsistencias?: number; // Solo para VISITAS: contador de asistencias (3 = promover a NUEVO)
   addedAt: Date;
   isBautizado: boolean;
   tieneDiscipulado: boolean;
