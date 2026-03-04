@@ -140,15 +140,15 @@ export const PastorDashboard: React.FC = () => {
 
   // Función para agregar líder
   const handleAddLider = async () => {
-    if (!newLider.name.trim()) return;
+    if (!newLider.name.trim() || !newLider.telefono.trim() || !newLider.fechaNacimiento) return;
     try {
       const liderData = {
-        name: newLider.name,
+        name: newLider.name.trim(),
         email: newLider.email || `${newLider.name.toLowerCase().replace(/\s+/g, '.')}@renacer.com`,
         password: 'Renacer', // Contraseña por defecto
         role: 'LIDER',
-        fechaNacimiento: newLider.fechaNacimiento || undefined,
-        telefono: newLider.telefono || undefined
+        fechaNacimiento: newLider.fechaNacimiento,
+        telefono: newLider.telefono.trim()
       };
       await api.createUser(liderData);
       setNewLider({ name: '', email: '', fechaNacimiento: '', telefono: '' });
@@ -890,19 +890,20 @@ export const PastorDashboard: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Fecha de Nacimiento
+                    Fecha de Nacimiento *
                   </label>
                   <input
                     type="date"
                     value={newLider.fechaNacimiento}
                     onChange={(e) => setNewLider({ ...newLider, fechaNacimiento: e.target.value })}
                     className="input"
+                    required
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Teléfono
+                    Teléfono *
                   </label>
                   <input
                     type="tel"
@@ -910,6 +911,7 @@ export const PastorDashboard: React.FC = () => {
                     onChange={(e) => setNewLider({ ...newLider, telefono: e.target.value })}
                     className="input"
                     placeholder="Ej: +54 9 11 ..."
+                    required
                   />
                 </div>
 
@@ -927,7 +929,7 @@ export const PastorDashboard: React.FC = () => {
                 <button
                   onClick={handleAddLider}
                   className="btn btn-primary flex-1"
-                  disabled={!newLider.name.trim()}
+                  disabled={!newLider.name.trim() || !newLider.telefono.trim() || !newLider.fechaNacimiento}
                 >
                   Agregar
                 </button>
