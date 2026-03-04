@@ -42,15 +42,17 @@ const SupervisorDashboard: React.FC = () => {
       if (celasAsistencias.length === 0) return 0;
       
       // Calcular porcentaje de cada registro usando totalPresentes y totalAusentes de ESE momento
-      const porcentajes = celasAsistencias.map(a => {
-        const totalMiembrosEnRegistro = a.totalPresentes + a.totalAusentes;
-        return totalMiembrosEnRegistro > 0 ? (a.totalPresentes / totalMiembrosEnRegistro) * 100 : 0;
-      });
+      // Solo considerar registros donde había miembros (excluir registros con solo visitas)
+      const porcentajes = celasAsistencias
+        .filter(a => (a.totalPresentes + a.totalAusentes) > 0) // Excluir registros sin miembros
+        .map(a => {
+          const totalMiembrosEnRegistro = a.totalPresentes + a.totalAusentes;
+          return (a.totalPresentes / totalMiembrosEnRegistro) * 100;
+        });
       
-      const porcentajesValidos = porcentajes.filter(p => p >= 0);
-      if (porcentajesValidos.length === 0) return 0;
+      if (porcentajes.length === 0) return 0;
       
-      return Math.round(porcentajesValidos.reduce((sum, p) => sum + p, 0) / porcentajesValidos.length);
+      return Math.round(porcentajes.reduce((sum, p) => sum + p, 0) / porcentajes.length);
     });
     
     const promediosValidos = promedios.filter(p => p > 0);
@@ -349,12 +351,17 @@ const SupervisorDashboard: React.FC = () => {
                       const totalMiembrosCelula = miembrosSinVisitas.length;
                       
                       // Calcular promedio usando totalPresentes y totalAusentes de cada registro histórico
+                      // Solo considerar registros donde había miembros (excluir registros con solo visitas)
                       const promedio = celasAsistencias.length > 0 ? (() => {
-                        const porcentajes = celasAsistencias.map(a => {
-                          const totalMiembrosEnRegistro = a.totalPresentes + a.totalAusentes;
-                          return totalMiembrosEnRegistro > 0 ? (a.totalPresentes / totalMiembrosEnRegistro) * 100 : 0;
-                        });
-                        return Math.round(porcentajes.reduce((sum, p) => sum + p, 0) / porcentajes.length);
+                        const porcentajes = celasAsistencias
+                          .filter(a => (a.totalPresentes + a.totalAusentes) > 0) // Excluir registros sin miembros
+                          .map(a => {
+                            const totalMiembrosEnRegistro = a.totalPresentes + a.totalAusentes;
+                            return (a.totalPresentes / totalMiembrosEnRegistro) * 100;
+                          });
+                        return porcentajes.length > 0 
+                          ? Math.round(porcentajes.reduce((sum, p) => sum + p, 0) / porcentajes.length)
+                          : 0;
                       })() : 0;
 
                       return (

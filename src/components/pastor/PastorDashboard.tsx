@@ -335,12 +335,17 @@ export const PastorDashboard: React.FC = () => {
       const totalMiembros = miembrosSinVisitas.length;
 
       // Calcular promedio usando totalPresentes y totalAusentes de cada registro histórico
+      // Solo considerar registros donde había miembros (excluir registros con solo visitas)
       const promedioAsistencia = celasAsistencias.length > 0 ? (() => {
-        const porcentajes = celasAsistencias.map(a => {
-          const totalMiembrosEnRegistro = a.totalPresentes + a.totalAusentes;
-          return totalMiembrosEnRegistro > 0 ? (a.totalPresentes / totalMiembrosEnRegistro) * 100 : 0;
-        });
-        return Math.round(porcentajes.reduce((sum, p) => sum + p, 0) / porcentajes.length);
+        const porcentajes = celasAsistencias
+          .filter(a => (a.totalPresentes + a.totalAusentes) > 0) // Excluir registros sin miembros
+          .map(a => {
+            const totalMiembrosEnRegistro = a.totalPresentes + a.totalAusentes;
+            return (a.totalPresentes / totalMiembrosEnRegistro) * 100;
+          });
+        return porcentajes.length > 0
+          ? Math.round(porcentajes.reduce((sum, p) => sum + p, 0) / porcentajes.length)
+          : 0;
       })() : 0;
 
       return {
