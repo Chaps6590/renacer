@@ -55,16 +55,29 @@ export const Login: React.FC = () => {
             <div className="absolute bottom-8 right-8 w-1 h-1 bg-white dark:bg-gray-800 rounded-full"></div>
             <div className="absolute bottom-12 left-12 w-2 h-2 bg-white dark:bg-gray-800 rounded-full"></div>
           </div>
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(12)].map((_, index) => (
+              <span
+                key={index}
+                className="login-particle"
+                style={{
+                  left: `${8 + ((index * 8) % 84)}%`,
+                  top: `${12 + ((index * 13) % 72)}%`,
+                  animationDelay: `${(index % 6) * 0.5}s`
+                }}
+              />
+            ))}
+          </div>
           <div className="relative">
             <div className="inline-flex items-center justify-center w-32 h-32 mb-6 relative">
               {/* Background glow effect */}
-              <div className="absolute inset-0 bg-white/30 rounded-full blur-xl"></div>
+              <div className="absolute inset-0 bg-white/35 rounded-full blur-xl"></div>
               {/* Main container */}
-              <div className="relative w-full h-full bg-white/25 backdrop-blur-sm rounded-full shadow-2xl p-1 border-2 border-white/40">
+              <div className="relative w-full h-full bg-white/20 backdrop-blur-sm rounded-full shadow-2xl p-1.5 border-2 border-white/50 ring-2 ring-white/35">
                 <img 
                   src={logo} 
                   alt="Logo Iglesia Renacer" 
-                  className="w-full h-full object-cover rounded-full ring-2 ring-white/30 shadow-inner"
+                  className="w-full h-full object-contain rounded-full drop-shadow-[0_4px_14px_rgba(255,255,255,0.35)]"
                 />
               </div>
               {/* Subtle shine effect */}
