@@ -40,16 +40,30 @@ const SupervisorDashboard: React.FC = () => {
       const miembrosSinVisitas = celula.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita');
       const totalMiembrosCelula = miembrosSinVisitas.length;
       
+      console.log(`📊 Célula "${celula.name}":`, {
+        asistencias: celasAsistencias.length,
+        miembros: totalMiembrosCelula,
+        totalPresentes: celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0)
+      });
+      
       if (celasAsistencias.length === 0 || totalMiembrosCelula === 0) return 0;
       
       const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
-      return Math.round((totalPresentes / celasAsistencias.length / totalMiembrosCelula) * 100);
+      const promedio = Math.round((totalPresentes / celasAsistencias.length / totalMiembrosCelula) * 100);
+      
+      console.log(`   → Promedio: ${promedio}%`);
+      return promedio;
     });
+    
+    console.log('🎯 Promedios por célula:', promedios);
     
     const promediosValidos = promedios.filter(p => p > 0);
     if (promediosValidos.length === 0) return 0;
     
-    return Math.round(promediosValidos.reduce((sum, p) => sum + p, 0) / promediosValidos.length);
+    const promedioFinal = Math.round(promediosValidos.reduce((sum, p) => sum + p, 0) / promediosValidos.length);
+    console.log('✅ Promedio final:', promedioFinal + '%');
+    
+    return promedioFinal;
   })();
 
   // Peticiones pendientes de mis células supervisadas
