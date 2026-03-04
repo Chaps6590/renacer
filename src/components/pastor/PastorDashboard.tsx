@@ -953,7 +953,7 @@ export const PastorDashboard: React.FC = () => {
                 onClick={() => setShowCumpleanos(true)}
                 className="btn btn-primary sm:w-auto"
               >
-                Ver lista completa
+                Ver todos los cumpleaños
               </button>
             </div>
 
