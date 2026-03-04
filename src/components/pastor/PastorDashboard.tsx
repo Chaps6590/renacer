@@ -80,9 +80,9 @@ export const PastorDashboard: React.FC = () => {
   const enrichLideresWithCelulas = async () => {
     setLoadingLideres(true);
     try {
-      // Obtener todos los usuarios y filtrar líderes
+      // Obtener todos los usuarios y filtrar líderes y supervisores
       const users = await api.getUsers() as User[];
-      const lideresUsuarios = users.filter((u) => u.role && u.role.toLowerCase() === 'lider');
+      const lideresUsuarios = users.filter((u) => u.role && (u.role.toLowerCase() === 'lider' || u.role.toLowerCase() === 'supervisor'));
 
       // Enriquecer con información de células
       const lideresEnriquecidos = lideresUsuarios.map(lider => {
@@ -255,8 +255,13 @@ export const PastorDashboard: React.FC = () => {
     }
   };
 
-  // Obtener líderes sin célula
-  const lideresDisponibles = lideres.filter(l => !l.celulaAsignada);
+  // Obtener líderes y supervisores disponibles
+  // Supervisores: siempre disponibles (pueden liderar células además de supervisar)
+  // Líderes normales: solo si no tienen célula asignada como líder principal
+  const lideresDisponibles = lideres.filter(l => {
+    const esSupervisor = l.role && l.role.toLowerCase() === 'supervisor';
+    return esSupervisor || !l.celulaAsignada;
+  });
 
   // Lógica de cumpleaños
   const getUpcomingBirthdays = () => {
