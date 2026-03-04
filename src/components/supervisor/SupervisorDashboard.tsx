@@ -38,13 +38,19 @@ const SupervisorDashboard: React.FC = () => {
     
     const promedios = misCelulas.map(celula => {
       const celasAsistencias = asistencias.filter(a => a.celulaId === celula.id);
-      const miembrosSinVisitas = celula.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita');
-      const totalMiembrosCelula = miembrosSinVisitas.length;
       
-      if (celasAsistencias.length === 0 || totalMiembrosCelula === 0) return 0;
+      if (celasAsistencias.length === 0) return 0;
       
-      const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
-      return Math.round((totalPresentes / celasAsistencias.length / totalMiembrosCelula) * 100);
+      // Calcular porcentaje de cada registro usando totalPresentes y totalAusentes de ESE momento
+      const porcentajes = celasAsistencias.map(a => {
+        const totalMiembrosEnRegistro = a.totalPresentes + a.totalAusentes;
+        return totalMiembrosEnRegistro > 0 ? (a.totalPresentes / totalMiembrosEnRegistro) * 100 : 0;
+      });
+      
+      const porcentajesValidos = porcentajes.filter(p => p >= 0);
+      if (porcentajesValidos.length === 0) return 0;
+      
+      return Math.round(porcentajesValidos.reduce((sum, p) => sum + p, 0) / porcentajesValidos.length);
     });
     
     const promediosValidos = promedios.filter(p => p > 0);
@@ -342,10 +348,14 @@ const SupervisorDashboard: React.FC = () => {
                       const miembrosSinVisitas = celula.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita');
                       const totalMiembrosCelula = miembrosSinVisitas.length;
                       
-                      const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
-                      const promedio = celasAsistencias.length > 0 && totalMiembrosCelula > 0
-                        ? Math.round((totalPresentes / celasAsistencias.length / totalMiembrosCelula) * 100)
-                        : 0;
+                      // Calcular promedio usando totalPresentes y totalAusentes de cada registro histórico
+                      const promedio = celasAsistencias.length > 0 ? (() => {
+                        const porcentajes = celasAsistencias.map(a => {
+                          const totalMiembrosEnRegistro = a.totalPresentes + a.totalAusentes;
+                          return totalMiembrosEnRegistro > 0 ? (a.totalPresentes / totalMiembrosEnRegistro) * 100 : 0;
+                        });
+                        return Math.round(porcentajes.reduce((sum, p) => sum + p, 0) / porcentajes.length);
+                      })() : 0;
 
                       return (
                         <tr key={celula.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">

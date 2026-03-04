@@ -334,10 +334,14 @@ export const PastorDashboard: React.FC = () => {
       const miembrosSinVisitas = celula.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita');
       const totalMiembros = miembrosSinVisitas.length;
 
-      const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
-      const promedioAsistencia = celasAsistencias.length > 0 && totalMiembros > 0
-        ? Math.round((totalPresentes / celasAsistencias.length / totalMiembros) * 100)
-        : 0;
+      // Calcular promedio usando totalPresentes y totalAusentes de cada registro histórico
+      const promedioAsistencia = celasAsistencias.length > 0 ? (() => {
+        const porcentajes = celasAsistencias.map(a => {
+          const totalMiembrosEnRegistro = a.totalPresentes + a.totalAusentes;
+          return totalMiembrosEnRegistro > 0 ? (a.totalPresentes / totalMiembrosEnRegistro) * 100 : 0;
+        });
+        return Math.round(porcentajes.reduce((sum, p) => sum + p, 0) / porcentajes.length);
+      })() : 0;
 
       return {
         celulaId: celula.id,
