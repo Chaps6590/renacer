@@ -29,7 +29,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
     tieneDiscipulado: false,
     fechaNacimiento: '',
     isRegistered: true,
-    rolCelula: 'nuevo' as 'nuevo' | 'visita'
+    rolCelula: 'visita' as 'nuevo' | 'visita'
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -46,7 +46,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
         isRegistered: formData.isRegistered,
         rolCelula: formData.rolCelula
       });
-      setFormData({ name: '', phone: '', email: '', direccion: '', isBautizado: false, tieneDiscipulado: false, fechaNacimiento: '', isRegistered: true, rolCelula: 'nuevo' });
+      setFormData({ name: '', phone: '', email: '', direccion: '', isBautizado: false, tieneDiscipulado: false, fechaNacimiento: '', isRegistered: true, rolCelula: 'visita' });
       onClose();
     }
   };
