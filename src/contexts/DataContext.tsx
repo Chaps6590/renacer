@@ -400,9 +400,14 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         }
         return c;
       }));
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error removing miembro:', error);
-      throw error;
+      const message =
+        error?.message ||
+        error?.response?.data?.message ||
+        error?.data?.message ||
+        'Error al eliminar miembro.';
+      throw new Error(message);
     }
   };
 
