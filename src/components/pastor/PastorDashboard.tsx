@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useData } from '../../contexts/DataContext';
-import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, Trash2, FileText, Newspaper, Heart, AlertCircle, Gift } from 'lucide-react';
+import { Users, BarChart3, UserPlus, Download, TrendingUp, Plus, Edit2, X, Trash2, FileText, Newspaper, Heart, AlertCircle } from 'lucide-react';
 import { Navbar } from '../layout/Navbar';
 import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
@@ -939,14 +939,22 @@ export const PastorDashboard: React.FC = () => {
         {/* Vista Cumpleaños */}
         {view === 'cumpleanos' && (
           <div className="card">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="bg-pink-100 p-2 rounded-full">
-                <Heart className="w-6 h-6 text-pink-500" />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-pink-100 p-2 rounded-full">
+                  <Heart className="w-6 h-6 text-pink-500" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Cumpleaños de la Semana</h3>
+                  <p className="text-gray-600 dark:text-gray-400">Próximos 7 días</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Cumpleaños de la Semana</h3>
-                <p className="text-gray-600 dark:text-gray-400">Próximos 7 días</p>
-              </div>
+              <button
+                onClick={() => setShowCumpleanos(true)}
+                className="btn btn-primary sm:w-auto"
+              >
+                Ver lista completa
+              </button>
             </div>
 
             {birthdays.length > 0 ? (
@@ -1417,29 +1425,7 @@ export const PastorDashboard: React.FC = () => {
         {/* Vista Recursos */}
         {view === 'recursos' && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-              {/* Cumpleaños */}
-              <div className="card">
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="bg-pink-400 p-2 rounded-lg">
-                      <Gift className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-pink-900">Cumpleaños</h3>
-                      <p className="text-sm text-pink-700">Próximos cumpleaños</p>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <button
-                      onClick={() => setShowCumpleanos(true)}
-                      className="w-full btn btn-primary"
-                    >
-                      Ver Cumpleaños
-                    </button>
-                  </div>
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Gestión de Materiales */}
               <div className="card">
                 <div className="p-6">

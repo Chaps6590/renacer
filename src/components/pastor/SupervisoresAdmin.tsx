@@ -9,6 +9,8 @@ interface SupervisoresAdminProps {
 
 const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
   const [supervisores, setSupervisores] = useState<User[]>([]);
+  const [lideresDisponibles, setLideresDisponibles] = useState<User[]>([]);
+  const [liderParaConvertir, setLiderParaConvertir] = useState('');
   const [form, setForm] = useState({ name: '', email: '', password: 'Renacer', telefono: '', fechaNacimiento: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,6 +23,7 @@ const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
     try {
       const users = await api.getUsers() as User[];
       setSupervisores(users.filter((u) => u.role && u.role.toLowerCase() === 'supervisor'));
+      setLideresDisponibles(users.filter((u) => u.role && u.role.toLowerCase() === 'lider'));
     } catch (err: any) {
       setError('Error al cargar supervisores');
       console.error(err);
@@ -49,6 +52,23 @@ const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
       setError(err.message || 'Error al crear supervisor');
+    }
+    setLoading(false);
+  };
+
+  const handleConvertirLiderASupervisor = async () => {
+    if (!liderParaConvertir) return;
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      await api.updateUser(liderParaConvertir, { role: 'SUPERVISOR' });
+      setSuccess('Líder convertido a supervisor exitosamente');
+      setLiderParaConvertir('');
+      await fetchSupervisores();
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err: any) {
+      setError(err.message || 'Error al convertir líder a supervisor');
     }
     setLoading(false);
   };
@@ -220,6 +240,53 @@ const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
       </div>
 
       {/* Lista de supervisores */}
+      <div className="card">
+        <div className="flex items-center gap-2 mb-4">
+          <Shield className="w-6 h-6 text-indigo-600" />
+          <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">Convertir Líder Existente</h3>
+        </div>
+
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          Puedes convertir un líder ya asignado a célula para que también actúe como supervisor.
+        </p>
+
+        {lideresDisponibles.length === 0 ? (
+          <p className="text-sm text-gray-500 dark:text-gray-400 italic">No hay líderes disponibles para convertir.</p>
+        ) : (
+          <div className="flex flex-col md:flex-row gap-3 md:items-end">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Selecciona un líder
+              </label>
+              <select
+                value={liderParaConvertir}
+                onChange={(e) => setLiderParaConvertir(e.target.value)}
+                className="input"
+              >
+                <option value="">Seleccionar líder...</option>
+                {lideresDisponibles.map((lider) => {
+                  const celulaAsignada = celulas.find(c => c.liderId === lider.id);
+                  return (
+                    <option key={lider.id} value={lider.id}>
+                      {lider.name} {celulaAsignada ? `- ${celulaAsignada.name}` : '- Sin célula asignada'}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            <button
+              type="button"
+              disabled={loading || !liderParaConvertir}
+              onClick={handleConvertirLiderASupervisor}
+              className="btn btn-primary md:w-auto"
+            >
+              Convertir a Supervisor
+            </button>
+          </div>
+        )}
+      </div>
+
       <div className="card">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Supervisores Activos</h3>
 
