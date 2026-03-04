@@ -47,6 +47,25 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
     }));
   };
 
+  const handleMotivoToggle = (asistenciaId: string, miembroId: string, motivo: MotivoFalta) => {
+    const key = `${asistenciaId}-${miembroId}`;
+    const motivoActual = motivosSeleccionados[key]?.motivo;
+
+    if (motivoActual === motivo) {
+      setMotivosSeleccionados(prev => ({
+        ...prev,
+        [key]: {
+          ...prev[key],
+          motivo: undefined,
+          anotacionEspecial: ''
+        }
+      }));
+      return;
+    }
+
+    handleMotivoChange(asistenciaId, miembroId, motivo);
+  };
+
   const handleAnotacionChange = (asistenciaId: string, miembroId: string, anotacionEspecial: string) => {
     const key = `${asistenciaId}-${miembroId}`;
     setMotivosSeleccionados(prev => ({
@@ -175,20 +194,17 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
                               <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wider">¿Por qué faltó?</p>
                               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                 {motivosFalta.map((motivo) => (
-                                  <label key={motivo.value} className={`flex items-center justify-center p-2 rounded-lg border cursor-pointer transition-all ${motivoSeleccionado?.motivo === motivo.value
-                                    ? 'bg-blue-600 border-blue-600 text-white shadow-md'
-                                    : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
-                                    }`}>
-                                    <input
-                                      type="radio"
-                                      name={`motivo-${key}`}
-                                      value={motivo.value}
-                                      checked={motivoSeleccionado?.motivo === motivo.value}
-                                      onChange={() => handleMotivoChange(pendiente.asistenciaId, miembro.miembroId, motivo.value)}
-                                      className="sr-only"
-                                    />
+                                  <button
+                                    key={motivo.value}
+                                    type="button"
+                                    onClick={() => handleMotivoToggle(pendiente.asistenciaId, miembro.miembroId, motivo.value)}
+                                    className={`flex items-center justify-center p-2 rounded-lg border cursor-pointer transition-all ${motivoSeleccionado?.motivo === motivo.value
+                                      ? 'bg-blue-600 border-blue-600 text-white shadow-md'
+                                      : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                                      }`}
+                                  >
                                     <span className="text-xs font-bold leading-tight text-center">{motivo.label}</span>
-                                  </label>
+                                  </button>
                                 ))}
                               </div>
                             </div>
