@@ -19,6 +19,27 @@ export const Navbar: React.FC = () => {
   );
   const tieneDualRole = isSupervisor && esLiderDeCelula;
 
+  // Debug: mostrar información en consola
+  useEffect(() => {
+    if (isSupervisor) {
+      console.log('🔍 Debug Dual Role:');
+      console.log('  - Es supervisor:', isSupervisor);
+      console.log('  - User ID:', user?.id);
+      console.log('  - Total células:', celulas.length);
+      console.log('  - Es líder de célula:', esLiderDeCelula);
+      console.log('  - Tiene dual role:', tieneDualRole);
+      
+      // Mostrar detalles de células
+      celulas.forEach(c => {
+        const esLider = c.liderId === user?.id;
+        const esColider = c.coLideres.some(col => col.id === user?.id);
+        if (esLider || esColider) {
+          console.log(`  ✅ Célula "${c.name}": ${esLider ? 'Líder' : 'Colíder'}`);
+        }
+      });
+    }
+  }, [isSupervisor, esLiderDeCelula, tieneDualRole, celulas.length]);
+
   const getRolLabel = (role?: string) => {
     const map: Record<string, string> = {
       timoteo: 'Líder Col.',
