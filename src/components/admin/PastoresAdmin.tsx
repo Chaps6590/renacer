@@ -5,7 +5,7 @@ import { User } from '../../types';
 
 const PastoresAdmin: React.FC = () => {
   const [pastores, setPastores] = useState<User[]>([]);
-  const [form, setForm] = useState({ name: '', email: '', password: '', telefono: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: 'Renacer', telefono: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -40,7 +40,7 @@ const PastoresAdmin: React.FC = () => {
     try {
       await api.createUser({ ...form, role: 'PASTOR' });
       setSuccess('Pastor creado exitosamente');
-      setForm({ name: '', email: '', password: '', telefono: '' });
+      setForm({ name: '', email: '', password: 'Renacer', telefono: '' });
       fetchPastores();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
@@ -119,7 +119,7 @@ const PastoresAdmin: React.FC = () => {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Contraseña *
+              Contraseña
             </label>
             <div className="relative">
               <input
@@ -129,20 +129,19 @@ const PastoresAdmin: React.FC = () => {
                 value={form.password}
                 onChange={handleChange}
                 className="input pr-10"
-                placeholder="Mínimo 6 caracteres"
-                required
+                placeholder="Por defecto: Renacer"
                 minLength={6}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              El pastor podrá cambiar su contraseña después de iniciar sesión
+              Contraseña por defecto: "Renacer". El pastor puede cambiarla desde su perfil.
             </p>
           </div>
 

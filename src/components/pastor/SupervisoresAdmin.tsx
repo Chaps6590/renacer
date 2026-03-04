@@ -9,7 +9,7 @@ interface SupervisoresAdminProps {
 
 const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
   const [supervisores, setSupervisores] = useState<User[]>([]);
-  const [form, setForm] = useState({ name: '', email: '', password: '', telefono: '', fechaNacimiento: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: 'Renacer', telefono: '', fechaNacimiento: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -44,7 +44,7 @@ const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
     try {
       await api.createUser({ ...form, role: 'SUPERVISOR' });
       setSuccess('Supervisor creado exitosamente');
-      setForm({ name: '', email: '', password: '', telefono: '', fechaNacimiento: '' });
+      setForm({ name: '', email: '', password: 'Renacer', telefono: '', fechaNacimiento: '' });
       fetchSupervisores();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
@@ -155,7 +155,7 @@ const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Contraseña *
+                Contraseña
               </label>
               <div className="relative">
                 <input
@@ -165,8 +165,7 @@ const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
                   value={form.password}
                   onChange={handleChange}
                   className="input pr-10"
-                  placeholder="Mínimo 6 caracteres"
-                  required
+                  placeholder="Por defecto: Renacer"
                   minLength={6}
                 />
                 <button
@@ -177,6 +176,7 @@ const SupervisoresAdmin: React.FC<SupervisoresAdminProps> = ({ celulas }) => {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Contraseña por defecto: "Renacer". El supervisor puede cambiarla desde su perfil.</p>
             </div>
 
             <div>
