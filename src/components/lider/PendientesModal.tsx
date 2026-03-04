@@ -135,6 +135,9 @@ export const PendientesModal: React.FC<PendientesModalProps> = ({ isOpen, onClos
               <p className="text-yellow-700">
                 Es fundamental completar el motivo por el cual los hermanos no pudieron asistir para brindarles el cuidado necesario.
               </p>
+              <p className="text-yellow-700 text-sm mt-2">
+                Si eres Líder Colaborador, completa estos pendientes cuando ya conozcas por qué faltó la persona.
+              </p>
             </div>
 
             {pendientesLider.map((pendiente) => (

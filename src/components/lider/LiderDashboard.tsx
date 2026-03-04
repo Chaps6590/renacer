@@ -249,7 +249,10 @@ const LiderDashboard: React.FC = () => {
 
   // Verificar si el usuario es el líder principal
   const isLider = miCelula?.liderId === user?.id;
-  const canManageMembers = isLider || user?.role?.toLowerCase() === 'colider';
+  const isColider = user?.role?.toLowerCase() === 'colider';
+  const isTimoteo = user?.role?.toLowerCase() === 'timoteo';
+  const canChangeRoles = isLider || isColider;
+  const canDeleteMembers = isLider || isColider || isTimoteo;
 
   const getRolDisplay = (rol: string) => {
     if (!rol) return '-';
@@ -339,13 +342,24 @@ const LiderDashboard: React.FC = () => {
 
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const confirmDeleteMiembro = async () => {
-    if (selectedMiembro && miCelula && canManageMembers) {
+    if (selectedMiembro && miCelula && canDeleteMembers) {
       if (selectedMiembro.rolCelula?.toLowerCase() === 'lider') {
         setDeleteError('No puedes eliminar al líder principal.');
         setShowDeleteConfirm(false);
         setSelectedMiembro(null);
         setTimeout(() => setDeleteError(null), 6000);
         return;
+      }
+
+      if (isTimoteo) {
+        const rol = (selectedMiembro.rolCelula || '').toLowerCase();
+        if (!['nuevo', 'visita', 'miembro'].includes(rol)) {
+          setDeleteError('Como líder colaborador solo puedes eliminar nuevo, visita o miembro.');
+          setShowDeleteConfirm(false);
+          setSelectedMiembro(null);
+          setTimeout(() => setDeleteError(null), 6000);
+          return;
+        }
       }
 
       if (selectedMiembro.id === user?.id) {
@@ -389,7 +403,7 @@ const LiderDashboard: React.FC = () => {
   };
 
   const confirmChangeRole = (newRole: string) => {
-    if (selectedMiembro && miCelula && canManageMembers) {
+    if (selectedMiembro && miCelula && canChangeRoles) {
       updateMiembroRol(miCelula.id, selectedMiembro.id, newRole as any);
     }
     setShowRoleDialog(false);
@@ -505,9 +519,15 @@ const LiderDashboard: React.FC = () => {
             )}
           </button>
 
-          {!isLider && user?.role?.toLowerCase() === 'colider' && (
+          {!isLider && isColider && (
             <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded-lg flex items-center gap-2">
               <span className="text-sm">Eres Colíder - Puedes gestionar miembros, excepto líder y tu propio usuario</span>
+            </div>
+          )}
+
+          {!isLider && isTimoteo && (
+            <div className="bg-orange-50 border border-orange-200 text-orange-800 px-4 py-2 rounded-lg flex items-center gap-2">
+              <span className="text-sm">Eres Líder Colaborador - Puedes eliminar miembros tipo nuevo, visita o miembro.</span>
             </div>
           )}
         </div>
@@ -717,11 +737,13 @@ const LiderDashboard: React.FC = () => {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
                       <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Bautizado</th>
                       <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Discipulado</th>
-                      {canManageMembers && (
+                      {canChangeRoles && (
                         <>
                           <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cambiar Rol</th>
-                          <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Eliminar</th>
                         </>
+                      )}
+                      {canDeleteMembers && (
+                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Eliminar</th>
                       )}
                     </tr>
                   </thead>
@@ -768,7 +790,7 @@ const LiderDashboard: React.FC = () => {
                               : <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"><XCircle className="w-3 h-3 mr-1" />No</span>
                           ) : <span className="text-sm text-gray-400">-</span>}
                         </td>
-                        {canManageMembers && (
+                        {canChangeRoles && (
                           <>
                             <td className="px-6 py-4 whitespace-nowrap text-center">
                               {miembro.rolCelula === 'lider' || miembro.rolCelula === 'colider' ? (
@@ -781,22 +803,30 @@ const LiderDashboard: React.FC = () => {
                                 </button>
                               )}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              {miembro.rolCelula === 'lider' ? (
-                                <button disabled className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed">
-                                  <Trash2 className="w-3 h-3 mr-1" />Eliminar
-                                </button>
-                              ) : miembro.id === user?.id ? (
-                                <button disabled className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed">
-                                  <Trash2 className="w-3 h-3 mr-1" />Eliminar
-                                </button>
-                              ) : (
+                          </>
+                        )}
+                        {canDeleteMembers && (
+                          <td className="px-6 py-4 whitespace-nowrap text-center">
+                            {(() => {
+                              const rol = (miembro.rolCelula || '').toLowerCase();
+                              const bloqueadoPorRolTimoteo = isTimoteo && !['nuevo', 'visita', 'miembro'].includes(rol);
+                              const disabled = rol === 'lider' || miembro.id === user?.id || bloqueadoPorRolTimoteo;
+
+                              if (disabled) {
+                                return (
+                                  <button disabled className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed">
+                                    <Trash2 className="w-3 h-3 mr-1" />Eliminar
+                                  </button>
+                                );
+                              }
+
+                              return (
                                 <button onClick={() => handleDeleteMiembro(miembro)} className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition duration-200">
                                   <Trash2 className="w-3 h-3 mr-1" />Eliminar
                                 </button>
-                              )}
-                            </td>
-                          </>
+                              );
+                            })()}
+                          </td>
                         )}
                       </tr>
                     ))}
@@ -1108,9 +1138,11 @@ const LiderDashboard: React.FC = () => {
                 </div>
 
                 {/* Acciones de gestión */}
-                {canManageMembers && (() => {
-                  const canEditThisDetalle = miembroDetalle.rolCelula !== 'lider' && miembroDetalle.rolCelula !== 'colider';
-                  const canDeleteThisDetalle = miembroDetalle.rolCelula !== 'lider' && miembroDetalle.id !== user?.id;
+                {(canChangeRoles || canDeleteMembers) && (() => {
+                  const rolDetalle = (miembroDetalle.rolCelula || '').toLowerCase();
+                  const canEditThisDetalle = canChangeRoles && rolDetalle !== 'lider' && rolDetalle !== 'colider';
+                  const canDeleteByRole = isTimoteo ? ['nuevo', 'visita', 'miembro'].includes(rolDetalle) : true;
+                  const canDeleteThisDetalle = canDeleteMembers && rolDetalle !== 'lider' && miembroDetalle.id !== user?.id && canDeleteByRole;
                   return (
                     <div className="flex gap-3">
                       <button

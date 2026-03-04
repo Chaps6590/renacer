@@ -234,7 +234,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         let asistenciasData: any[] = [];
         if (user?.role === 'admin' || user?.role === 'pastor') {
           asistenciasData = await api.getAllAsistencias() as any[];
-        } else if (user?.role === 'lider' || user?.role === 'colider') {
+        } else if (user?.role === 'lider' || user?.role === 'colider' || user?.role === 'timoteo') {
           const misCelulas = await api.getCelulas() as any[];
           for (const c of misCelulas) {
             const data = await api.getAsistencias(c.id) as any[];
@@ -721,7 +721,16 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   };
 
   const getPendientesAsistencia = (liderId: string) => {
-    const celulasLider = celulas.filter(c => c.liderId === liderId || c.coLideres.some(col => col.id === liderId));
+    const isTimoteo = user?.role === 'timoteo'
+    const celulasLider = celulas.filter(c => {
+      if (isTimoteo) {
+        return c.miembros.some(m =>
+          (m.email || '').toLowerCase() === (user?.email || '').toLowerCase() &&
+          (m.rolCelula || '').toLowerCase() === 'timoteo'
+        )
+      }
+      return c.liderId === liderId || c.coLideres.some(col => col.id === liderId)
+    });
     const idscelulas = celulasLider.map(c => c.id);
     return pendientesAsistencia.filter(p => idscelulas.includes(p.celulaId));
   };
