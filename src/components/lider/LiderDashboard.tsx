@@ -16,7 +16,7 @@ import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCi
 interface AddMiembroModalProps {
   isOpen: boolean;
   onClose: () => void;
-  on Add: (miembro: { name: string; phone?: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' }) => void;
+  onAdd: (miembro: { name: string; phone?: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' }) => void;
 }
 
 const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAdd }) => {
