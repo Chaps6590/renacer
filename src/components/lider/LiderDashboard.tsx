@@ -386,7 +386,9 @@ const LiderDashboard: React.FC = () => {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const confirmDeleteMiembro = async () => {
     if (selectedMiembro && miCelula && canDeleteMembers) {
-      if (selectedMiembro.rolCelula?.toLowerCase() === 'lider') {
+      const isLiderPrincipal = selectedMiembro.id === miCelula.liderId;
+
+      if (isLiderPrincipal) {
         setDeleteError('No puedes eliminar al líder principal.');
         setShowDeleteConfirm(false);
         setSelectedMiembro(null);
@@ -1268,8 +1270,9 @@ const LiderDashboard: React.FC = () => {
                 {(canChangeRoles || canDeleteMembers || canUpdateFormacion) && (() => {
                   const rolDetalle = (miembroDetalle.rolCelula || '').toLowerCase();
                   const canEditThisDetalle = canChangeRoles && rolDetalle !== 'lider' && rolDetalle !== 'colider';
+                  const isLiderPrincipalDetalle = miembroDetalle.id === miCelula.liderId;
                   const canDeleteByRole = isTimoteo ? ['nuevo', 'visita', 'miembro'].includes(rolDetalle) : true;
-                  const canDeleteThisDetalle = canDeleteMembers && rolDetalle !== 'lider' && miembroDetalle.id !== user?.id && canDeleteByRole;
+                  const canDeleteThisDetalle = canDeleteMembers && !isLiderPrincipalDetalle && miembroDetalle.id !== user?.id && canDeleteByRole;
                   const canEditFormacionDetalle = canUpdateFormacion && rolDetalle !== 'lider' && rolDetalle !== 'colider';
                   return (
                     <div className="flex gap-3">
