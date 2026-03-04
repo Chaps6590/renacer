@@ -280,6 +280,30 @@ const LiderDashboard: React.FC = () => {
     return colors[rol.toLowerCase()] || 'bg-gray-100 text-gray-800 border-gray-300';
   };
 
+  const getEdad = (fechaNacimiento?: string) => {
+    if (!fechaNacimiento) return null;
+    const clean = fechaNacimiento.slice(0, 10);
+    const [year, month, day] = clean.split('-').map(Number);
+    if (!year || !month || !day) return null;
+
+    const today = new Date();
+    let edad = today.getFullYear() - year;
+    const monthDiff = (today.getMonth() + 1) - month;
+    const dayDiff = today.getDate() - day;
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      edad--;
+    }
+    return edad >= 0 ? edad : null;
+  };
+
+  const formatFecha = (fecha?: string) => {
+    if (!fecha) return null;
+    const clean = fecha.slice(0, 10);
+    const [year, month, day] = clean.split('-').map(Number);
+    if (!year || !month || !day) return null;
+    return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+  };
+
   // Ordenar miembros: Líder principal, Colíderes, Miembros, Nuevos
   // Evitamos duplicados si un miembro tiene rol 'colider' o 'lider' pero ya está arriba
   const miembrosOrdenados = miCelula ? [
@@ -749,7 +773,7 @@ const LiderDashboard: React.FC = () => {
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {miembrosOrdenados.map((miembro) => (
-                      <tr key={miembro.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <tr key={miembro.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer" onClick={() => setMiembroDetalle(miembro)}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{miembro.name}</div>
@@ -798,7 +822,7 @@ const LiderDashboard: React.FC = () => {
                                   <Edit className="w-3 h-3 mr-1" />Cambiar
                                 </button>
                               ) : (
-                                <button onClick={() => handleChangeRole(miembro)} className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition duration-200">
+                                <button onClick={(e) => { e.stopPropagation(); handleChangeRole(miembro); }} className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition duration-200">
                                   <Edit className="w-3 h-3 mr-1" />Cambiar
                                 </button>
                               )}
@@ -821,7 +845,7 @@ const LiderDashboard: React.FC = () => {
                               }
 
                               return (
-                                <button onClick={() => handleDeleteMiembro(miembro)} className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition duration-200">
+                                <button onClick={(e) => { e.stopPropagation(); handleDeleteMiembro(miembro); }} className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition duration-200">
                                   <Trash2 className="w-3 h-3 mr-1" />Eliminar
                                 </button>
                               );
@@ -1103,13 +1127,30 @@ const LiderDashboard: React.FC = () => {
                   </div>
                 )}
 
+                {/* Edad y nacimiento */}
+                {'fechaNacimiento' in miembroDetalle && miembroDetalle.fechaNacimiento && (
+                  <div className="flex items-center gap-3 w-full bg-gray-50 dark:bg-gray-700/40 rounded-2xl px-4 py-3">
+                    <span className="w-9 h-9 rounded-full bg-purple-50 dark:bg-purple-900/40 flex items-center justify-center shrink-0">
+                      <Calendar className="w-5 h-5 text-purple-500" />
+                    </span>
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                        {getEdad(miembroDetalle.fechaNacimiento) !== null ? `${getEdad(miembroDetalle.fechaNacimiento)} años` : 'Edad no disponible'}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Nacimiento: {formatFecha(miembroDetalle.fechaNacimiento) || 'Sin fecha'}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Dirección */}
-                {'address' in miembroDetalle && miembroDetalle.address && (
+                {'direccion' in miembroDetalle && miembroDetalle.direccion && (
                   <div className="flex items-start gap-3 w-full bg-gray-50 dark:bg-gray-700/40 rounded-2xl px-4 py-3">
                     <span className="w-9 h-9 rounded-full bg-amber-50 dark:bg-amber-900/40 flex items-center justify-center shrink-0 mt-0.5">
                       <MapPin className="w-5 h-5 text-amber-500" />
                     </span>
-                    <span className="text-sm text-gray-700 dark:text-gray-200">{miembroDetalle.address}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-200">{miembroDetalle.direccion}</span>
                   </div>
                 )}
 
