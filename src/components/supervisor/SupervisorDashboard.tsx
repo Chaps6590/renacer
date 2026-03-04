@@ -11,7 +11,7 @@ import { Users, BarChart3, Eye, FileText, Newspaper, Heart, TrendingUp, UserChec
 
 const SupervisorDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { celulas, peticionesPastor } = useData();
+  const { celulas, peticionesPastor, asistencias } = useData();
   const [showHistorial, setShowHistorial] = useState(false);
   const [selectedCelulaId, setSelectedCelulaId] = useState<string | null>(null);
   const [showMateriales, setShowMateriales] = useState(false);
@@ -30,7 +30,27 @@ const SupervisorDashboard: React.FC = () => {
     const miembrosSinVisitas = c.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita');
     return sum + miembrosSinVisitas.length;
   }, 0);
-  const promedioMiembrosPorCelula = totalCelulas > 0 ? Math.round(totalMiembros / totalCelulas) : 0;
+  
+  // Calcular promedio de asistencia de las células supervisadas
+  const promedioAsistencia = (() => {
+    if (misCelulas.length === 0) return 0;
+    
+    const promedios = misCelulas.map(celula => {
+      const celasAsistencias = asistencias.filter(a => a.celulaId === celula.id);
+      const miembrosSinVisitas = celula.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita');
+      const totalMiembrosCelula = miembrosSinVisitas.length;
+      
+      if (celasAsistencias.length === 0 || totalMiembrosCelula === 0) return 0;
+      
+      const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
+      return Math.round((totalPresentes / celasAsistencias.length / totalMiembrosCelula) * 100);
+    });
+    
+    const promediosValidos = promedios.filter(p => p > 0);
+    if (promediosValidos.length === 0) return 0;
+    
+    return Math.round(promediosValidos.reduce((sum, p) => sum + p, 0) / promediosValidos.length);
+  })();
 
   // Peticiones pendientes de mis células supervisadas
   const peticionesPendientes = peticionesPastor.filter(p => !p.resuelta).length;
@@ -82,15 +102,27 @@ const SupervisorDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-purple-500">
+          <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 ${
+            promedioAsistencia >= 80 ? 'border-purple-500' :
+            promedioAsistencia >= 60 ? 'border-yellow-500' :
+            promedioAsistencia > 0 ? 'border-red-500' : 'border-gray-400'
+          }`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Miembros/Célula</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{promedioMiembrosPorCelula}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Promedio</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Asistencia</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{promedioAsistencia}%</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Promedio general</p>
               </div>
-              <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
-                <TrendingUp className="w-8 h-8 text-purple-600 dark:text-purple-300" />
+              <div className={`p-3 rounded-lg ${
+                promedioAsistencia >= 80 ? 'bg-purple-100 dark:bg-purple-900' :
+                promedioAsistencia >= 60 ? 'bg-yellow-100 dark:bg-yellow-900' :
+                promedioAsistencia > 0 ? 'bg-red-100 dark:bg-red-900' : 'bg-gray-100 dark:bg-gray-700'
+              }`}>
+                <TrendingUp className={`w-8 h-8 ${
+                  promedioAsistencia >= 80 ? 'text-purple-600 dark:text-purple-300' :
+                  promedioAsistencia >= 60 ? 'text-yellow-600 dark:text-yellow-300' :
+                  promedioAsistencia > 0 ? 'text-red-600 dark:text-red-300' : 'text-gray-600 dark:text-gray-400'
+                }`} />
               </div>
             </div>
           </div>
