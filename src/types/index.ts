@@ -56,7 +56,9 @@ export interface Miembro {
   contadorAsistencias?: number; // Solo para VISITAS: contador de asistencias (3 = promover a NUEVO)
   addedAt: Date;
   isBautizado: boolean;
+  fechaBautismo?: string;
   tieneDiscipulado: boolean;
+  fechaDiscipulado?: string;
   isRegistered: boolean; // Identifica si el miembro está registrado
 }
 

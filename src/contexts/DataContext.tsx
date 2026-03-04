@@ -23,6 +23,7 @@ interface DataContextType {
   addColiderToCelula: (celulaId: string, colider: CoLider) => Promise<void>;
   removeColiderFromCelula: (celulaId: string, coliderId: string) => Promise<void>;
   updateMiembroRol: (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo' | 'timoteo') => Promise<void>;
+  updateMiembroFormacion: (celulaId: string, miembroId: string, data: { isBautizado?: boolean; tieneDiscipulado?: boolean; fechaBautismo?: string; fechaDiscipulado?: string }) => Promise<void>;
 
   // Funciones de asistencia
   registrarAsistencia: (asistencia: AsistenciaRecord) => Promise<void>;
@@ -461,6 +462,31 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     }
   };
 
+  const updateMiembroFormacion = async (celulaId: string, miembroId: string, data: { isBautizado?: boolean; tieneDiscipulado?: boolean; fechaBautismo?: string; fechaDiscipulado?: string }) => {
+    try {
+      const res = await api.updateMiembro(celulaId, miembroId, data) as any;
+      const m = res.miembro || res;
+      const miembroActualizado: Miembro = {
+        ...m,
+        name: m.nombre,
+        phone: m.telefono
+      };
+
+      setCelulas(celulas.map(c => {
+        if (c.id === celulaId) {
+          return {
+            ...c,
+            miembros: c.miembros.map(miembro => miembro.id === miembroId ? miembroActualizado : miembro)
+          };
+        }
+        return c;
+      }));
+    } catch (error) {
+      console.error('Error updating miembro formación:', error);
+      throw error;
+    }
+  };
+
   const registrarAsistencia = async (asistencia: AsistenciaRecord) => {
     try {
       const res = await api.registrarAsistencia(asistencia) as any;
@@ -753,6 +779,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     addColiderToCelula,
     removeColiderFromCelula,
     updateMiembroRol,
+    updateMiembroFormacion,
     registrarAsistencia,
     actualizarMotivoFalta,
     registrarAccionPastoral,
