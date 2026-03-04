@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Celula, AsistenciaRecord, MiembroAsistencia, PrioridadAnotacion, MotivoFalta } from '../../types';
 import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { Check, X, Save, MessageCircle, Flag } from 'lucide-react';
+import { Check, X, Save, MessageCircle, Flag, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface AsistenciaModalProps {
@@ -12,7 +12,7 @@ interface AsistenciaModalProps {
 
 export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClose }) => {
   const { user } = useAuth();
-  const { registrarAsistencia } = useData();
+  const { registrarAsistencia, asistencias } = useData();
   const [fecha, setFecha] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [ofrenda, setOfrenda] = useState<number>(0);
   const [miembrosAsistencia, setMiembrosAsistencia] = useState<{ [key: string]: MiembroAsistencia }>(
@@ -28,6 +28,20 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
     }), {})
   );
   const [mostrandoDetalles, setMostrandoDetalles] = useState<string | null>(null);
+  const [registroExistente, setRegistroExistente] = useState<AsistenciaRecord | null>(null);
+
+  // Verificar si ya existe un registro para la fecha seleccionada
+  useEffect(() => {
+    const fechaSeleccionada = new Date(fecha + 'T00:00:00');
+    const existente = asistencias.find(a => {
+      const fechaAsistencia = new Date(a.date);
+      return a.celulaId === celula.id &&
+        fechaAsistencia.getFullYear() === fechaSeleccionada.getFullYear() &&
+        fechaAsistencia.getMonth() === fechaSeleccionada.getMonth() &&
+        fechaAsistencia.getDate() === fechaSeleccionada.getDate();
+    });
+    setRegistroExistente(existente || null);
+  }, [fecha, asistencias, celula.id]);
 
   const handleToggleAsistencia = (miembroId: string) => {
     setMiembrosAsistencia(prev => {
@@ -117,6 +131,21 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
             <X className="w-5 h-5 text-gray-400 dark:text-gray-500" />
           </button>
         </div>
+
+        {/* Advertencia de registro existente */}
+        {registroExistente && (
+          <div className="mb-4 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 dark:border-yellow-600 rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h4 className="font-bold text-yellow-900 dark:text-yellow-200 mb-1">Ya existe un registro para esta fecha</h4>
+                <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                  Al guardar, se reemplazará el registro anterior con {registroExistente.totalPresentes} presente(s) y {registroExistente.totalAusentes} ausente(s).
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4 bg-gray-50 dark:bg-gray-700 p-4 rounded-xl">
           <div className="flex-1">
