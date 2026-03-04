@@ -294,9 +294,10 @@ const LiderDashboard: React.FC = () => {
     return colors[rol.toLowerCase()] || 'bg-gray-100 text-gray-800 border-gray-300';
   };
 
-  const getEdad = (fechaNacimiento?: string) => {
+  const getEdad = (fechaNacimiento?: string | Date) => {
     if (!fechaNacimiento) return null;
-    const clean = fechaNacimiento.slice(0, 10);
+    const raw = typeof fechaNacimiento === 'string' ? fechaNacimiento : fechaNacimiento.toISOString();
+    const clean = raw.slice(0, 10);
     const [year, month, day] = clean.split('-').map(Number);
     if (!year || !month || !day) return null;
 
@@ -310,9 +311,10 @@ const LiderDashboard: React.FC = () => {
     return edad >= 0 ? edad : null;
   };
 
-  const formatFecha = (fecha?: string) => {
+  const formatFecha = (fecha?: string | Date) => {
     if (!fecha) return null;
-    const clean = fecha.slice(0, 10);
+    const raw = typeof fecha === 'string' ? fecha : fecha.toISOString();
+    const clean = raw.slice(0, 10);
     const [year, month, day] = clean.split('-').map(Number);
     if (!year || !month || !day) return null;
     return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
@@ -333,6 +335,7 @@ const LiderDashboard: React.FC = () => {
       rolCelula: 'lider',
       email: miCelula.liderEmail || '-',
       phone: miCelula.liderPhone || '-',
+      fechaNacimiento: miCelula.liderFechaNacimiento || undefined,
       isBautizado: true, // Los líderes siempre tienen bautismo
       tieneDiscipulado: true // Los líderes siempre tienen discipulado
     },
@@ -1216,21 +1219,24 @@ const LiderDashboard: React.FC = () => {
                 )}
 
                 {/* Edad y nacimiento */}
-                {'fechaNacimiento' in miembroDetalle && miembroDetalle.fechaNacimiento && (
+                {(() => {
+                  const fechaNacimientoDetalle = miembroDetalle?.fechaNacimiento;
+                  return (
                   <div className="flex items-center gap-3 w-full bg-gray-50 dark:bg-gray-700/40 rounded-2xl px-4 py-3">
                     <span className="w-9 h-9 rounded-full bg-purple-50 dark:bg-purple-900/40 flex items-center justify-center shrink-0">
                       <Calendar className="w-5 h-5 text-purple-500" />
                     </span>
                     <div className="flex-1">
                       <div className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                        {getEdad(miembroDetalle.fechaNacimiento) !== null ? `${getEdad(miembroDetalle.fechaNacimiento)} años` : 'Edad no disponible'}
+                        {getEdad(fechaNacimientoDetalle) !== null ? `${getEdad(fechaNacimientoDetalle)} años` : 'Edad no disponible'}
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">
-                        Nacimiento: {formatFecha(miembroDetalle.fechaNacimiento) || 'Sin fecha'}
+                        Nacimiento: {formatFecha(fechaNacimientoDetalle) || 'Sin fecha'}
                       </div>
                     </div>
                   </div>
-                )}
+                  );
+                })()}
 
                 {/* Dirección */}
                 {'direccion' in miembroDetalle && miembroDetalle.direccion && (
