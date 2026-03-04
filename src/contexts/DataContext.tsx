@@ -240,6 +240,14 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
             const data = await api.getAsistencias(c.id) as any[];
             asistenciasData = [...asistenciasData, ...data];
           }
+        } else if (user?.role === 'supervisor') {
+          // Cargar asistencias de las células supervisadas
+          const celulasData = await api.getCelulas() as any[];
+          const misCelulasSupervisadas = celulasData.filter((c: any) => c.supervisorId === user?.id);
+          for (const c of misCelulasSupervisadas) {
+            const data = await api.getAsistencias(c.id) as any[];
+            asistenciasData = [...asistenciasData, ...data];
+          }
         }
 
         const asistenciasTransformadas = asistenciasData.map((a: any) => ({
