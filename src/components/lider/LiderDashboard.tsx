@@ -203,7 +203,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
 const LiderDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { celulas, addMiembroToCelula, removeMiembroFromCelula, removeColiderFromCelula, updateMiembroRol, getPendientesAsistencia, noticias } = useData();
+  const { celulas, addMiembroToCelula, removeMiembroFromCelula, removeColiderFromCelula, updateMiembroRol, updateMiembroFormacion, getPendientesAsistencia, noticias } = useData();
   const [showAsistencia, setShowAsistencia] = useState(false);
   const [showAddMiembro, setShowAddMiembro] = useState(false);
   const [showPendientes, setShowPendientes] = useState(false);
@@ -229,7 +229,14 @@ const LiderDashboard: React.FC = () => {
   // Estados para modales de confirmación y acciones
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
+  const [showFormacionDialog, setShowFormacionDialog] = useState(false);
   const [selectedMiembro, setSelectedMiembro] = useState<any>(null);
+  const [formacionData, setFormacionData] = useState({
+    isBautizado: false,
+    tieneDiscipulado: false,
+    fechaBautismo: '',
+    fechaDiscipulado: ''
+  });
 
   // Obtener pendientes de asistencia
   const pendientesAsistencia = getPendientesAsistencia(user?.id || '');
@@ -253,6 +260,7 @@ const LiderDashboard: React.FC = () => {
   const isTimoteo = user?.role?.toLowerCase() === 'timoteo';
   const canChangeRoles = isLider || isColider;
   const canDeleteMembers = isLider || isColider || isTimoteo;
+  const canUpdateFormacion = isLider || isColider || isTimoteo;
 
   const getRolDisplay = (rol: string) => {
     if (!rol) return '-';
@@ -302,6 +310,11 @@ const LiderDashboard: React.FC = () => {
     const [year, month, day] = clean.split('-').map(Number);
     if (!year || !month || !day) return null;
     return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+  };
+
+  const toInputDate = (value?: string) => {
+    if (!value) return '';
+    return value.slice(0, 10);
   };
 
   // Ordenar miembros: Líder principal, Colíderes, Miembros, Nuevos
@@ -432,6 +445,42 @@ const LiderDashboard: React.FC = () => {
     }
     setShowRoleDialog(false);
     setSelectedMiembro(null);
+  };
+
+  const handleEditFormacion = (miembro: any) => {
+    const rol = (miembro.rolCelula || '').toLowerCase();
+    if (!canUpdateFormacion || rol === 'lider' || rol === 'colider') return;
+
+    setSelectedMiembro(miembro);
+    setFormacionData({
+      isBautizado: !!miembro.isBautizado,
+      tieneDiscipulado: !!miembro.tieneDiscipulado,
+      fechaBautismo: toInputDate(miembro.fechaBautismo),
+      fechaDiscipulado: toInputDate(miembro.fechaDiscipulado)
+    });
+    setShowFormacionDialog(true);
+  };
+
+  const confirmFormacion = async () => {
+    if (!selectedMiembro || !miCelula || !canUpdateFormacion) return;
+
+    try {
+      await updateMiembroFormacion(miCelula.id, selectedMiembro.id, {
+        isBautizado: formacionData.isBautizado,
+        tieneDiscipulado: formacionData.tieneDiscipulado,
+        fechaBautismo: formacionData.isBautizado ? (formacionData.fechaBautismo || undefined) : undefined,
+        fechaDiscipulado: formacionData.tieneDiscipulado ? (formacionData.fechaDiscipulado || undefined) : undefined
+      });
+
+      setShowFormacionDialog(false);
+      setSelectedMiembro(null);
+      setMiembroDetalle(null);
+    } catch (error: any) {
+      setDeleteError(error?.message || 'Error al actualizar bautismo/discipulado.');
+      setShowFormacionDialog(false);
+      setSelectedMiembro(null);
+      setTimeout(() => setDeleteError(null), 6000);
+    }
   };
 
   if (!miCelula) {
@@ -1011,6 +1060,86 @@ const LiderDashboard: React.FC = () => {
           </div>
         )}
 
+        {/* Modal de formación (bautismo y discipulado) */}
+        {showFormacionDialog && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-[60] flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4 text-center">
+                <h3 className="text-xl font-bold text-white flex items-center justify-center gap-2">
+                  <Edit className="w-5 h-5" />
+                  Formación
+                </h3>
+                <p className="text-emerald-100 text-sm mt-1">{selectedMiembro?.name}</p>
+              </div>
+
+              <div className="p-6 space-y-5">
+                <div className="space-y-2">
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={formacionData.isBautizado}
+                      onChange={(e) => setFormacionData(prev => ({
+                        ...prev,
+                        isBautizado: e.target.checked,
+                        fechaBautismo: e.target.checked ? (prev.fechaBautismo || new Date().toISOString().slice(0, 10)) : ''
+                      }))}
+                      className="w-5 h-5 text-emerald-600 border-gray-300 rounded"
+                    />
+                    <span className="font-semibold text-gray-900 dark:text-white">¿Está bautizado?</span>
+                  </label>
+                  {formacionData.isBautizado && (
+                    <input
+                      type="date"
+                      value={formacionData.fechaBautismo}
+                      onChange={(e) => setFormacionData(prev => ({ ...prev, fechaBautismo: e.target.value }))}
+                      className="input"
+                    />
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={formacionData.tieneDiscipulado}
+                      onChange={(e) => setFormacionData(prev => ({
+                        ...prev,
+                        tieneDiscipulado: e.target.checked,
+                        fechaDiscipulado: e.target.checked ? (prev.fechaDiscipulado || new Date().toISOString().slice(0, 10)) : ''
+                      }))}
+                      className="w-5 h-5 text-emerald-600 border-gray-300 rounded"
+                    />
+                    <span className="font-semibold text-gray-900 dark:text-white">¿Tiene discipulado?</span>
+                  </label>
+                  {formacionData.tieneDiscipulado && (
+                    <input
+                      type="date"
+                      value={formacionData.fechaDiscipulado}
+                      onChange={(e) => setFormacionData(prev => ({ ...prev, fechaDiscipulado: e.target.value }))}
+                      className="input"
+                    />
+                  )}
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={() => setShowFormacionDialog(false)}
+                    className="flex-1 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:bg-gray-700 transition duration-200"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={confirmFormacion}
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold rounded-xl transition duration-200"
+                  >
+                    Guardar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Modal de pendientes */}
         <PendientesModal
           isOpen={showPendientes}
@@ -1163,7 +1292,7 @@ const LiderDashboard: React.FC = () => {
                         : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
                     }`}>
                       {miembroDetalle.isBautizado ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                      Bautizado
+                      {`Bautizado${miembroDetalle.fechaBautismo ? ` (${formatFecha(miembroDetalle.fechaBautismo)})` : ''}`}
                     </span>
                   )}
                   {'tieneDiscipulado' in miembroDetalle && (
@@ -1173,19 +1302,35 @@ const LiderDashboard: React.FC = () => {
                         : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
                     }`}>
                       {miembroDetalle.tieneDiscipulado ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                      Discipulado
+                      {`Discipulado${miembroDetalle.fechaDiscipulado ? ` (${formatFecha(miembroDetalle.fechaDiscipulado)})` : ''}`}
                     </span>
                   )}
                 </div>
 
                 {/* Acciones de gestión */}
-                {(canChangeRoles || canDeleteMembers) && (() => {
+                {(canChangeRoles || canDeleteMembers || canUpdateFormacion) && (() => {
                   const rolDetalle = (miembroDetalle.rolCelula || '').toLowerCase();
                   const canEditThisDetalle = canChangeRoles && rolDetalle !== 'lider' && rolDetalle !== 'colider';
                   const canDeleteByRole = isTimoteo ? ['nuevo', 'visita', 'miembro'].includes(rolDetalle) : true;
                   const canDeleteThisDetalle = canDeleteMembers && rolDetalle !== 'lider' && miembroDetalle.id !== user?.id && canDeleteByRole;
+                  const canEditFormacionDetalle = canUpdateFormacion && rolDetalle !== 'lider' && rolDetalle !== 'colider';
                   return (
                     <div className="flex gap-3">
+                      <button
+                        disabled={!canEditFormacionDetalle}
+                        onClick={() => {
+                          if (!canEditFormacionDetalle) return;
+                          handleEditFormacion(miembroDetalle);
+                        }}
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm active:scale-95 transition-transform ${
+                          canEditFormacionDetalle
+                            ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                        }`}
+                      >
+                        <Edit className="w-4 h-4" />
+                        Formación
+                      </button>
                       <button
                         disabled={!canEditThisDetalle}
                         onClick={() => {
