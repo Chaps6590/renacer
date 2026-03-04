@@ -217,7 +217,9 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                                     )}
                                                                     <div className="flex flex-col gap-1">
                                                                         <span className="font-bold text-gray-800 dark:text-gray-100">{(m as any).miembro?.nombre || 'Miembro'}</span>
-                                                                        {(m as any).miembro?.rolCelula?.toLowerCase() === 'visita' && (
+                                                                        {/* Usar rol histórico si está disponible, sino el rol actual */}
+                                                                        {(((m as any).rolCelulaEnMomento?.toLowerCase() === 'visita') || 
+                                                                          (!(m as any).rolCelulaEnMomento && (m as any).miembro?.rolCelula?.toLowerCase() === 'visita')) && (
                                                                             <div className="flex items-center gap-2">
                                                                                 <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-300 border border-pink-300 dark:border-pink-700">
                                                                                     VISITA

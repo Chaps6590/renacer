@@ -63,6 +63,7 @@ export interface Miembro {
 export interface MiembroAsistencia {
   miembroId: string;
   presente: boolean;
+  rolCelulaEnMomento?: string; // Rol que tenía el miembro al momento de registrar (para trazabilidad)
   motivoFalta?: MotivoFalta;
   motivoPersonalizado?: string; // Para cuando motivoFalta es 'otro'
   anotacionEspecial?: string; // Para presentes: oración, necesidades, etc.
