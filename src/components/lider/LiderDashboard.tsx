@@ -598,11 +598,6 @@ const LiderDashboard: React.FC = () => {
             </div>
           )}
 
-          {!isLider && isTimoteo && (
-            <div className="bg-orange-50 border border-orange-200 text-orange-800 px-4 py-2 rounded-lg flex items-center gap-2">
-              <span className="text-sm">Eres Líder Colaborador - Puedes eliminar miembros tipo nuevo, visita o miembro.</span>
-            </div>
-          )}
         </div>
 
         {/* Accesos Rápidos */}
