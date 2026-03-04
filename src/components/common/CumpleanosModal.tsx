@@ -169,7 +169,7 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
           </button>
         </div>
         {/* Content */}
-        <div className="p-6 overflow-y-auto flex-1 bg-gray-50/50">
+        <div className="p-6 overflow-y-auto flex-1 bg-gray-50/50 dark:bg-gray-900/50">
           {cumpleanieros.length === 0 ? (
             <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-600">
               <Gift className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -182,12 +182,12 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
             <ul className="divide-y divide-gray-200 dark:divide-gray-700">
               {cumpleanieros.map(m => (
                 <li key={m.id} className="py-3 flex items-center gap-4">
-                  <div className="bg-pink-100 text-pink-700 rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
+                  <div className="bg-pink-100 dark:bg-pink-900 text-pink-700 dark:text-pink-300 rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
                     {m.name?.[0] || '?'}
                   </div>
                   <div className="flex-1">
-                    <div className="font-bold text-gray-800 dark:text-gray-100">{m.name}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className="font-bold text-gray-900 dark:text-white">{m.name}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
                       {(() => {
                         if (!m.fechaNacimiento) return 'Sin fecha';
                         try {
@@ -208,10 +208,10 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
             </ul>
           )}
         </div>
-        <div className="p-6 border-t shrink-0 bg-white dark:bg-gray-800">
+        <div className="p-6 border-t dark:border-gray-700 shrink-0 bg-white dark:bg-gray-800">
           <button
             onClick={onClose}
-            className="w-full py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 text-gray-700 dark:text-gray-300 font-bold rounded-xl transition-colors tracking-wide"
+            className="w-full py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl transition-colors tracking-wide"
           >
             Cerrar
           </button>

@@ -103,7 +103,7 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                 return (
                                     <div
                                         key={registro.id}
-                                        className={`bg-white rounded-xl border transition-all duration-300 ${isExpanded ? 'border-blue-300 shadow-md ring-1 ring-blue-100' : 'border-gray-200 hover:border-gray-300 shadow-sm'
+                                        className={`bg-white dark:bg-gray-800 rounded-xl border transition-all duration-300 ${isExpanded ? 'border-blue-300 dark:border-blue-600 shadow-md ring-1 ring-blue-100 dark:ring-blue-900' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 shadow-sm'
                                             }`}
                                     >
                                         {/* Fila colapsada */}

@@ -203,8 +203,8 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
 
             return (
               <div key={miembro.id} className={`rounded-2xl border-2 transition-all duration-300 ${asistencia.presente
-                ? 'border-green-100 bg-white'
-                : 'border-red-100 bg-white shadow-sm'
+                ? 'border-green-100 dark:border-green-800 bg-white dark:bg-gray-800'
+                : 'border-red-100 dark:border-red-800 bg-white dark:bg-gray-800 shadow-sm'
                 }`}>
                 {/* Fila principal */}
                 <div
@@ -212,11 +212,11 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
                   className="flex items-center justify-between p-4 cursor-pointer"
                 >
                   <div className="flex items-center gap-4 flex-1">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg transition-colors ${asistencia.presente ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg transition-colors ${asistencia.presente ? 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300' : 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300'}`}>
                       {miembro.name.charAt(0)}
                     </div>
                     <div className="flex-1">
-                      <p className={`font-bold transition-colors ${asistencia.presente ? 'text-gray-900' : 'text-red-900'}`}>{miembro.name}</p>
+                      <p className={`font-bold transition-colors ${asistencia.presente ? 'text-gray-900 dark:text-white' : 'text-red-900 dark:text-red-300'}`}>{miembro.name}</p>
                       {asistencia.anotacionEspecial && (
                         <div className="flex items-center gap-2 mt-1">
                           <Flag className={`w-3 h-3 ${asistencia.prioridadAnotacion === 'alta' ? 'text-red-500' :
@@ -236,13 +236,13 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
                       }}
                       className={`p-2 rounded-xl transition-all ${(asistencia.anotacionEspecial || asistencia.motivoFalta)
                         ? 'bg-blue-600 text-white shadow-md'
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                         }`}
                     >
                       <MessageCircle className="w-5 h-5" />
                     </button>
 
-                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-wider ${asistencia.presente ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-wider ${asistencia.presente ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' : 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'}`}>
                       {asistencia.presente ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
                       {asistencia.presente ? 'Presente' : 'Ausente'}
                     </div>
