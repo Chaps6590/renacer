@@ -24,9 +24,12 @@ const SupervisorDashboard: React.FC = () => {
     .filter(c => c.supervisorId === user?.id)
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  // Calcular estadísticas generales
+  // Calcular estadísticas generales (excluir VISITAS)
   const totalCelulas = misCelulas.length;
-  const totalMiembros = misCelulas.reduce((sum, c) => sum + c.miembros.length, 0);
+  const totalMiembros = misCelulas.reduce((sum, c) => {
+    const miembrosSinVisitas = c.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita');
+    return sum + miembrosSinVisitas.length;
+  }, 0);
   const promedioMiembrosPorCelula = totalCelulas > 0 ? Math.round(totalMiembros / totalCelulas) : 0;
 
   // Peticiones pendientes de mis células supervisadas
@@ -191,7 +194,9 @@ const SupervisorDashboard: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-gray-700 dark:text-gray-300">Miembros:</span>
-                          <span className="text-gray-600 dark:text-gray-400">{celula.miembros.length}</span>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            {celula.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita').length}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-gray-700 dark:text-gray-300">Colíderes:</span>

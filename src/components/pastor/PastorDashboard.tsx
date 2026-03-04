@@ -330,8 +330,9 @@ export const PastorDashboard: React.FC = () => {
   const getEstadisticas = () => {
     return celulas.map(celula => {
       const celasAsistencias = asistencias.filter(a => a.celulaId === celula.id);
-      // Contar solo miembros registrados (el líder y colíderes no registran su propia asistencia)
-      const totalMiembros = celula.miembros.length;
+      // Contar solo miembros registrados (excluir VISITAS que no cuentan en estadísticas)
+      const miembrosSinVisitas = celula.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita');
+      const totalMiembros = miembrosSinVisitas.length;
 
       const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
       const promedioAsistencia = celasAsistencias.length > 0 && totalMiembros > 0
@@ -776,7 +777,7 @@ export const PastorDashboard: React.FC = () => {
                     <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-2 rounded">
                       <span className="text-gray-700 dark:text-gray-300 text-sm font-medium">Miembros:</span>
                       <span className="bg-white dark:bg-gray-800 px-2 py-1 rounded text-gray-900 dark:text-white font-bold shadow-sm border border-gray-200 dark:border-gray-700">
-                        {celula.miembros.length}
+                        {celula.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita').length}
                       </span>
                     </div>
                     <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-2 rounded">

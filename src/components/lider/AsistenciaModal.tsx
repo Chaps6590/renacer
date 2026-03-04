@@ -148,7 +148,9 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
           <div className="flex gap-4">
             <div className="text-center">
               <p className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase">Miembros</p>
-              <p className="text-xl font-black text-gray-900 dark:text-white">{celula.miembros.length}</p>
+              <p className="text-xl font-black text-gray-900 dark:text-white">
+                {celula.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita').length}
+              </p>
             </div>
             <div className="text-center">
               <p className="text-[10px] font-black text-green-400 dark:text-green-500 uppercase">Presentes</p>
