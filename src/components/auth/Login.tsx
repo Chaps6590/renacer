@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
-import logo from '../../assets/images/logo.png';
+import logo from '../../assets/images/logoRenacer2.png';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');

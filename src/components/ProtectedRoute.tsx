@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { UserRole } from '../types';
-import logo from '../assets/images/logo.png';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -23,7 +22,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           <div className="relative w-20 h-20">
             <div className="absolute inset-0 bg-blue-400 rounded-full blur-xl opacity-30 animate-pulse"></div>
             <div className="relative w-full h-full bg-white rounded-full shadow-xl p-1.5 border-2 border-blue-100">
-              <img src={logo} alt="Renacer" className="w-full h-full object-cover rounded-full" />
+              <img src="/icons/logoRenacer.png" alt="Renacer" className="w-full h-full object-cover rounded-full" />
             </div>
           </div>
 
