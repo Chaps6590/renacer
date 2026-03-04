@@ -19,11 +19,15 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
     if (!isOpen) return;
     
     if (user?.role?.toLowerCase() === 'pastor') {
-      // Si es pastor, cargar todos los líderes y colíderes desde la API
+      // Si es pastor, cargar líderes, colíderes y supervisores desde la API
       api.getUsers().then((users) => {
         const allUsers = users as User[];
         const lideresYColideres = allUsers.filter((u) => 
-          u.role && (u.role.toLowerCase() === 'lider' || u.role.toLowerCase() === 'colider')
+          u.role && (
+            u.role.toLowerCase() === 'lider' ||
+            u.role.toLowerCase() === 'colider' ||
+            u.role.toLowerCase() === 'supervisor'
+          )
         );
         setLideres(lideresYColideres);
       }).catch(error => {
