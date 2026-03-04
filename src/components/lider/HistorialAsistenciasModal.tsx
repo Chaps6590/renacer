@@ -205,7 +205,7 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                                 }`}
                                                         >
                                                             <div className="flex items-center justify-between mb-2">
-                                                                <div className="flex items-center gap-3">
+                                                                <div className="flex items-center gap-3 flex-1">
                                                                     {m.presente ? (
                                                                         <div className="bg-green-100 dark:bg-green-900 p-1.5 rounded-full text-green-600 dark:text-green-300">
                                                                             <CheckCircle2 className="w-4 h-4" />
@@ -215,7 +215,21 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                                             <XCircle className="w-4 h-4" />
                                                                         </div>
                                                                     )}
-                                                                    <span className="font-bold text-gray-800 dark:text-gray-100">{(m as any).miembro?.nombre || 'Miembro'}</span>
+                                                                    <div className="flex flex-col gap-1">
+                                                                        <span className="font-bold text-gray-800 dark:text-gray-100">{(m as any).miembro?.nombre || 'Miembro'}</span>
+                                                                        {(m as any).miembro?.rolCelula?.toLowerCase() === 'visita' && (
+                                                                            <div className="flex items-center gap-2">
+                                                                                <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-300 border border-pink-300 dark:border-pink-700">
+                                                                                    VISITA
+                                                                                </span>
+                                                                                {(m as any).miembro?.contadorAsistencias > 0 && (
+                                                                                    <span className="text-[10px] font-semibold text-pink-600 dark:text-pink-400">
+                                                                                        {(m as any).miembro.contadorAsistencias} {(m as any).miembro.contadorAsistencias === 1 ? 'asistencia' : 'asistencias'}
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
                                                                 <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${m.presente ? 'bg-green-600 dark:bg-green-700 text-white' : 'bg-red-600 dark:bg-red-700 text-white'
                                                                     }`}>

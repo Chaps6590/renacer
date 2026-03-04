@@ -74,6 +74,7 @@ const SupervisorDashboard: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Total Miembros</p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{totalMiembros}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Excluye visitas</p>
               </div>
               <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
                 <UserCheck className="w-8 h-8 text-green-600 dark:text-green-300" />
@@ -84,8 +85,9 @@ const SupervisorDashboard: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border-l-4 border-purple-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Promedio/Célula</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">Miembros/Célula</p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{promedioMiembrosPorCelula}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Promedio</p>
               </div>
               <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
                 <TrendingUp className="w-8 h-8 text-purple-600 dark:text-purple-300" />
