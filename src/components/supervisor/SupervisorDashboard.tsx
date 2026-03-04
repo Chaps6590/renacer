@@ -254,7 +254,7 @@ const SupervisorDashboard: React.FC = () => {
         </div>
 
         {/* Acciones rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-8">
           <button
             onClick={() => setShowPeticiones(true)}
             className="bg-gradient-to-br from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl relative"
@@ -421,7 +421,7 @@ const SupervisorDashboard: React.FC = () => {
       {showDonaciones && <DonacionesModal isOpen={showDonaciones} onClose={() => setShowDonaciones(false)} />}
       {showTodosCumpleanos && <CumpleanosModal isOpen={showTodosCumpleanos} onClose={() => setShowTodosCumpleanos(false)} />}
 
-      {/* Modal de Estadísticas */
+      {/* Modal de Estadísticas */}
       {showEstadisticas && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden border border-gray-100 dark:border-gray-700">
