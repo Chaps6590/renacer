@@ -16,7 +16,7 @@ import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCi
 interface AddMiembroModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (miembro: { name: string; phone?: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' }) => void;
+  onAdd: (miembro: { name: string; phone: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' }) => void;
 }
 
 const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAdd }) => {
@@ -34,15 +34,19 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.name.trim()) {
+    const nombre = formData.name.trim();
+    const telefono = formData.phone.trim();
+    const fechaNacimiento = formData.fechaNacimiento;
+
+    if (nombre && telefono && fechaNacimiento) {
       onAdd({
-        name: formData.name.trim(),
-        phone: formData.phone.trim() || undefined,
+        name: nombre,
+        phone: telefono,
         email: formData.email.trim() || undefined,
         direccion: formData.direccion.trim() || undefined,
         isBautizado: formData.isBautizado,
         tieneDiscipulado: formData.tieneDiscipulado,
-        fechaNacimiento: formData.fechaNacimiento || undefined,
+        fechaNacimiento,
         isRegistered: formData.isRegistered,
         rolCelula: formData.rolCelula
       });
@@ -80,7 +84,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Teléfono
+              Teléfono *
             </label>
             <input
               type="tel"
@@ -88,18 +92,20 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
               placeholder="Ej: +54 9 11 1234-5678"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              required
             />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Fecha de Nacimiento
+              Fecha de Nacimiento *
             </label>
             <input
               type="date"
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
               value={formData.fechaNacimiento}
               onChange={(e) => setFormData({ ...formData, fechaNacimiento: e.target.value })}
+              required
             />
           </div>
 
@@ -350,7 +356,7 @@ const LiderDashboard: React.FC = () => {
     })
   ].filter(Boolean) : [];
 
-  const handleAddMiembro = (miembroData: { name: string; phone?: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento?: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' }) => {
+  const handleAddMiembro = (miembroData: { name: string; phone: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' }) => {
     if (miCelula) {
       const nuevoMiembro = {
         id: `member-${Date.now()}`,
