@@ -16,7 +16,7 @@ import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCi
 interface AddMiembroModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (miembro: { name: string; phone: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' }) => void;
+  onAdd: (miembro: { name: string; phone: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' | 'miembro' }) => void;
 }
 
 const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAdd }) => {
@@ -29,7 +29,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
     tieneDiscipulado: false,
     fechaNacimiento: '',
     isRegistered: true,
-    rolCelula: 'visita' as 'nuevo' | 'visita'
+    rolCelula: 'visita' as 'nuevo' | 'visita' | 'miembro'
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -144,16 +144,19 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
               </label>
               <select
                 value={formData.rolCelula}
-                onChange={(e) => setFormData({ ...formData, rolCelula: e.target.value as 'nuevo' | 'visita' })}
+                onChange={(e) => setFormData({ ...formData, rolCelula: e.target.value as 'nuevo' | 'visita' | 'miembro' })}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="visita">Visitante (primera vez)</option>
                 <option value="nuevo">Nuevo</option>
+                <option value="miembro">Miembro</option>
               </select>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 { formData.rolCelula === 'visita' 
                   ? '👋 Las visitas NO cuentan para estadísticas. Cuando consideres que están listas, cambia su rol a "Nuevo" manualmente'
-                  : '✅ Los nuevos ya son miembros activos de la célula'
+                  : formData.rolCelula === 'nuevo'
+                    ? '✅ Los nuevos ya son miembros activos de la célula'
+                    : '💪 Se registrará directamente como miembro activo'
                 }
               </p>
             </div>
@@ -359,7 +362,7 @@ const LiderDashboard: React.FC = () => {
     })
   ].filter(Boolean) : [];
 
-  const handleAddMiembro = (miembroData: { name: string; phone: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' }) => {
+  const handleAddMiembro = async (miembroData: { name: string; phone: string; email?: string; direccion?: string; isBautizado: boolean; tieneDiscipulado: boolean; fechaNacimiento: string; isRegistered: boolean; rolCelula: 'nuevo' | 'visita' | 'miembro' }) => {
     if (miCelula) {
       const nuevoMiembro = {
         id: `member-${Date.now()}`,
@@ -376,7 +379,17 @@ const LiderDashboard: React.FC = () => {
         isRegistered: miembroData.isRegistered
       };
 
-      addMiembroToCelula(miCelula.id, nuevoMiembro);
+      try {
+        await addMiembroToCelula(miCelula.id, nuevoMiembro);
+      } catch (error: any) {
+        setDeleteError(
+          error?.message ||
+          error?.response?.data?.message ||
+          error?.data?.message ||
+          'Error al agregar miembro.'
+        );
+        setTimeout(() => setDeleteError(null), 6000);
+      }
     }
   };
 
@@ -1006,6 +1019,19 @@ const LiderDashboard: React.FC = () => {
                     <div>
                       <div className="font-semibold text-gray-900 dark:text-white">Nuevo</div>
                       <div className="text-sm text-gray-600 dark:text-gray-400">Persona nueva en la célula</div>
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => confirmChangeRole('visita')}
+                  className="w-full p-4 text-left border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-pink-300 hover:bg-pink-50 transition duration-200 group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 bg-pink-500 rounded-full group-hover:scale-110 transition duration-200"></div>
+                    <div>
+                      <div className="font-semibold text-gray-900 dark:text-white">Visitante</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Persona en su primera etapa de asistencia</div>
                     </div>
                   </div>
                 </button>

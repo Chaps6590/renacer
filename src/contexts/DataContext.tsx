@@ -22,7 +22,7 @@ interface DataContextType {
   removeMiembroFromCelula: (celulaId: string, miembroId: string) => Promise<void>;
   addColiderToCelula: (celulaId: string, colider: CoLider) => Promise<void>;
   removeColiderFromCelula: (celulaId: string, coliderId: string) => Promise<void>;
-  updateMiembroRol: (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo' | 'timoteo') => Promise<void>;
+  updateMiembroRol: (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo' | 'timoteo' | 'visita') => Promise<void>;
   updateMiembroFormacion: (celulaId: string, miembroId: string, data: { isBautizado?: boolean; tieneDiscipulado?: boolean; fechaBautismo?: string; fechaDiscipulado?: string }) => Promise<void>;
 
   // Funciones de asistencia
@@ -442,7 +442,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     }
   };
 
-  const updateMiembroRol = async (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo' | 'timoteo') => {
+  const updateMiembroRol = async (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo' | 'timoteo' | 'visita') => {
     try {
       const res = await api.updateMiembro(celulaId, miembroId, { rolCelula: nuevoRol }) as any;
       const m = res.miembro || res;
