@@ -65,9 +65,16 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
       });
       
       setLideres(lideresTemp);
-    } else if (user?.role?.toLowerCase() === 'lider') {
-      // Si es líder, usar los datos directamente de la célula (sin llamar a la API)
-      const miCelula = celulas.find(c => c.liderId === user.id || c.coLideres.some(col => col.id === user.id));
+    } else if (user?.role?.toLowerCase() === 'lider' || user?.role?.toLowerCase() === 'timoteo') {
+      // Si es líder o timoteo, usar los datos de su célula (sin llamar a la API)
+      const miCelula = celulas.find(c =>
+        c.liderId === user.id ||
+        c.coLideres.some(col => col.id === user.id) ||
+        (user?.role?.toLowerCase() === 'timoteo' && c.miembros.some(m =>
+          (m.email || '').toLowerCase() === (user.email || '').toLowerCase() &&
+          (m.rolCelula || '').toLowerCase() === 'timoteo'
+        ))
+      );
       if (miCelula) {
         // Construir lista de líderes desde la célula
         const lideresTemp: User[] = [];
@@ -103,9 +110,16 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
 
   if (!isOpen) return null;
 
-  // Obtener la célula del líder si es líder
-  const miCelula = user?.role?.toLowerCase() === 'lider' 
-    ? celulas.find(c => c.liderId === user.id || c.coLideres.some(col => col.id === user.id))
+  // Obtener la célula del líder/timoteo
+  const miCelula = (user?.role?.toLowerCase() === 'lider' || user?.role?.toLowerCase() === 'timoteo')
+    ? celulas.find(c =>
+      c.liderId === user.id ||
+      c.coLideres.some(col => col.id === user.id) ||
+      (user?.role?.toLowerCase() === 'timoteo' && c.miembros.some(m =>
+        (m.email || '').toLowerCase() === (user.email || '').toLowerCase() &&
+        (m.rolCelula || '').toLowerCase() === 'timoteo'
+      ))
+    )
     : null;
 
   // Obtener células supervisadas si es supervisor
@@ -116,8 +130,8 @@ export const CumpleanosModal: React.FC<CumpleanosModalProps> = ({ isOpen, onClos
   // Obtener todos los miembros
   let miembros = celulas.flatMap(c => c.miembros || []);
   
-  // Si es líder, filtrar solo su célula
-  if (user?.role?.toLowerCase() === 'lider' && miCelula) {
+  // Si es líder o timoteo, filtrar solo su célula
+  if ((user?.role?.toLowerCase() === 'lider' || user?.role?.toLowerCase() === 'timoteo') && miCelula) {
     miembros = miCelula.miembros || [];
   }
   
