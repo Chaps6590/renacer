@@ -811,14 +811,6 @@ const LiderDashboard: React.FC = () => {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
                       <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Bautizado</th>
                       <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Discipulado</th>
-                      {canChangeRoles && (
-                        <>
-                          <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cambiar Rol</th>
-                        </>
-                      )}
-                      {canDeleteMembers && (
-                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Eliminar</th>
-                      )}
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -864,44 +856,6 @@ const LiderDashboard: React.FC = () => {
                               : <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"><XCircle className="w-3 h-3 mr-1" />No</span>
                           ) : <span className="text-sm text-gray-400">-</span>}
                         </td>
-                        {canChangeRoles && (
-                          <>
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              {miembro.rolCelula === 'lider' || miembro.rolCelula === 'colider' ? (
-                                <button disabled className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed">
-                                  <Edit className="w-3 h-3 mr-1" />Cambiar
-                                </button>
-                              ) : (
-                                <button onClick={(e) => { e.stopPropagation(); handleChangeRole(miembro); }} className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition duration-200">
-                                  <Edit className="w-3 h-3 mr-1" />Cambiar
-                                </button>
-                              )}
-                            </td>
-                          </>
-                        )}
-                        {canDeleteMembers && (
-                          <td className="px-6 py-4 whitespace-nowrap text-center">
-                            {(() => {
-                              const rol = (miembro.rolCelula || '').toLowerCase();
-                              const bloqueadoPorRolTimoteo = isTimoteo && !['nuevo', 'visita', 'miembro'].includes(rol);
-                              const disabled = rol === 'lider' || miembro.id === user?.id || bloqueadoPorRolTimoteo;
-
-                              if (disabled) {
-                                return (
-                                  <button disabled className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-not-allowed">
-                                    <Trash2 className="w-3 h-3 mr-1" />Eliminar
-                                  </button>
-                                );
-                              }
-
-                              return (
-                                <button onClick={(e) => { e.stopPropagation(); handleDeleteMiembro(miembro); }} className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition duration-200">
-                                  <Trash2 className="w-3 h-3 mr-1" />Eliminar
-                                </button>
-                              );
-                            })()}
-                          </td>
-                        )}
                       </tr>
                     ))}
                   </tbody>
