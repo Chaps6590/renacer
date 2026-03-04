@@ -420,8 +420,8 @@ const LiderDashboard: React.FC = () => {
         let msg = selectedMiembro.rolCelula === 'colider' 
           ? 'Error al eliminar colíder.' 
           : 'Error al eliminar miembro.';
-        if (error?.response?.status === 409 && error?.response?.data?.message) {
-          msg = error.response.data.message;
+        if (error?.message) {
+          msg = error.message;
         }
         setDeleteError(msg);
         setShowDeleteConfirm(false);
