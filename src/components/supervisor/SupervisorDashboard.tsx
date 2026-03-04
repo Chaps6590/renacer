@@ -7,7 +7,7 @@ import { MaterialesModal } from '../common/MaterialesModal';
 import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
 import { PeticionesModal } from '../common/PeticionesModal';
-import { Users, BarChart3, Eye, FileText, Newspaper, Heart, TrendingUp, UserCheck, Bell } from 'lucide-react';
+import { Users, BarChart3, Eye, FileText, Newspaper, Heart, TrendingUp, UserCheck, Bell, X } from 'lucide-react';
 
 const SupervisorDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -18,6 +18,7 @@ const SupervisorDashboard: React.FC = () => {
   const [showNoticias, setShowNoticias] = useState(false);
   const [showDonaciones, setShowDonaciones] = useState(false);
   const [showPeticiones, setShowPeticiones] = useState(false);
+  const [showEstadisticas, setShowEstadisticas] = useState(false);
 
   // Filtrar y ordenar las células que supervisa el usuario
   const misCelulas = celulas
@@ -40,30 +41,16 @@ const SupervisorDashboard: React.FC = () => {
       const miembrosSinVisitas = celula.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita');
       const totalMiembrosCelula = miembrosSinVisitas.length;
       
-      console.log(`📊 Célula "${celula.name}":`, {
-        asistencias: celasAsistencias.length,
-        miembros: totalMiembrosCelula,
-        totalPresentes: celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0)
-      });
-      
       if (celasAsistencias.length === 0 || totalMiembrosCelula === 0) return 0;
       
       const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
-      const promedio = Math.round((totalPresentes / celasAsistencias.length / totalMiembrosCelula) * 100);
-      
-      console.log(`   → Promedio: ${promedio}%`);
-      return promedio;
+      return Math.round((totalPresentes / celasAsistencias.length / totalMiembrosCelula) * 100);
     });
-    
-    console.log('🎯 Promedios por célula:', promedios);
     
     const promediosValidos = promedios.filter(p => p > 0);
     if (promediosValidos.length === 0) return 0;
     
-    const promedioFinal = Math.round(promediosValidos.reduce((sum, p) => sum + p, 0) / promediosValidos.length);
-    console.log('✅ Promedio final:', promedioFinal + '%');
-    
-    return promedioFinal;
+    return Math.round(promediosValidos.reduce((sum, p) => sum + p, 0) / promediosValidos.length);
   })();
 
   // Peticiones pendientes de mis células supervisadas
@@ -193,10 +180,13 @@ const SupervisorDashboard: React.FC = () => {
             <span className="font-semibold">Ofrendar</span>
           </button>
 
-          <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-xl p-4 flex items-center gap-3">
-            <BarChart3 className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-            <span className="font-semibold text-gray-700 dark:text-gray-200">Estadísticas</span>
-          </div>
+          <button
+            onClick={() => setShowEstadisticas(true)}
+            className="bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-xl p-4 flex items-center gap-3 transition-all shadow-lg hover:shadow-xl"
+          >
+            <BarChart3 className="w-6 h-6" />
+            <span className="font-semibold">Estadísticas</span>
+          </button>
         </div>
 
         {/* Lista de Células */}
@@ -309,6 +299,133 @@ const SupervisorDashboard: React.FC = () => {
       {showMateriales && <MaterialesModal isOpen={showMateriales} onClose={() => setShowMateriales(false)} />}
       {showNoticias && <NoticiasModal isOpen={showNoticias} onClose={() => setShowNoticias(false)} />}
       {showDonaciones && <DonacionesModal isOpen={showDonaciones} onClose={() => setShowDonaciones(false)} />}
+
+      {/* Modal de Estadísticas */}
+      {showEstadisticas && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden border border-gray-100 dark:border-gray-700">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-700 px-6 py-4 flex items-center justify-between text-white">
+              <div className="flex items-center gap-3">
+                <div className="bg-white/20 p-2 rounded-lg">
+                  <BarChart3 className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold">Estadísticas de Células</h3>
+                  <p className="text-indigo-100 text-xs uppercase tracking-wider font-semibold">Reporte detallado</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowEstadisticas(false)}
+                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b-2 border-gray-200 dark:border-gray-700">
+                      <th className="text-left py-3 px-4 text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Célula</th>
+                      <th className="text-left py-3 px-4 text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Líder</th>
+                      <th className="text-center py-3 px-4 text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Miembros</th>
+                      <th className="text-center py-3 px-4 text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Registros</th>
+                      <th className="text-center py-3 px-4 text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Promedio</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {misCelulas.map(celula => {
+                      const celasAsistencias = asistencias.filter(a => a.celulaId === celula.id);
+                      const miembrosSinVisitas = celula.miembros.filter(m => m.rolCelula?.toLowerCase() !== 'visita');
+                      const totalMiembrosCelula = miembrosSinVisitas.length;
+                      
+                      const totalPresentes = celasAsistencias.reduce((sum, a) => sum + a.totalPresentes, 0);
+                      const promedio = celasAsistencias.length > 0 && totalMiembrosCelula > 0
+                        ? Math.round((totalPresentes / celasAsistencias.length / totalMiembrosCelula) * 100)
+                        : 0;
+
+                      return (
+                        <tr key={celula.id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                          <td className="py-4 px-4">
+                            <div className="font-semibold text-gray-900 dark:text-white">{celula.name}</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">{celula.diaSemana} • {celula.horario}</div>
+                          </td>
+                          <td className="py-4 px-4 text-gray-700 dark:text-gray-300">{celula.liderName}</td>
+                          <td className="py-4 px-4 text-center">
+                            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-bold">
+                              {totalMiembrosCelula}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4 text-center">
+                            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold">
+                              {celasAsistencias.length}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4 text-center">
+                            <span className={`inline-flex items-center justify-center px-4 py-2 rounded-full font-bold text-sm ${
+                              promedio >= 80 ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300' :
+                              promedio >= 60 ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300' :
+                              promedio > 0 ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300' :
+                              'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+                            }`}>
+                              {promedio > 0 ? `${promedio}%` : 'Sin datos'}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Resumen */}
+              <div className="mt-6 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-6 border-2 border-indigo-200 dark:border-indigo-800">
+                <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Resumen General</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Células</p>
+                    <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{totalCelulas}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Miembros</p>
+                    <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{totalMiembros}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Células con Datos</p>
+                    <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                      {misCelulas.filter(c => asistencias.some(a => a.celulaId === c.id)).length}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Promedio Global</p>
+                    <p className={`text-3xl font-bold ${
+                      promedioAsistencia >= 80 ? 'text-green-600 dark:text-green-400' :
+                      promedioAsistencia >= 60 ? 'text-yellow-600 dark:text-yellow-400' :
+                      promedioAsistencia > 0 ? 'text-red-600 dark:text-red-400' :
+                      'text-gray-500 dark:text-gray-400'
+                    }`}>
+                      {promedioAsistencia}%
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+              <button
+                onClick={() => setShowEstadisticas(false)}
+                className="w-full py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl transition-colors"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -288,8 +288,8 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
               <div
                 key={noticia.id}
                 className={`border rounded-lg p-4 ${noticia.importante
-                  ? 'border-red-300 bg-red-50'
-                  : 'border-gray-200 bg-white hover:bg-gray-50'
+                  ? 'border-red-300 dark:border-red-400 bg-red-50 dark:bg-red-900/20'
+                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
                   } transition-colors`}
               >
                 <div className="flex items-start justify-between">
@@ -300,7 +300,7 @@ export const NoticiasModal: React.FC<NoticiasModalProps> = ({ isOpen, onClose })
                       )}
                       <h4 className="font-semibold text-gray-900 dark:text-white">{noticia.titulo}</h4>
                       {noticia.importante && (
-                        <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full font-medium">
+                        <span className="bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-200 text-xs px-2 py-1 rounded-full font-medium">
                           Importante
                         </span>
                       )}
