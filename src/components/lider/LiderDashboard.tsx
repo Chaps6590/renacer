@@ -267,7 +267,7 @@ const LiderDashboard: React.FC = () => {
   const isLider = miCelula?.liderId === user?.id;
   const isColider = user?.role?.toLowerCase() === 'colider';
   const isTimoteo = user?.role?.toLowerCase() === 'timoteo';
-  const canChangeRoles = isLider || isColider;
+  const canChangeRoles = isLider || isColider || isTimoteo;
   const canDeleteMembers = isLider || isColider || isTimoteo;
   const canUpdateFormacion = isLider || isColider || isTimoteo;
 
@@ -465,12 +465,48 @@ const LiderDashboard: React.FC = () => {
     setShowRoleDialog(true);
   };
 
-  const confirmChangeRole = (newRole: string) => {
-    if (selectedMiembro && miCelula && canChangeRoles) {
-      updateMiembroRol(miCelula.id, selectedMiembro.id, newRole as any);
+  const confirmChangeRole = async (newRole: string) => {
+    if (!selectedMiembro || !miCelula || !canChangeRoles) {
+      setShowRoleDialog(false);
+      setSelectedMiembro(null);
+      return;
     }
-    setShowRoleDialog(false);
-    setSelectedMiembro(null);
+
+    const emailMiembro = (selectedMiembro.email || '').trim();
+    const requiereEmail = newRole === 'colider' || newRole === 'timoteo';
+    let emailParaActualizar: string | undefined = undefined;
+    if (requiereEmail && !emailMiembro) {
+      const emailIngresado = window.prompt('Este rol requiere correo. Ingresá el email del miembro:')?.trim().toLowerCase() || '';
+
+      if (!emailIngresado) {
+        setDeleteError('El cambio de rol se canceló porque no se ingresó correo.');
+        setTimeout(() => setDeleteError(null), 6000);
+        return;
+      }
+
+      const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailIngresado);
+      if (!emailValido) {
+        setDeleteError('El correo ingresado no es válido.');
+        setTimeout(() => setDeleteError(null), 6000);
+        return;
+      }
+
+      emailParaActualizar = emailIngresado;
+    }
+
+    try {
+      await updateMiembroRol(miCelula.id, selectedMiembro.id, newRole as any, emailParaActualizar);
+      setShowRoleDialog(false);
+      setSelectedMiembro(null);
+    } catch (error: any) {
+      const msg =
+        error?.message ||
+        error?.response?.data?.message ||
+        error?.data?.message ||
+        'Error al cambiar el rol del miembro.';
+      setDeleteError(msg);
+      setTimeout(() => setDeleteError(null), 6000);
+    }
   };
 
   const handleEditFormacion = (miembro: any) => {
@@ -982,20 +1018,22 @@ const LiderDashboard: React.FC = () => {
                   </div>
                 </button>
 
-                <button
-                  onClick={() => confirmChangeRole('colider')}
-                  className="w-full p-4 text-left border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition duration-200 group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full group-hover:scale-110 transition duration-200"></div>
-                    <div>
-                      <div className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                        Colíder <Star className="w-4 h-4 text-blue-500" />
+                {!isTimoteo && (
+                  <button
+                    onClick={() => confirmChangeRole('colider')}
+                    className="w-full p-4 text-left border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition duration-200 group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 bg-blue-500 rounded-full group-hover:scale-110 transition duration-200"></div>
+                      <div>
+                        <div className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                          Colíder <Star className="w-4 h-4 text-blue-500" />
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Ayudante del líder de célula</div>
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Ayudante del líder de célula</div>
                     </div>
-                  </div>
-                </button>
+                  </button>
+                )}
 
                 <button
                   onClick={() => confirmChangeRole('timoteo')}
