@@ -472,10 +472,14 @@ const LiderDashboard: React.FC = () => {
       return;
     }
 
-    const emailMiembro = (selectedMiembro.email || '').trim();
+    const miembroActual = miCelula.miembros.find(m => m.id === selectedMiembro.id);
+    const emailMiembro = String(miembroActual?.email ?? selectedMiembro.email ?? '')
+      .trim()
+      .toLowerCase();
     const requiereEmail = newRole === 'colider' || newRole === 'timoteo';
     let emailParaActualizar: string | undefined = undefined;
-    if (requiereEmail && !emailMiembro) {
+    const tieneEmailValido = !!emailMiembro && emailMiembro !== '-' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailMiembro);
+    if (requiereEmail && !tieneEmailValido) {
       const emailIngresado = window.prompt('Este rol requiere correo. Ingresá el email del miembro:')?.trim().toLowerCase() || '';
 
       if (!emailIngresado) {
