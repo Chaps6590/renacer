@@ -11,7 +11,7 @@ import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
 import { CumpleanosModal } from '../common/CumpleanosModal';
 
-import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart, History, Phone, Mail, MapPin, X } from 'lucide-react';
+import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart, History, Phone, Mail, MapPin, X, Gift } from 'lucide-react';
 
 interface AddMiembroModalProps {
   isOpen: boolean;
@@ -900,7 +900,8 @@ const LiderDashboard: React.FC = () => {
                             {getRolDisplay(miembro.rolCelula)}
                           </span>
                           {isCumpleHoy && (
-                            <span className="px-2 py-0.5 text-xs rounded-full bg-pink-100 text-pink-700 font-semibold border border-pink-200">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-pink-100 text-pink-700 font-semibold border border-pink-200">
+                              <Gift className="w-3 h-3" />
                               Cumple hoy
                             </span>
                           )}
@@ -948,7 +949,8 @@ const LiderDashboard: React.FC = () => {
                             {miembro.rolCelula?.toLowerCase() === 'colider' && <Star className="w-4 h-4 text-blue-500 ml-2" />}
                             {miembro.rolCelula?.toLowerCase() === 'timoteo' && <Star className="w-4 h-4 text-orange-500 ml-2 fill-orange-200" />}
                             {isCumpleHoy && (
-                              <span className="ml-2 px-2 py-0.5 text-[10px] font-semibold rounded-full bg-pink-100 text-pink-700 border border-pink-200">
+                              <span className="ml-2 inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-full bg-pink-100 text-pink-700 border border-pink-200">
+                                <Gift className="w-3 h-3" />
                                 Cumple hoy
                               </span>
                             )}
