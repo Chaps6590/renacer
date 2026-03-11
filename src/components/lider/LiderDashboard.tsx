@@ -431,6 +431,15 @@ const LiderDashboard: React.FC = () => {
         return;
       }
 
+      // Co-líderes User no pueden ser eliminados por otros co-líderes
+      if (miCelula.coLideres.some(c => c.id === selectedMiembro.id)) {
+        setDeleteError('No puedes eliminar a otro co-líder.');
+        setShowDeleteConfirm(false);
+        setSelectedMiembro(null);
+        setTimeout(() => setDeleteError(null), 6000);
+        return;
+      }
+
       try {
         // Si es colíder USER (está en coLideres), usar removeColiderFromCelula
         // Si es miembro con rolCelula='colider', usar removeMiembroFromCelula
@@ -517,7 +526,8 @@ const LiderDashboard: React.FC = () => {
 
   const handleEditFormacion = (miembro: any) => {
     const rol = (miembro.rolCelula || '').toLowerCase();
-    if (!canUpdateFormacion || rol === 'lider' || rol === 'colider') return;
+    const isUserColider = rol === 'colider' && miCelula?.coLideres.some(c => c.id === miembro.id);
+    if (!canUpdateFormacion || rol === 'lider' || isUserColider) return;
 
     setSelectedMiembro(miembro);
     setFormacionData({
@@ -1350,7 +1360,7 @@ const LiderDashboard: React.FC = () => {
                   const canEditThisDetalle = canChangeRoles && rolDetalle !== 'lider' && !isUserColiderDetalle;
                   const isLiderPrincipalDetalle = miembroDetalle.id === miCelula.liderId;
                   const canDeleteByRole = isTimoteo ? ['nuevo', 'visita', 'miembro'].includes(rolDetalle) : true;
-                  const canDeleteThisDetalle = canDeleteMembers && !isLiderPrincipalDetalle && miembroDetalle.id !== user?.id && canDeleteByRole;
+                  const canDeleteThisDetalle = canDeleteMembers && !isLiderPrincipalDetalle && miembroDetalle.id !== user?.id && canDeleteByRole && !isUserColiderDetalle;
                   const canEditFormacionDetalle = canUpdateFormacion && rolDetalle !== 'lider' && !isUserColiderDetalle;
                   return (
                     <div className="flex gap-3">
