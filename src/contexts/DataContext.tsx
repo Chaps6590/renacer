@@ -786,6 +786,9 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       )
     );
     const idscelulas = celulasLider.map(c => c.id);
+    if (idscelulas.length === 0) {
+      return pendientesAsistencia;
+    }
     return pendientesAsistencia.filter(p => idscelulas.includes(p.celulaId));
   };
 
