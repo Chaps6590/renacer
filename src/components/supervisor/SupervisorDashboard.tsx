@@ -122,11 +122,14 @@ const SupervisorDashboard: React.FC = () => {
       }
     });
 
-    // Colíderes de células supervisadas
+    // Colíderes de células supervisadas (evitar duplicados con líderes ya agregados)
+    const idsYaAgregados = new Set(allBirthdays.map(b => b.id));
     misCelulas.forEach(c => {
       c.coLideres?.forEach(cl => {
+        if (idsYaAgregados.has(cl.id)) return;
         const daysUntil = getDaysUntilBirthday(cl.fechaNacimiento);
         if (daysUntil !== null) {
+          idsYaAgregados.add(cl.id);
           allBirthdays.push({ ...cl, type: 'Colíder', celulaName: c.name, liderName: c.liderName, daysUntil });
         }
       });

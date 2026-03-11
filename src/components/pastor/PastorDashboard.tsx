@@ -318,11 +318,14 @@ export const PastorDashboard: React.FC = () => {
       }
     });
 
-    // Colíderes
+    // Colíderes (evitar duplicados con líderes que ya fueron agregados)
+    const idsYaAgregados = new Set(allBirthdays.map(b => b.id));
     celulas.forEach(c => {
       c.coLideres?.forEach(cl => {
+        if (idsYaAgregados.has(cl.id)) return;
         const daysUntil = getDaysUntilBirthday(cl.fechaNacimiento);
         if (daysUntil !== null) {
+          idsYaAgregados.add(cl.id);
           allBirthdays.push({ ...cl, type: 'Colíder', celulaName: c.name, liderName: c.liderName, daysUntil });
         }
       });
