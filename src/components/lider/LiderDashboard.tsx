@@ -1411,7 +1411,7 @@ const LiderDashboard: React.FC = () => {
                 )}
 
                 {/* Badges bautizado / discipulado */}
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {'isBautizado' in miembroDetalle && (
                     <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
                       miembroDetalle.isBautizado
