@@ -776,12 +776,19 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   };
 
   const getPendientesAsistencia = (liderId: string) => {
-    const isTimoteo = user?.role === 'timoteo'
+    const role = (user?.role || '').toLowerCase()
+    const userEmail = (user?.email || '').toLowerCase()
     const celulasLider = celulas.filter(c => {
-      if (isTimoteo) {
+      if (role === 'timoteo') {
         return c.miembros.some(m =>
-          (m.email || '').toLowerCase() === (user?.email || '').toLowerCase() &&
+          (m.email || '').toLowerCase() === userEmail &&
           (m.rolCelula || '').toLowerCase() === 'timoteo'
+        )
+      }
+      if (role === 'colider') {
+        return c.coLideres.some(col => col.id === liderId) || c.miembros.some(m =>
+          (m.email || '').toLowerCase() === userEmail &&
+          (m.rolCelula || '').toLowerCase() === 'colider'
         )
       }
       return c.liderId === liderId || c.coLideres.some(col => col.id === liderId)
