@@ -257,17 +257,31 @@ const LiderDashboard: React.FC = () => {
   ).length;
 
   // Encontrar la célula donde el usuario es líder, colíder o líder colab.
+  const userEmail = (user?.email || '').toLowerCase();
   const miCelula = celulas.find(c =>
     c.liderId === user?.id ||
     c.coLideres.some(col => col.id === user?.id) ||
-    (user?.role === 'timoteo' && c.miembros.some(m => m.email === user.email && m.rolCelula?.toLowerCase() === 'timoteo')) ||
-    (user?.role === 'colider' && c.miembros.some(m => m.email === user.email && m.rolCelula?.toLowerCase() === 'colider'))
+    c.miembros.some(m =>
+      userEmail &&
+      (m.email || '').toLowerCase() === userEmail &&
+      ['timoteo', 'colider'].includes((m.rolCelula || '').toLowerCase())
+    )
   );
 
+  const rolEnCelula = (() => {
+    if (!miCelula || !user) return null;
+    if (miCelula.liderId === user.id) return 'lider';
+    if (miCelula.coLideres.some(col => col.id === user.id)) return 'colider';
+    const miembroMatch = miCelula.miembros.find(m =>
+      userEmail && (m.email || '').toLowerCase() === userEmail
+    );
+    return (miembroMatch?.rolCelula || '').toLowerCase() || null;
+  })();
+
   // Verificar si el usuario es el líder principal
-  const isLider = miCelula?.liderId === user?.id;
-  const isColider = user?.role?.toLowerCase() === 'colider';
-  const isTimoteo = user?.role?.toLowerCase() === 'timoteo';
+  const isLider = rolEnCelula === 'lider';
+  const isColider = rolEnCelula === 'colider';
+  const isTimoteo = rolEnCelula === 'timoteo';
   const canChangeRoles = isLider || isColider || isTimoteo;
   const canDeleteMembers = isLider || isColider || isTimoteo;
   const canUpdateFormacion = isLider || isColider || isTimoteo;

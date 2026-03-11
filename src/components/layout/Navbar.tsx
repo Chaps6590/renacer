@@ -12,10 +12,17 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const [showPerfil, setShowPerfil] = useState(false);
 
-  // Detectar si el usuario es supervisor Y también líder de una célula
+  // Detectar si el usuario es supervisor Y también líder/colíder de una célula
   const isSupervisor = user?.role?.toLowerCase() === 'supervisor';
-  const esLiderDeCelula = celulas.some(c => 
-    c.liderId === user?.id || c.coLideres.some(col => col.id === user?.id)
+  const userEmail = (user?.email || '').toLowerCase();
+  const esLiderDeCelula = celulas.some(c =>
+    c.liderId === user?.id ||
+    c.coLideres.some(col => col.id === user?.id) ||
+    c.miembros.some(m =>
+      userEmail &&
+      (m.email || '').toLowerCase() === userEmail &&
+      (m.rolCelula || '').toLowerCase() === 'colider'
+    )
   );
   const tieneDualRole = isSupervisor && esLiderDeCelula;
 
@@ -51,6 +58,29 @@ export const Navbar: React.FC = () => {
     };
     return map[role?.toLowerCase() ?? ''] ?? role ?? '';
   };
+
+  const rolEnCelula = (() => {
+    if (!user) return null;
+    const miCelula = celulas.find(c =>
+      c.liderId === user.id ||
+      c.coLideres.some(col => col.id === user.id) ||
+      c.miembros.some(m =>
+        userEmail &&
+        (m.email || '').toLowerCase() === userEmail &&
+        ['timoteo', 'colider'].includes((m.rolCelula || '').toLowerCase())
+      )
+    );
+
+    if (!miCelula) return null;
+    if (miCelula.liderId === user.id) return 'lider';
+    if (miCelula.coLideres.some(col => col.id === user.id)) return 'colider';
+    const miembroMatch = miCelula.miembros.find(m =>
+      userEmail && (m.email || '').toLowerCase() === userEmail
+    );
+    return (miembroMatch?.rolCelula || '').toLowerCase() || null;
+  })();
+
+  const rolBadge = location.pathname === '/lider' && rolEnCelula ? rolEnCelula : user?.role;
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode');
     return saved === 'true' || false;
@@ -101,7 +131,7 @@ export const Navbar: React.FC = () => {
               <span className="text-gray-400 dark:text-gray-500 shrink-0 text-sm">|</span>
               <span className="text-xs sm:text-base text-gray-600 dark:text-gray-300 truncate">{user?.name}</span>
               <span className="shrink-0 px-1.5 py-0.5 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-xs font-medium ml-1">
-                {getRolLabel(user?.role)}
+                {getRolLabel(rolBadge)}
               </span>
             </div>
 
@@ -118,7 +148,7 @@ export const Navbar: React.FC = () => {
                 </button>
               )}
               <span className="px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full text-sm font-medium">
-                {getRolLabel(user?.role)}
+                {getRolLabel(rolBadge)}
               </span>
               <button onClick={toggleDarkMode} className="btn btn-secondary flex items-center gap-2 text-sm" title={isDarkMode ? 'Modo claro' : 'Modo oscuro'}>
                 {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
