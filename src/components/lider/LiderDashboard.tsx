@@ -260,7 +260,8 @@ const LiderDashboard: React.FC = () => {
   const miCelula = celulas.find(c =>
     c.liderId === user?.id ||
     c.coLideres.some(col => col.id === user?.id) ||
-    (user?.role === 'timoteo' && c.miembros.some(m => m.email === user.email && m.rolCelula?.toLowerCase() === 'timoteo'))
+    (user?.role === 'timoteo' && c.miembros.some(m => m.email === user.email && m.rolCelula?.toLowerCase() === 'timoteo')) ||
+    (user?.role === 'colider' && c.miembros.some(m => m.email === user.email && m.rolCelula?.toLowerCase() === 'colider'))
   );
 
   // Verificar si el usuario es el líder principal
