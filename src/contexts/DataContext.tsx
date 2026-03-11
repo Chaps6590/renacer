@@ -776,23 +776,15 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   };
 
   const getPendientesAsistencia = (liderId: string) => {
-    const role = (user?.role || '').toLowerCase()
     const userEmail = (user?.email || '').toLowerCase()
-    const celulasLider = celulas.filter(c => {
-      if (role === 'timoteo') {
-        return c.miembros.some(m =>
-          (m.email || '').toLowerCase() === userEmail &&
-          (m.rolCelula || '').toLowerCase() === 'timoteo'
-        )
-      }
-      if (role === 'colider') {
-        return c.coLideres.some(col => col.id === liderId) || c.miembros.some(m =>
-          (m.email || '').toLowerCase() === userEmail &&
-          (m.rolCelula || '').toLowerCase() === 'colider'
-        )
-      }
-      return c.liderId === liderId || c.coLideres.some(col => col.id === liderId)
-    });
+    const celulasLider = celulas.filter(c =>
+      c.liderId === liderId ||
+      c.coLideres.some(col => col.id === liderId) ||
+      c.miembros.some(m =>
+        (m.email || '').toLowerCase() === userEmail &&
+        ['timoteo', 'colider'].includes((m.rolCelula || '').toLowerCase())
+      )
+    );
     const idscelulas = celulasLider.map(c => c.id);
     return pendientesAsistencia.filter(p => idscelulas.includes(p.celulaId));
   };
