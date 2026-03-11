@@ -57,8 +57,14 @@ export interface Miembro {
   addedAt: Date;
   isBautizado: boolean;
   fechaBautismo?: string;
-  tieneDiscipulado: boolean;
+  tieneDiscipulado?: boolean;
   fechaDiscipulado?: string;
+  discipuladoNivel1?: boolean;
+  fechaDiscipuladoNivel1?: string;
+  discipuladoNivel2?: boolean;
+  fechaDiscipuladoNivel2?: string;
+  escuelaLiderazgo?: boolean;
+  fechaEscuelaLiderazgo?: string;
   isRegistered: boolean; // Identifica si el miembro está registrado
 }
 

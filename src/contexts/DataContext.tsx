@@ -23,7 +23,18 @@ interface DataContextType {
   addColiderToCelula: (celulaId: string, colider: CoLider) => Promise<void>;
   removeColiderFromCelula: (celulaId: string, coliderId: string) => Promise<void>;
   updateMiembroRol: (celulaId: string, miembroId: string, nuevoRol: 'miembro' | 'colider' | 'nuevo' | 'timoteo' | 'visita', email?: string) => Promise<void>;
-  updateMiembroFormacion: (celulaId: string, miembroId: string, data: { isBautizado?: boolean; tieneDiscipulado?: boolean; fechaBautismo?: string; fechaDiscipulado?: string }) => Promise<void>;
+  updateMiembroFormacion: (celulaId: string, miembroId: string, data: {
+    isBautizado?: boolean;
+    tieneDiscipulado?: boolean;
+    fechaBautismo?: string;
+    fechaDiscipulado?: string;
+    discipuladoNivel1?: boolean;
+    fechaDiscipuladoNivel1?: string;
+    discipuladoNivel2?: boolean;
+    fechaDiscipuladoNivel2?: string;
+    escuelaLiderazgo?: boolean;
+    fechaEscuelaLiderazgo?: string;
+  }) => Promise<void>;
 
   // Funciones de asistencia
   registrarAsistencia: (asistencia: AsistenciaRecord) => Promise<void>;
@@ -469,7 +480,18 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     }
   };
 
-  const updateMiembroFormacion = async (celulaId: string, miembroId: string, data: { isBautizado?: boolean; tieneDiscipulado?: boolean; fechaBautismo?: string; fechaDiscipulado?: string }) => {
+  const updateMiembroFormacion = async (celulaId: string, miembroId: string, data: {
+    isBautizado?: boolean;
+    tieneDiscipulado?: boolean;
+    fechaBautismo?: string;
+    fechaDiscipulado?: string;
+    discipuladoNivel1?: boolean;
+    fechaDiscipuladoNivel1?: string;
+    discipuladoNivel2?: boolean;
+    fechaDiscipuladoNivel2?: string;
+    escuelaLiderazgo?: boolean;
+    fechaEscuelaLiderazgo?: string;
+  }) => {
     try {
       const res = await api.updateMiembro(celulaId, miembroId, data) as any;
       const m = res.miembro || res;

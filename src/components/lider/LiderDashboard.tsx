@@ -242,9 +242,13 @@ const LiderDashboard: React.FC = () => {
   const [selectedMiembro, setSelectedMiembro] = useState<any>(null);
   const [formacionData, setFormacionData] = useState({
     isBautizado: false,
-    tieneDiscipulado: false,
     fechaBautismo: '',
-    fechaDiscipulado: ''
+    discipuladoNivel1: false,
+    fechaDiscipuladoNivel1: '',
+    discipuladoNivel2: false,
+    fechaDiscipuladoNivel2: '',
+    escuelaLiderazgo: false,
+    fechaEscuelaLiderazgo: ''
   });
 
   // Obtener pendientes de asistencia
@@ -544,12 +548,22 @@ const LiderDashboard: React.FC = () => {
     const isUserColider = rol === 'colider' && miCelula?.coLideres.some(c => c.id === miembro.id);
     if (!canUpdateFormacion || rol === 'lider' || isUserColider) return;
 
+    const legacyDiscipulado = !!miembro.tieneDiscipulado;
+    const nivel1 = miembro.discipuladoNivel1 ?? legacyDiscipulado;
+    const nivel2 = miembro.discipuladoNivel2 ?? legacyDiscipulado;
+    const fechaNivel1 = miembro.fechaDiscipuladoNivel1 || (nivel1 ? miembro.fechaDiscipulado : undefined);
+    const fechaNivel2 = miembro.fechaDiscipuladoNivel2 || (nivel2 ? miembro.fechaDiscipulado : undefined);
+
     setSelectedMiembro(miembro);
     setFormacionData({
       isBautizado: !!miembro.isBautizado,
-      tieneDiscipulado: !!miembro.tieneDiscipulado,
       fechaBautismo: toInputDate(miembro.fechaBautismo),
-      fechaDiscipulado: toInputDate(miembro.fechaDiscipulado)
+      discipuladoNivel1: !!nivel1,
+      fechaDiscipuladoNivel1: toInputDate(fechaNivel1),
+      discipuladoNivel2: !!nivel2,
+      fechaDiscipuladoNivel2: toInputDate(fechaNivel2),
+      escuelaLiderazgo: !!miembro.escuelaLiderazgo,
+      fechaEscuelaLiderazgo: toInputDate(miembro.fechaEscuelaLiderazgo)
     });
     setShowFormacionDialog(true);
   };
@@ -560,9 +574,14 @@ const LiderDashboard: React.FC = () => {
     try {
       await updateMiembroFormacion(miCelula.id, selectedMiembro.id, {
         isBautizado: formacionData.isBautizado,
-        tieneDiscipulado: formacionData.tieneDiscipulado,
+        tieneDiscipulado: formacionData.discipuladoNivel1 || formacionData.discipuladoNivel2,
         fechaBautismo: formacionData.isBautizado ? (formacionData.fechaBautismo || undefined) : undefined,
-        fechaDiscipulado: formacionData.tieneDiscipulado ? (formacionData.fechaDiscipulado || undefined) : undefined
+        discipuladoNivel1: formacionData.discipuladoNivel1,
+        fechaDiscipuladoNivel1: formacionData.discipuladoNivel1 ? (formacionData.fechaDiscipuladoNivel1 || undefined) : undefined,
+        discipuladoNivel2: formacionData.discipuladoNivel2,
+        fechaDiscipuladoNivel2: formacionData.discipuladoNivel2 ? (formacionData.fechaDiscipuladoNivel2 || undefined) : undefined,
+        escuelaLiderazgo: formacionData.escuelaLiderazgo,
+        fechaEscuelaLiderazgo: formacionData.escuelaLiderazgo ? (formacionData.fechaEscuelaLiderazgo || undefined) : undefined
       });
 
       setShowFormacionDialog(false);
@@ -1158,21 +1177,69 @@ const LiderDashboard: React.FC = () => {
                   <label className="flex items-center gap-3">
                     <input
                       type="checkbox"
-                      checked={formacionData.tieneDiscipulado}
+                      checked={formacionData.discipuladoNivel1}
                       onChange={(e) => setFormacionData(prev => ({
                         ...prev,
-                        tieneDiscipulado: e.target.checked,
-                        fechaDiscipulado: e.target.checked ? (prev.fechaDiscipulado || new Date().toISOString().slice(0, 10)) : ''
+                        discipuladoNivel1: e.target.checked,
+                        fechaDiscipuladoNivel1: e.target.checked ? (prev.fechaDiscipuladoNivel1 || new Date().toISOString().slice(0, 10)) : ''
                       }))}
                       className="w-5 h-5 text-emerald-600 border-gray-300 rounded"
                     />
-                    <span className="font-semibold text-gray-900 dark:text-white">¿Tiene discipulado?</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">Discipulado N°1</span>
                   </label>
-                  {formacionData.tieneDiscipulado && (
+                  {formacionData.discipuladoNivel1 && (
                     <input
                       type="date"
-                      value={formacionData.fechaDiscipulado}
-                      onChange={(e) => setFormacionData(prev => ({ ...prev, fechaDiscipulado: e.target.value }))}
+                      value={formacionData.fechaDiscipuladoNivel1}
+                      onChange={(e) => setFormacionData(prev => ({ ...prev, fechaDiscipuladoNivel1: e.target.value }))}
+                      className="input"
+                    />
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={formacionData.discipuladoNivel2}
+                      onChange={(e) => setFormacionData(prev => ({
+                        ...prev,
+                        discipuladoNivel2: e.target.checked,
+                        fechaDiscipuladoNivel2: e.target.checked ? (prev.fechaDiscipuladoNivel2 || new Date().toISOString().slice(0, 10)) : ''
+                      }))}
+                      className="w-5 h-5 text-emerald-600 border-gray-300 rounded"
+                    />
+                    <span className="font-semibold text-gray-900 dark:text-white">Discipulado N°2</span>
+                  </label>
+                  {formacionData.discipuladoNivel2 && (
+                    <input
+                      type="date"
+                      value={formacionData.fechaDiscipuladoNivel2}
+                      onChange={(e) => setFormacionData(prev => ({ ...prev, fechaDiscipuladoNivel2: e.target.value }))}
+                      className="input"
+                    />
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={formacionData.escuelaLiderazgo}
+                      onChange={(e) => setFormacionData(prev => ({
+                        ...prev,
+                        escuelaLiderazgo: e.target.checked,
+                        fechaEscuelaLiderazgo: e.target.checked ? (prev.fechaEscuelaLiderazgo || new Date().toISOString().slice(0, 10)) : ''
+                      }))}
+                      className="w-5 h-5 text-emerald-600 border-gray-300 rounded"
+                    />
+                    <span className="font-semibold text-gray-900 dark:text-white">Escuela de Liderazgo</span>
+                  </label>
+                  {formacionData.escuelaLiderazgo && (
+                    <input
+                      type="date"
+                      value={formacionData.fechaEscuelaLiderazgo}
+                      onChange={(e) => setFormacionData(prev => ({ ...prev, fechaEscuelaLiderazgo: e.target.value }))}
                       className="input"
                     />
                   )}
@@ -1355,16 +1422,48 @@ const LiderDashboard: React.FC = () => {
                       {`Bautizado${miembroDetalle.fechaBautismo ? ` (${formatFecha(miembroDetalle.fechaBautismo)})` : ''}`}
                     </span>
                   )}
-                  {'tieneDiscipulado' in miembroDetalle && (
-                    <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
-                      miembroDetalle.tieneDiscipulado
-                        ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300'
-                        : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
-                    }`}>
-                      {miembroDetalle.tieneDiscipulado ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                      {`Discipulado${miembroDetalle.fechaDiscipulado ? ` (${formatFecha(miembroDetalle.fechaDiscipulado)})` : ''}`}
-                    </span>
-                  )}
+                  {(() => {
+                    const legacyDiscipulado = !!miembroDetalle.tieneDiscipulado;
+                    const nivel1 = miembroDetalle.discipuladoNivel1 ?? legacyDiscipulado;
+                    const nivel2 = miembroDetalle.discipuladoNivel2 ?? legacyDiscipulado;
+                    const fechaNivel1 = miembroDetalle.fechaDiscipuladoNivel1 || (nivel1 ? miembroDetalle.fechaDiscipulado : null);
+                    const fechaNivel2 = miembroDetalle.fechaDiscipuladoNivel2 || (nivel2 ? miembroDetalle.fechaDiscipulado : null);
+
+                    return (
+                      <>
+                        {'discipuladoNivel1' in miembroDetalle || 'tieneDiscipulado' in miembroDetalle ? (
+                          <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
+                            nivel1
+                              ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300'
+                              : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
+                          }`}>
+                            {nivel1 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                            {`Discipulado N°1${fechaNivel1 ? ` (${formatFecha(fechaNivel1)})` : ''}`}
+                          </span>
+                        ) : null}
+                        {'discipuladoNivel2' in miembroDetalle || 'tieneDiscipulado' in miembroDetalle ? (
+                          <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
+                            nivel2
+                              ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300'
+                              : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
+                          }`}>
+                            {nivel2 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                            {`Discipulado N°2${fechaNivel2 ? ` (${formatFecha(fechaNivel2)})` : ''}`}
+                          </span>
+                        ) : null}
+                        {'escuelaLiderazgo' in miembroDetalle ? (
+                          <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
+                            miembroDetalle.escuelaLiderazgo
+                              ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+                              : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
+                          }`}>
+                            {miembroDetalle.escuelaLiderazgo ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                            {`Escuela de Liderazgo${miembroDetalle.fechaEscuelaLiderazgo ? ` (${formatFecha(miembroDetalle.fechaEscuelaLiderazgo)})` : ''}`}
+                          </span>
+                        ) : null}
+                      </>
+                    );
+                  })()}
                 </div>
 
                 {/* Acciones de gestión */}
