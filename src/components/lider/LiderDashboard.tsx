@@ -342,6 +342,16 @@ const LiderDashboard: React.FC = () => {
     return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
   };
 
+  const isBirthdayToday = (fechaNacimiento?: string | Date) => {
+    if (!fechaNacimiento) return false;
+    const raw = typeof fechaNacimiento === 'string' ? fechaNacimiento : fechaNacimiento.toISOString();
+    const clean = raw.slice(0, 10);
+    const [year, month, day] = clean.split('-').map(Number);
+    if (!year || !month || !day) return false;
+    const today = new Date();
+    return day === today.getDate() && month === (today.getMonth() + 1);
+  };
+
   const toInputDate = (value?: string) => {
     if (!value) return '';
     return value.slice(0, 10);
@@ -859,10 +869,12 @@ const LiderDashboard: React.FC = () => {
                   };
                   const avatarCls = avatarColor[miembro.rolCelula?.toLowerCase() ?? ''] ?? 'bg-gray-100 text-gray-600';
 
+                  const isCumpleHoy = isBirthdayToday(miembro.fechaNacimiento);
+
                   return (
                     <div
                       key={miembro.id}
-                      className="p-4 flex items-center gap-3 active:bg-gray-50 dark:active:bg-gray-700 transition-colors"
+                      className={`p-4 flex items-center gap-3 transition-colors ${isCumpleHoy ? 'bg-pink-50/70 dark:bg-pink-900/20 ring-2 ring-pink-300/70' : 'active:bg-gray-50 dark:active:bg-gray-700'}`}
                     >
                       {/* Avatar — click abre detalle */}
                       <button
@@ -887,6 +899,11 @@ const LiderDashboard: React.FC = () => {
                           <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${getRolColor(miembro.rolCelula)}`}>
                             {getRolDisplay(miembro.rolCelula)}
                           </span>
+                          {isCumpleHoy && (
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-pink-100 text-pink-700 font-semibold border border-pink-200">
+                              Cumple hoy
+                            </span>
+                          )}
                           {miembro.rolCelula?.toLowerCase() === 'visita' && 'contadorAsistencias' in miembro && (miembro.contadorAsistencias ?? 0) > 0 && (
                             <span className="px-2 py-0.5 text-xs rounded-full bg-pink-50 text-pink-700 font-semibold border border-pink-200">
                               {miembro.contadorAsistencias} {(miembro.contadorAsistencias ?? 0) === 1 ? 'asistencia' : 'asistencias'}
@@ -920,14 +937,21 @@ const LiderDashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {miembrosOrdenados.map((miembro) => (
-                      <tr key={miembro.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer" onClick={() => setMiembroDetalle(miembro)}>
+                    {miembrosOrdenados.map((miembro) => {
+                      const isCumpleHoy = isBirthdayToday(miembro.fechaNacimiento);
+                      return (
+                      <tr key={miembro.id} className={`cursor-pointer ${isCumpleHoy ? 'bg-pink-50/70 dark:bg-pink-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`} onClick={() => setMiembroDetalle(miembro)}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{miembro.name}</div>
                             {miembro.rolCelula?.toLowerCase() === 'lider' && <Crown className="w-4 h-4 text-purple-500 ml-2" />}
                             {miembro.rolCelula?.toLowerCase() === 'colider' && <Star className="w-4 h-4 text-blue-500 ml-2" />}
                             {miembro.rolCelula?.toLowerCase() === 'timoteo' && <Star className="w-4 h-4 text-orange-500 ml-2 fill-orange-200" />}
+                            {isCumpleHoy && (
+                              <span className="ml-2 px-2 py-0.5 text-[10px] font-semibold rounded-full bg-pink-100 text-pink-700 border border-pink-200">
+                                Cumple hoy
+                              </span>
+                            )}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -963,7 +987,7 @@ const LiderDashboard: React.FC = () => {
                           ) : <span className="text-sm text-gray-400">-</span>}
                         </td>
                       </tr>
-                    ))}
+                    )})}
                   </tbody>
                 </table>
               </div>
@@ -1352,7 +1376,7 @@ const LiderDashboard: React.FC = () => {
                 {/* Teléfono */}
                 {'phone' in miembroDetalle && miembroDetalle.phone ? (
                   <a
-                    href={`tel:${miembroDetalle.phone}`}
+                    href={`https://wa.me/${String(miembroDetalle.phone || '').replace(/\D/g, '')}`}
                     className="flex items-center gap-3 w-full bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-2xl px-4 py-3 text-green-700 dark:text-green-300 font-semibold active:scale-95 transition-transform"
                   >
                     <span className="w-9 h-9 rounded-full bg-green-100 dark:bg-green-800 flex items-center justify-center shrink-0">
