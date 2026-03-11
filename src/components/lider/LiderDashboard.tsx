@@ -11,7 +11,7 @@ import { NoticiasModal } from '../common/NoticiasModal';
 import { DonacionesModal } from '../common/DonacionesModal';
 import { CumpleanosModal } from '../common/CumpleanosModal';
 
-import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart, History, Phone, Mail, MapPin, X, Gift } from 'lucide-react';
+import { Users, UserPlus, Calendar, Crown, Star, Trash2, Edit, CheckCircle2, XCircle, Bell, FileText, Newspaper, Heart, History, Phone, Mail, MapPin, X, Gift, MessageCircle } from 'lucide-react';
 
 interface AddMiembroModalProps {
   isOpen: boolean;
@@ -1382,10 +1382,10 @@ const LiderDashboard: React.FC = () => {
                     className="flex items-center gap-3 w-full bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-2xl px-4 py-3 text-green-700 dark:text-green-300 font-semibold active:scale-95 transition-transform"
                   >
                     <span className="w-9 h-9 rounded-full bg-green-100 dark:bg-green-800 flex items-center justify-center shrink-0">
-                      <Phone className="w-5 h-5 text-green-600 dark:text-green-300" />
+                      <MessageCircle className="w-5 h-5 text-green-600 dark:text-green-300" />
                     </span>
                     <span className="text-base">{miembroDetalle.phone}</span>
-                    <span className="ml-auto text-xs text-green-500">Llamar</span>
+                    <span className="ml-auto text-xs text-green-500">Escribir</span>
                   </a>
                 ) : (
                   <div className="flex items-center gap-3 w-full bg-gray-50 dark:bg-gray-700/40 rounded-2xl px-4 py-3">
