@@ -5,6 +5,7 @@ import { AsistenciaRecord } from '../../types';
 import { X, Calendar, ChevronDown, ChevronUp, CheckCircle2, XCircle, Flag, MessageSquare, Users, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { parseLocalDate } from '../../utils/helpers';
 
 interface HistorialAsistenciasModalProps {
     celulaId: string;
@@ -113,13 +114,13 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                         >
                                             <div className="flex items-start sm:items-center gap-4 sm:gap-6 min-w-0">
                                                 <div className="flex flex-col items-center justify-center min-w-[70px] py-1 bg-blue-50 dark:bg-blue-900 rounded-lg text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800 font-bold group-hover:bg-blue-100 dark:group-hover:bg-blue-800 transition-colors">
-                                                    <span className="text-xs uppercase leading-none mb-1">{format(new Date(registro.date), 'MMM', { locale: es })}</span>
-                                                    <span className="text-2xl leading-none">{format(new Date(registro.date), 'dd')}</span>
+                                                    <span className="text-xs uppercase leading-none mb-1">{format(parseLocalDate(registro.date), 'MMM', { locale: es })}</span>
+                                                    <span className="text-2xl leading-none">{format(parseLocalDate(registro.date), 'dd')}</span>
                                                 </div>
 
                                                 <div className="min-w-0 flex-1">
                                                     <p className="font-bold text-gray-900 dark:text-white text-lg">
-                                                        {format(new Date(registro.date), 'EEEE, d MMMM', { locale: es })}
+                                                        {format(parseLocalDate(registro.date), 'EEEE, d MMMM', { locale: es })}
                                                     </p>
                                                     <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2 text-sm">
                                                         <span className="flex items-center gap-1.5 px-2 py-0.5 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold rounded-md border border-green-100 dark:border-green-800">

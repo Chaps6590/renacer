@@ -1,5 +1,12 @@
 // Utilidades de ayuda
 
+// Parsea una fecha (string ISO o Date) como fecha local, evitando el desfase de zona horaria UTC
+export const parseLocalDate = (date: Date | string): Date => {
+  const str = typeof date === 'string' ? date : date.toISOString();
+  const [year, month, day] = str.substring(0, 10).split('-').map(Number);
+  return new Date(year, month - 1, day);
+};
+
 export const formatDate = (date: Date | string): string => {
   const d = typeof date === 'string' ? new Date(date) : date;
   return d.toLocaleDateString('es-AR', {

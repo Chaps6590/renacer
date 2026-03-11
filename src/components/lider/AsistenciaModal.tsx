@@ -4,6 +4,7 @@ import { useData } from '../../contexts/DataContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Check, X, Save, MessageCircle, Flag, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
+import { parseLocalDate } from '../../utils/helpers';
 
 interface AsistenciaModalProps {
   celula: Celula;
@@ -34,7 +35,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
   useEffect(() => {
     const fechaSeleccionada = new Date(fecha + 'T00:00:00');
     const existente = asistencias.find(a => {
-      const fechaAsistencia = new Date(a.date);
+      const fechaAsistencia = parseLocalDate(a.date);
       return a.celulaId === celula.id &&
         fechaAsistencia.getFullYear() === fechaSeleccionada.getFullYear() &&
         fechaAsistencia.getMonth() === fechaSeleccionada.getMonth() &&
@@ -100,7 +101,7 @@ export const AsistenciaModal: React.FC<AsistenciaModalProps> = ({ celula, onClos
     const record: AsistenciaRecord = {
       id: Date.now().toString(),
       celulaId: celula.id,
-      date: new Date(fecha),
+      date: new Date(fecha + 'T00:00:00'),
       miembros: miembrosParaEnviar,
       totalPresentes: presentes,
       totalAusentes: ausentes,
