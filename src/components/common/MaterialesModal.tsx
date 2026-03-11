@@ -23,6 +23,7 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
   });
   const [archivoSeleccionado, setArchivoSeleccionado] = useState<File | null>(null);
   const [cargandoDescarga, setCargandoDescarga] = useState<string | null>(null);
+  const [cargandoSubida, setCargandoSubida] = useState(false);
   const [esGeneral, setEsGeneral] = useState(true);
   const [celulasSeleccionadas, setCelulasSeleccionadas] = useState<string[]>([]);
 
@@ -86,6 +87,7 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
     }
 
     try {
+      setCargandoSubida(true);
       const formData = new FormData();
       formData.append('archivo', archivoSeleccionado);
       formData.append('titulo', nuevoMaterial.titulo.trim());
@@ -110,10 +112,11 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
       setCelulasSeleccionadas([]);
       setEsGeneral(true);
       setMostrandoSubir(false);
-      alert('Material subido exitosamente');
     } catch (error) {
       console.error('Error al subir material:', error);
       alert('Error al subir el archivo');
+    } finally {
+      setCargandoSubida(false);
     }
   };
 
@@ -265,13 +268,34 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
                 </div>
               )}
 
+              {/* Barra de progreso de subida */}
+              {cargandoSubida && (
+                <div className="rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 p-3 flex items-center gap-3">
+                  <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-blue-800 dark:text-blue-200">Subiendo a Cloudflare R2...</p>
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">Por favor no cierres esta ventana</p>
+                  </div>
+                </div>
+              )}
+
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <button
                   onClick={handleSubirMaterial}
-                  className="btn btn-primary flex items-center justify-center gap-2 text-sm sm:text-base"
+                  disabled={cargandoSubida}
+                  className="btn btn-primary flex items-center justify-center gap-2 text-sm sm:text-base disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <Upload className="w-4 h-4" />
-                  Subir Material
+                  {cargandoSubida ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Subiendo...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4" />
+                      Subir Material
+                    </>
+                  )}
                 </button>
                 <button
                   onClick={() => {
@@ -281,7 +305,8 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
                     setCelulasSeleccionadas([]);
                     setEsGeneral(true);
                   }}
-                  className="btn btn-secondary text-sm sm:text-base"
+                  disabled={cargandoSubida}
+                  className="btn btn-secondary text-sm sm:text-base disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   Cancelar
                 </button>
