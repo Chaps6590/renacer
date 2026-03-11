@@ -269,11 +269,22 @@ class ApiService {
     });
   }
 
-  async subirMaterial(materialData: any) {
-    return this.request('/materiales', {
+  async subirMaterial(formData: FormData) {
+    // Uso de fetch directo: NO incluir Content-Type para que el browser
+    // establezca automáticamente "multipart/form-data" con el boundary correcto
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${this.baseUrl}/materiales`, {
       method: 'POST',
-      body: JSON.stringify(materialData),
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
     });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error((errorData as any).message || `HTTP error! status: ${response.status}`);
+    }
+    return response.json();
   }
 
   async eliminarMaterial(id: string) {
@@ -283,6 +294,7 @@ class ApiService {
   }
 
   async descargarMaterial(id: string) {
+    // Retorna { url, nombreArchivo } — URL pre-firmada de R2 válida 1 hora
     return this.request(`/materiales/${id}/download`, {
       method: 'GET',
     });

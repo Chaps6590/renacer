@@ -51,16 +51,16 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
       setCargandoDescarga(material.id);
 
       const res = await api.descargarMaterial(material.id) as any;
-      const materialData = res.material;
 
-      if (!materialData || !materialData.contenidoBase64) {
-        throw new Error('No se pudo obtener el contenido del archivo');
+      if (!res.url) {
+        throw new Error('No se pudo obtener la URL de descarga');
       }
 
-      // El contenidoBase64 ya viene con el prefijo "data:application/pdf;base64,..."
+      // Abrir la URL pre-firmada de R2 para descarga directa
       const link = document.createElement('a');
-      link.href = materialData.contenidoBase64;
-      link.download = materialData.nombreArchivo;
+      link.href = res.url;
+      link.download = res.nombreArchivo || material.nombreArchivo;
+      link.target = '_blank';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -86,36 +86,31 @@ export const MaterialesModal: React.FC<MaterialesModalProps> = ({ isOpen, onClos
     }
 
     try {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const contenidoBase64 = reader.result as string;
+      const formData = new FormData();
+      formData.append('archivo', archivoSeleccionado);
+      formData.append('titulo', nuevoMaterial.titulo.trim());
+      if (nuevoMaterial.descripcion.trim()) {
+        formData.append('descripcion', nuevoMaterial.descripcion.trim());
+      }
+      if (nuevoMaterial.fechaParaUsar) {
+        formData.append('fechaParaUsar', nuevoMaterial.fechaParaUsar);
+      }
+      formData.append('esGeneral', esSupervisor ? 'false' : String(esGeneral));
 
-        const materialData: any = {
-          titulo: nuevoMaterial.titulo.trim(),
-          descripcion: nuevoMaterial.descripcion.trim(),
-          nombreArchivo: archivoSeleccionado.name,
-          tipoArchivo: archivoSeleccionado.type,
-          tamanoArchivo: archivoSeleccionado.size,
-          contenidoBase64: contenidoBase64,
-          esGeneral: esSupervisor ? false : esGeneral,
-        };
+      // Agregar células si no es general
+      if ((esSupervisor || !esGeneral) && celulasSeleccionadas.length > 0) {
+        celulasSeleccionadas.forEach(id => formData.append('celulasIds', id));
+      }
 
-        // Agregar células si no es general
-        if (!materialData.esGeneral && celulasSeleccionadas.length > 0) {
-          materialData.celulasIds = celulasSeleccionadas;
-        }
+      await subirMaterial(formData);
 
-        await subirMaterial(materialData);
-
-        // Limpiar formulario
-        setNuevoMaterial({ titulo: '', descripcion: '', fechaParaUsar: '' });
-        setArchivoSeleccionado(null);
-        setCelulasSeleccionadas([]);
-        setEsGeneral(true);
-        setMostrandoSubir(false);
-        alert('Material subido exitosamente');
-      };
-      reader.readAsDataURL(archivoSeleccionado);
+      // Limpiar formulario
+      setNuevoMaterial({ titulo: '', descripcion: '', fechaParaUsar: '' });
+      setArchivoSeleccionado(null);
+      setCelulasSeleccionadas([]);
+      setEsGeneral(true);
+      setMostrandoSubir(false);
+      alert('Material subido exitosamente');
     } catch (error) {
       console.error('Error al subir material:', error);
       alert('Error al subir el archivo');

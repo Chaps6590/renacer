@@ -49,7 +49,7 @@ interface DataContextType {
   eliminarNoticia: (id: string) => Promise<void>;
 
   // Funciones de materiales
-  subirMaterial: (material: Omit<MaterialCelula, 'id' | 'fechaSubida'>) => Promise<void>;
+  subirMaterial: (formData: FormData) => Promise<void>;
   eliminarMaterial: (id: string) => Promise<void>;
 
   // Funciones de donaciones
@@ -710,18 +710,18 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   };
 
   // Funciones de materiales
-  const subirMaterial = async (material: Omit<MaterialCelula, 'id' | 'fechaSubida'>) => {
+  const subirMaterial = async (formData: FormData) => {
     try {
-      const res = await api.subirMaterial(material) as any;
+      const res = await api.subirMaterial(formData) as any;
       const m = res.material || res;
       const nuevoMaterial: MaterialCelula = {
         id: m.id,
         titulo: m.titulo,
         descripcion: m.descripcion,
-        archivoUrl: m.nombreArchivo,
+        archivoUrl: m.archivoUrl || null,
         nombreArchivo: m.nombreArchivo,
         fechaSubida: new Date(m.fechaSubida),
-        subidoPor: m.subidoPorId || '',
+        subidoPor: m.subidoPor || m.subidoPorId || '',
         activo: m.activo
       };
       setMateriales([...materiales, nuevoMaterial]);
