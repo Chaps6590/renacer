@@ -275,11 +275,14 @@ export const HistorialAsistenciasModal: React.FC<HistorialAsistenciasModalProps>
                                                                                     <span className="text-[10px] font-bold uppercase text-gray-400 dark:text-gray-500">Prioridad {m.prioridadAnotacion}</span>
                                                                                 </div>
                                                                             )}
-                                                                            {m.resuelta && (
+                                                                            {(m.resuelta || (m as any).resueltaPor?.name || (m as any).resueltaPorNombre) && (
                                                                                 <div className="flex items-center gap-1 mt-2">
                                                                                     <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                                                                                     <span className="text-[10px] font-bold uppercase text-emerald-600 dark:text-emerald-400">
-                                                                                        Atendida{(m as any).resueltaPor?.name ? ` por ${(m as any).resueltaPor.name}` : ''}
+                                                                                        {(() => {
+                                                                                            const resueltaPorNombre = (m as any).resueltaPor?.name || (m as any).resueltaPorNombre;
+                                                                                            return `Atendida${resueltaPorNombre ? ` por ${resueltaPorNombre}` : ''}`;
+                                                                                        })()}
                                                                                     </span>
                                                                                 </div>
                                                                             )}
