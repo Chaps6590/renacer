@@ -432,8 +432,10 @@ const LiderDashboard: React.FC = () => {
       }
 
       try {
-        // Si es colíder, usar removeColiderFromCelula, si no, usar removeMiembroFromCelula
-        if (selectedMiembro.rolCelula === 'colider') {
+        // Si es colíder USER (está en coLideres), usar removeColiderFromCelula
+        // Si es miembro con rolCelula='colider', usar removeMiembroFromCelula
+        const isUserColider = miCelula.coLideres.some(c => c.id === selectedMiembro.id);
+        if (selectedMiembro.rolCelula === 'colider' && isUserColider) {
           await removeColiderFromCelula(miCelula.id, selectedMiembro.id);
         } else {
           await removeMiembroFromCelula(miCelula.id, selectedMiembro.id);
@@ -1343,11 +1345,13 @@ const LiderDashboard: React.FC = () => {
                 {/* Acciones de gestión */}
                 {(canChangeRoles || canDeleteMembers || canUpdateFormacion) && (() => {
                   const rolDetalle = (miembroDetalle.rolCelula || '').toLowerCase();
-                  const canEditThisDetalle = canChangeRoles && rolDetalle !== 'lider' && rolDetalle !== 'colider';
+                  // Un co-líder USER viene de la relación coLideres (no es un Miembro); bloquear edición via ruta miembro
+                  const isUserColiderDetalle = rolDetalle === 'colider' && miCelula.coLideres.some(c => c.id === miembroDetalle.id);
+                  const canEditThisDetalle = canChangeRoles && rolDetalle !== 'lider' && !isUserColiderDetalle;
                   const isLiderPrincipalDetalle = miembroDetalle.id === miCelula.liderId;
                   const canDeleteByRole = isTimoteo ? ['nuevo', 'visita', 'miembro'].includes(rolDetalle) : true;
                   const canDeleteThisDetalle = canDeleteMembers && !isLiderPrincipalDetalle && miembroDetalle.id !== user?.id && canDeleteByRole;
-                  const canEditFormacionDetalle = canUpdateFormacion && rolDetalle !== 'lider' && rolDetalle !== 'colider';
+                  const canEditFormacionDetalle = canUpdateFormacion && rolDetalle !== 'lider' && !isUserColiderDetalle;
                   return (
                     <div className="flex gap-3">
                       <button
