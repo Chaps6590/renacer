@@ -358,7 +358,14 @@ const LiderDashboard: React.FC = () => {
   };
 
   // Ordenar miembros: Líder principal, Colíderes, Miembros, Nuevos
-  // Evitamos duplicados si un miembro tiene rol 'colider' o 'lider' pero ya está arriba
+  // Evitamos duplicados cuando un colíder existe en coLideres y también en miembros.
+  const coliderIds = new Set((miCelula?.coLideres || []).map(c => c.id));
+  const coliderEmails = new Set(
+    (miCelula?.coLideres || [])
+      .map(c => (c.email || '').trim().toLowerCase())
+      .filter(Boolean)
+  );
+
   const miembrosOrdenados = miCelula ? [
     // Líder principal (usar datos desde miCelula directamente)
     {
@@ -379,10 +386,13 @@ const LiderDashboard: React.FC = () => {
       tieneDiscipulado: true // Los colíderes siempre tienen discipulado
     })),
     // Otros miembros que no sean el líder ni los colíderes arriba
-    ...miCelula.miembros.filter(m =>
-      m.id !== miCelula.liderId &&
-      !miCelula.coLideres.some(col => col.id === m.id)
-    ).sort((a, b) => {
+    ...miCelula.miembros.filter(m => {
+      const emailMiembro = (m.email || '').trim().toLowerCase();
+      const estaEnColideresPorId = coliderIds.has(m.id);
+      const estaEnColideresPorEmail = !!emailMiembro && coliderEmails.has(emailMiembro);
+
+      return m.id !== miCelula.liderId && !estaEnColideresPorId && !estaEnColideresPorEmail;
+    }).sort((a, b) => {
       // Orden por nivel: Líder Colab. > Miembro > Nuevo
       const priority: Record<string, number> = { TIMOTEO: 1, MIEMBRO: 2, NUEVO: 3 };
       const pA = priority[(a.rolCelula || 'nuevo').toUpperCase()] || 4;

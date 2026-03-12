@@ -458,7 +458,23 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       const payload: any = { rolCelula: nuevoRol };
       if (email !== undefined) payload.email = email;
       const res = await api.updateMiembro(celulaId, miembroId, payload) as any;
+      // Cuando backend promociona a colíder, elimina/inhabilita el miembro para evitar duplicados.
+      if (res?.removedMiembroId) {
+        setCelulas(celulas.map(c => {
+          if (c.id === celulaId) {
+            return {
+              ...c,
+              miembros: c.miembros.filter(miembro => miembro.id !== res.removedMiembroId)
+            };
+          }
+          return c;
+        }));
+        return;
+      }
+
       const m = res.miembro || res;
+      if (!m) return;
+
       const miembroActualizado: Miembro = {
         ...m,
         name: m.nombre,
