@@ -522,6 +522,7 @@ const LiderDashboard: React.FC = () => {
       return;
     }
 
+    const isUserColiderSeleccionado = miCelula.coLideres.some(c => c.id === selectedMiembro.id);
     const miembroActual = miCelula.miembros.find(m => m.id === selectedMiembro.id);
     const emailMiembro = String(miembroActual?.email ?? selectedMiembro.email ?? '')
       .trim()
@@ -549,6 +550,42 @@ const LiderDashboard: React.FC = () => {
     }
 
     try {
+      // Caso especial: colíder que vive en tabla users/coLideres (no en miembros).
+      if (isUserColiderSeleccionado) {
+        if (!isLider) {
+          setDeleteError('Solo el líder principal puede descender a un colíder.');
+          setTimeout(() => setDeleteError(null), 6000);
+          return;
+        }
+
+        if (newRole === 'colider') {
+          setShowRoleDialog(false);
+          setSelectedMiembro(null);
+          return;
+        }
+
+        await removeColiderFromCelula(miCelula.id, selectedMiembro.id);
+
+        const rolDestino = (['miembro', 'nuevo', 'visita', 'timoteo'].includes(newRole) ? newRole : 'miembro') as 'miembro' | 'nuevo' | 'visita' | 'timoteo';
+
+        await addMiembroToCelula(miCelula.id, {
+          id: `member-${Date.now()}`,
+          name: (selectedMiembro.name || '').trim() || 'Sin nombre',
+          phone: (selectedMiembro.phone || '').trim() || '-',
+          email: emailMiembro || undefined,
+          fechaNacimiento: selectedMiembro.fechaNacimiento || new Date().toISOString().slice(0, 10),
+          isBautizado: true,
+          tieneDiscipulado: true,
+          isRegistered: true,
+          rolCelula: rolDestino,
+          addedAt: new Date()
+        } as any);
+
+        setShowRoleDialog(false);
+        setSelectedMiembro(null);
+        return;
+      }
+
       await updateMiembroRol(miCelula.id, selectedMiembro.id, newRole as any, emailParaActualizar);
       setShowRoleDialog(false);
       setSelectedMiembro(null);
@@ -1507,7 +1544,7 @@ const LiderDashboard: React.FC = () => {
                   const rolDetalle = (miembroDetalle.rolCelula || '').toLowerCase();
                   // Un co-líder USER viene de la relación coLideres (no es un Miembro); bloquear edición via ruta miembro
                   const isUserColiderDetalle = rolDetalle === 'colider' && miCelula.coLideres.some(c => c.id === miembroDetalle.id);
-                  const canEditThisDetalle = canChangeRoles && rolDetalle !== 'lider' && !isUserColiderDetalle;
+                  const canEditThisDetalle = canChangeRoles && rolDetalle !== 'lider' && (!isUserColiderDetalle || isLider);
                   const isLiderPrincipalDetalle = miembroDetalle.id === miCelula.liderId;
                   const canDeleteByRole = isTimoteo ? ['nuevo', 'visita', 'miembro'].includes(rolDetalle) : true;
                   const canDeleteThisDetalle = canDeleteMembers && !isLiderPrincipalDetalle && miembroDetalle.id !== user?.id && canDeleteByRole && !isUserColiderDetalle;
