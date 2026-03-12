@@ -568,12 +568,27 @@ const LiderDashboard: React.FC = () => {
 
         const rolDestino = (['miembro', 'nuevo', 'visita', 'timoteo'].includes(newRole) ? newRole : 'miembro') as 'miembro' | 'nuevo' | 'visita' | 'timoteo';
 
+        const telefonoColider = (selectedMiembro.phone || '').trim();
+        const fechaNacimientoColider = selectedMiembro.fechaNacimiento || '';
+
+        if (!telefonoColider || telefonoColider === '-') {
+          setDeleteError('El colíder no tiene teléfono cargado. Editalo como líder y luego intentá descenderlo.');
+          setTimeout(() => setDeleteError(null), 6000);
+          return;
+        }
+
+        if (!fechaNacimientoColider) {
+          setDeleteError('El colíder no tiene fecha de nacimiento cargada. Editalo como líder y luego intentá descenderlo.');
+          setTimeout(() => setDeleteError(null), 6000);
+          return;
+        }
+
         await addMiembroToCelula(miCelula.id, {
           id: `member-${Date.now()}`,
           name: (selectedMiembro.name || '').trim() || 'Sin nombre',
-          phone: (selectedMiembro.phone || '').trim() || '-',
+          phone: telefonoColider,
           email: emailMiembro || undefined,
-          fechaNacimiento: selectedMiembro.fechaNacimiento || new Date().toISOString().slice(0, 10),
+          fechaNacimiento: fechaNacimientoColider,
           isBautizado: true,
           tieneDiscipulado: true,
           isRegistered: true,
