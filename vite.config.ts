@@ -10,7 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png'],
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,svg,woff,woff2}'],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*\.com\/.*/i,
@@ -29,15 +30,15 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'Renacer App',
-        short_name: 'Renacer',
+        name: 'Kairos',
+        short_name: 'Kairos',
         start_url: '/',
         scope: '/',
         display: 'standalone',
         display_override: ['standalone', 'minimal-ui', 'browser'],
-        background_color: '#f0f9ff',
-        theme_color: '#2563eb',
-        description: 'App de gestión para Renacer',
+        background_color: '#07101f',
+        theme_color: '#34d399',
+        description: 'Kairos · Plataforma de gestión ministerial',
         orientation: 'portrait-primary',
         icons: [
           {
