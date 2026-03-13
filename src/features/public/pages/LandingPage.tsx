@@ -37,9 +37,9 @@ const features = [
 ];
 
 const roles = [
-  { color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', icon: Building2, label: 'Iglesia', desc: 'Entidad principal con configuración propia, plan y administración independiente.' },
-  { color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'bg-cyan-500/10', icon: Shield, label: 'Administrador de iglesia', desc: 'Usuario responsable de configurar personal, permisos, supervisores y recursos internos.' },
-  { color: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/10', icon: Users, label: 'Usuarios y células', desc: 'Pastores, supervisores, líderes, colíderes, timoteos y miembros bajo una estructura aislada por tenant.' },
+  { color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', icon: Building2, label: 'Iglesia', desc: 'Casa espiritual con visión propia, cobertura pastoral y administración local para su crecimiento.' },
+  { color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'bg-cyan-500/10', icon: Shield, label: 'Administrador de iglesia', desc: 'Responsable de organizar usuarios, permisos, equipos y recursos para sostener la operación diaria.' },
+  { color: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/10', icon: Users, label: 'Usuarios y células', desc: 'Estructura basada en Plan Felipe: pastor, líder de red, supervisor, líder de célula y miembros.' },
 ];
 
 const steps = [
@@ -163,52 +163,53 @@ export const LandingPage: React.FC = () => {
 
         {/* Estructura por iglesia */}
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <div className="grid gap-10 sm:gap-14 lg:grid-cols-[1fr_1fr]">
+          <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 shadow-2xl shadow-[#020712]/30 backdrop-blur-sm sm:p-8 lg:p-10">
+            <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:gap-10">
             <div className="flex flex-col justify-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-400">Fase siguiente</p>
-              <h2 className="mt-3 text-2xl font-bold text-white sm:text-4xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-300 sm:text-sm">Fase siguiente</p>
+              <h2 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-4xl">
                 Estructura prevista para cada iglesia
               </h2>
-              <p className="mt-4 text-sm leading-7 text-slate-400 sm:text-base">
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300/90 sm:text-base">
                 Cada iglesia que se sume a Kairos tendrá su propio espacio aislado con administración independiente, jerarquía de roles y datos completamente separados del resto de las iglesias.
               </p>
-              <div className="mt-6 rounded-2xl border border-cyan-500/20 bg-gradient-to-b from-cyan-500/15 to-slate-900/40 p-4 sm:p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Fundamento · Plan Felipe</p>
-                <div className="mt-4 rounded-xl border border-cyan-300/15 bg-slate-950/30 p-3 sm:p-4">
+              <div className="mt-6 rounded-2xl border border-cyan-400/20 bg-gradient-to-br from-cyan-500/12 via-[#071626]/70 to-[#091321]/80 p-4 shadow-lg shadow-cyan-950/20 sm:p-5">
+                <p className="inline-flex rounded-full border border-cyan-300/25 bg-cyan-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">Fundamento · Plan Felipe</p>
+                <div className="mt-4 rounded-xl border border-cyan-300/15 bg-[#071629]/65 p-3 sm:p-4">
                   {planFelipeLevels.map((level, idx) => (
                     <div
                       key={level}
-                      className="relative pb-3 last:pb-0"
-                      style={{ paddingLeft: `${idx * 18 + 28}px` }}
+                      className="relative pb-2.5 last:pb-0"
+                      style={{ paddingLeft: `${idx * 16 + 24}px` }}
                     >
                       {idx > 0 && (
                         <>
                           <span
-                            className="absolute w-px bg-cyan-300/40"
-                            style={{ left: `${idx * 18 + 10}px`, top: '-0.45rem', height: '1.05rem' }}
+                            className="absolute w-px bg-cyan-200/40"
+                            style={{ left: `${idx * 16 + 8}px`, top: '-0.32rem', height: '0.9rem' }}
                             aria-hidden="true"
                           />
                           <span
-                            className="absolute h-px bg-cyan-300/40"
-                            style={{ left: `${idx * 18 + 10}px`, top: '0.6rem', width: '14px' }}
+                            className="absolute h-px bg-cyan-200/40"
+                            style={{ left: `${idx * 16 + 8}px`, top: '0.65rem', width: '12px' }}
                             aria-hidden="true"
                           />
                           <span
-                            className="absolute h-1.5 w-1.5 rounded-full bg-cyan-300/70"
-                            style={{ left: `${idx * 18 + 8}px`, top: '0.48rem' }}
+                            className="absolute h-1.5 w-1.5 rounded-full bg-cyan-200/80"
+                            style={{ left: `${idx * 16 + 6}px`, top: '0.52rem' }}
                             aria-hidden="true"
                           />
                         </>
                       )}
                       {idx === 0 && (
                         <span
-                          className="absolute h-2 w-2 rounded-full bg-cyan-300/80 shadow-[0_0_12px_rgba(103,232,249,0.45)]"
-                          style={{ left: '8px', top: '0.42rem' }}
+                          className="absolute h-2 w-2 rounded-full bg-cyan-200/90 shadow-[0_0_12px_rgba(103,232,249,0.5)]"
+                          style={{ left: '6px', top: '0.45rem' }}
                           aria-hidden="true"
                         />
                       )}
-                      <div className="rounded-lg border border-cyan-300/20 bg-slate-900/60 px-3 py-2.5">
-                        <span className="text-sm font-semibold text-slate-100">{level}</span>
+                      <div className="rounded-lg border border-cyan-200/20 bg-[#0a1b30]/70 px-3 py-2.5 shadow-sm shadow-cyan-950/20">
+                        <span className="text-sm font-semibold text-slate-100/95">{level}</span>
                       </div>
                     </div>
                   ))}
@@ -217,15 +218,18 @@ export const LandingPage: React.FC = () => {
             </div>
             <div className="space-y-3 sm:space-y-4">
               {roles.map((r) => (
-                <div key={r.label} className={`rounded-2xl border ${r.border} ${r.bg} p-4 sm:p-5`}>
-                  <div className={`mb-2 flex items-center gap-2 font-semibold ${r.color}`}>
-                    <r.icon className="h-5 w-5" />
-                    <span>{r.label}</span>
+                <div key={r.label} className={`rounded-2xl border ${r.border} ${r.bg} p-4 transition duration-300 hover:-translate-y-0.5 hover:border-white/25 sm:p-5`}>
+                  <div className={`mb-3 flex items-center gap-3 font-semibold ${r.color}`}>
+                    <span className={`inline-flex rounded-lg border ${r.border} bg-white/5 p-2`}>
+                      <r.icon className="h-4 w-4" />
+                    </span>
+                    <span className="text-xl">{r.label}</span>
                   </div>
-                  <p className="text-sm text-slate-400">{r.desc}</p>
+                  <p className="text-sm leading-7 text-slate-300/85">{r.desc}</p>
                 </div>
               ))}
             </div>
+          </div>
           </div>
         </section>
 
