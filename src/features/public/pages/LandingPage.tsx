@@ -1,6 +1,8 @@
 import React from 'react';
-import { ArrowRight, Building2, ChevronRight, Shield, Users, Zap } from 'lucide-react';
+import { ArrowRight, Building2, ChevronRight, Shield, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import kairosDestello from '../../../assets/images/KairosDestello.png';
+import kairosNombre from '../../../assets/images/KairosNombre.png';
 import { AccessRequestForm } from '../components/AccessRequestForm';
 import { ParticlesBackground } from '../components/ParticlesBackground';
 
@@ -65,10 +67,10 @@ export const LandingPage: React.FC = () => {
         <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#07101f]/80 backdrop-blur-xl">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-400 shadow-lg shadow-emerald-500/20">
-                <Zap className="h-5 w-5 text-slate-900" />
+              <div className="flex h-9 w-9 items-center justify-center">
+                <img src={kairosDestello} alt="Kairos" className="h-9 w-9 object-contain drop-shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
               </div>
-              <span className="text-lg font-bold tracking-tight text-white">Kairos</span>
+              <img src={kairosNombre} alt="Kairos" className="h-6 object-contain brightness-0 invert" />
             </div>
             <div className="flex items-center gap-3">
               <a
@@ -91,7 +93,21 @@ export const LandingPage: React.FC = () => {
         {/* Hero */}
         <section className="mx-auto max-w-7xl px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pt-28">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-400">
+            {/* Logo hero */}
+            <div className="flex flex-col items-center gap-4">
+              <img
+                src={kairosDestello}
+                alt="Kairos"
+                className="h-24 w-24 object-contain drop-shadow-[0_0_40px_rgba(52,211,153,0.5)] sm:h-28 sm:w-28"
+              />
+              <img
+                src={kairosNombre}
+                alt="Kairos"
+                className="h-10 object-contain brightness-0 invert sm:h-12"
+              />
+            </div>
+
+            <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-400">
               <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
               Plataforma Multi-Iglesia · En construcción activa
             </div>
@@ -216,8 +232,10 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-white/[0.06] py-8 text-center text-sm text-slate-600">
-          <p>© {new Date().getFullYear()} Kairos · Plataforma de gestión ministerial</p>
+        <footer className="border-t border-white/[0.06] py-10 text-center">
+          <img src={kairosDestello} alt="Kairos" className="mx-auto mb-3 h-10 w-10 object-contain opacity-60" />
+          <img src={kairosNombre} alt="Kairos" className="mx-auto mb-4 h-5 object-contain brightness-0 invert opacity-40" />
+          <p className="text-sm text-slate-600">© {new Date().getFullYear()} Kairos · Plataforma de gestión ministerial</p>
         </footer>
       </div>
     </div>
