@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowRight, Building2, ChevronRight, Shield, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import kairosDestello from '../../../assets/images/KairosDestello.png';
@@ -37,11 +37,11 @@ const features = [
 ];
 
 const roles = [
-  { color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', icon: Building2, label: 'Pastor principal', desc: 'Guía la visión espiritual de toda la iglesia: dirección, enseñanza, estrategia de crecimiento y supervisión general.' },
-  { color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'bg-cyan-500/10', icon: Shield, label: 'Líderes generales', desc: 'Coordinan áreas grandes del ministerio, entrenan líderes y sostienen la visión pastoral. Referencia: 1 líder general puede acompañar 3 a 5 redes.' },
-  { color: 'text-sky-400', border: 'border-sky-500/20', bg: 'bg-sky-500/10', icon: Users, label: 'Líderes de red', desc: 'Dan seguimiento a supervisores, realizan reuniones de liderazgo y monitorean el crecimiento. Referencia: 1 red puede tener 4 a 6 supervisores.' },
-  { color: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/10', icon: Shield, label: 'Supervisores', desc: 'Acompañan a los líderes de célula: cuidan, visitan, ayudan en problemas y capacitan. Referencia: 1 supervisor puede supervisar 4 a 5 células.' },
-  { color: 'text-orange-300', border: 'border-orange-400/20', bg: 'bg-orange-400/10', icon: Users, label: 'Líder de célula', desc: 'Dirige el grupo pequeño en casa, discipula, cuida y evangeliza. Regla común: 10 a 12 personas; al crecer, la célula se multiplica.' },
+  { key: 'pastor', color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', glow: 'shadow-[0_0_28px_rgba(16,185,129,0.26)] ring-1 ring-emerald-300/35', icon: Building2, label: 'Pastor principal', desc: 'Guía la visión espiritual de toda la iglesia: dirección, enseñanza, estrategia de crecimiento y supervisión general.' },
+  { key: 'generales', color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'bg-cyan-500/10', glow: 'shadow-[0_0_28px_rgba(34,211,238,0.22)] ring-1 ring-cyan-300/35', icon: Shield, label: 'Líderes generales', desc: 'Coordinan áreas grandes del ministerio, entrenan líderes y sostienen la visión pastoral. Referencia: 1 líder general puede acompañar 3 a 5 redes.' },
+  { key: 'red', color: 'text-sky-400', border: 'border-sky-500/20', bg: 'bg-sky-500/10', glow: 'shadow-[0_0_28px_rgba(56,189,248,0.2)] ring-1 ring-sky-300/35', icon: Users, label: 'Líderes de red', desc: 'Dan seguimiento a supervisores, realizan reuniones de liderazgo y monitorean el crecimiento. Referencia: 1 red puede tener 4 a 6 supervisores.' },
+  { key: 'supervisores', color: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/10', glow: 'shadow-[0_0_28px_rgba(245,158,11,0.22)] ring-1 ring-amber-300/35', icon: Shield, label: 'Supervisores', desc: 'Acompañan a los líderes de célula: cuidan, visitan, ayudan en problemas y capacitan. Referencia: 1 supervisor puede supervisar 4 a 5 células.' },
+  { key: 'celula', color: 'text-orange-300', border: 'border-orange-400/20', bg: 'bg-orange-400/10', glow: 'shadow-[0_0_28px_rgba(251,146,60,0.22)] ring-1 ring-orange-300/35', icon: Users, label: 'Líder de célula', desc: 'Dirige el grupo pequeño en casa, discipula, cuida y evangeliza. Regla común: 10 a 12 personas; al crecer, la célula se multiplica.' },
 ];
 
 const steps = [
@@ -53,15 +53,17 @@ const steps = [
 ];
 
 const planFelipeLevels = [
-  'Iglesia',
-  'Pastor',
-  'Líder de Red',
-  'Supervisor',
-  'Líder de Célula',
-  'Miembros',
+  { label: 'Iglesia', roleKey: 'pastor' },
+  { label: 'Pastor principal', roleKey: 'pastor' },
+  { label: 'Líderes generales', roleKey: 'generales' },
+  { label: 'Líderes de red', roleKey: 'red' },
+  { label: 'Supervisores', roleKey: 'supervisores' },
+  { label: 'Líder de célula', roleKey: 'celula' },
 ];
 
 export const LandingPage: React.FC = () => {
+  const [hoveredRoleKey, setHoveredRoleKey] = useState<string | null>(null);
+
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#07101f] text-white">
       <ParticlesBackground />
@@ -175,52 +177,68 @@ export const LandingPage: React.FC = () => {
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300/90 sm:text-base">
                 Esta estructura se fundamenta en el Plan Felipe: una cadena de liderazgo clara que ordena el cuidado pastoral, el discipulado y la multiplicación de células en cada iglesia.
               </p>
-              <div className="mt-6 rounded-2xl border border-cyan-400/20 bg-gradient-to-br from-cyan-500/12 via-[#071626]/70 to-[#091321]/80 p-4 shadow-lg shadow-cyan-950/20 sm:p-5">
-                <p className="inline-flex rounded-full border border-cyan-300/25 bg-cyan-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">Fundamento · Plan Felipe</p>
-                <div className="mt-4 rounded-xl border border-cyan-300/15 bg-[#071629]/65 p-3 sm:p-4">
-                  {planFelipeLevels.map((level, idx) => (
-                    <div
-                      key={level}
-                      className="relative pb-2.5 last:pb-0"
-                      style={{ paddingLeft: `${idx * 16 + 24}px` }}
-                    >
-                      {idx > 0 && (
-                        <>
+              <div className="mt-6 rounded-2xl border border-cyan-300/35 bg-gradient-to-br from-cyan-400/18 via-[#0b2036]/75 to-[#0a1a2e]/85 p-4 shadow-xl shadow-cyan-900/30 sm:p-5">
+                <p className="inline-flex rounded-full border border-cyan-200/35 bg-cyan-300/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100">Fundamento · Plan Felipe</p>
+                <div className="mt-4 rounded-xl border border-cyan-200/25 bg-[#0a2138]/75 p-3 sm:p-4">
+                  {planFelipeLevels.map((level, idx) => {
+                    const isActive = hoveredRoleKey !== null && hoveredRoleKey === level.roleKey;
+
+                    return (
+                      <div
+                        key={level.label}
+                        className={`relative pb-2.5 last:pb-0 ${level.roleKey ? 'cursor-pointer' : ''}`}
+                        style={{ paddingLeft: `${idx * 16 + 24}px` }}
+                        onMouseEnter={() => setHoveredRoleKey(level.roleKey)}
+                        onMouseLeave={() => setHoveredRoleKey(null)}
+                        onFocus={() => setHoveredRoleKey(level.roleKey)}
+                        onBlur={() => setHoveredRoleKey(null)}
+                        tabIndex={level.roleKey ? 0 : -1}
+                      >
+                        {idx > 0 && (
+                          <>
+                            <span
+                              className={`absolute w-px ${isActive ? 'bg-white/90 shadow-[0_0_10px_rgba(255,255,255,0.95)]' : 'bg-cyan-200/40'}`}
+                              style={{ left: `${idx * 16 + 8}px`, top: '-0.32rem', height: '0.9rem' }}
+                              aria-hidden="true"
+                            />
+                            <span
+                              className={`absolute h-px ${isActive ? 'bg-white/90 shadow-[0_0_10px_rgba(255,255,255,0.95)]' : 'bg-cyan-200/40'}`}
+                              style={{ left: `${idx * 16 + 8}px`, top: '0.65rem', width: '12px' }}
+                              aria-hidden="true"
+                            />
+                            <span
+                              className={`absolute h-1.5 w-1.5 rounded-full ${isActive ? 'bg-white shadow-[0_0_12px_rgba(255,255,255,1)]' : 'bg-cyan-200/80'}`}
+                              style={{ left: `${idx * 16 + 6}px`, top: '0.52rem' }}
+                              aria-hidden="true"
+                            />
+                          </>
+                        )}
+                        {idx === 0 && (
                           <span
-                            className="absolute w-px bg-cyan-200/40"
-                            style={{ left: `${idx * 16 + 8}px`, top: '-0.32rem', height: '0.9rem' }}
+                            className={`absolute h-2 w-2 rounded-full ${isActive ? 'bg-white shadow-[0_0_14px_rgba(255,255,255,1)]' : 'bg-cyan-200/90 shadow-[0_0_12px_rgba(103,232,249,0.5)]'}`}
+                            style={{ left: '6px', top: '0.45rem' }}
                             aria-hidden="true"
                           />
-                          <span
-                            className="absolute h-px bg-cyan-200/40"
-                            style={{ left: `${idx * 16 + 8}px`, top: '0.65rem', width: '12px' }}
-                            aria-hidden="true"
-                          />
-                          <span
-                            className="absolute h-1.5 w-1.5 rounded-full bg-cyan-200/80"
-                            style={{ left: `${idx * 16 + 6}px`, top: '0.52rem' }}
-                            aria-hidden="true"
-                          />
-                        </>
-                      )}
-                      {idx === 0 && (
-                        <span
-                          className="absolute h-2 w-2 rounded-full bg-cyan-200/90 shadow-[0_0_12px_rgba(103,232,249,0.5)]"
-                          style={{ left: '6px', top: '0.45rem' }}
-                          aria-hidden="true"
-                        />
-                      )}
-                      <div className="rounded-lg border border-cyan-200/20 bg-[#0a1b30]/70 px-3 py-2.5 shadow-sm shadow-cyan-950/20">
-                        <span className="text-sm font-semibold text-slate-100/95">{level}</span>
+                        )}
+                        <div
+                          className={`rounded-lg border border-cyan-200/30 bg-[#0c233d]/78 px-3 py-2.5 shadow-sm shadow-cyan-900/30 transition duration-200 ${isActive ? 'border-white/90 bg-[#183a5d] shadow-[0_0_26px_rgba(255,255,255,0.55),0_0_14px_rgba(56,189,248,0.45)]' : ''}`}
+                        >
+                          <span className={`text-sm font-semibold ${isActive ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.95)]' : 'text-slate-100/95'}`}>{level.label}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
             <div className="space-y-2.5 sm:space-y-3">
               {roles.map((r) => (
-                <div key={r.label} className={`rounded-xl border ${r.border} ${r.bg} p-3 transition duration-300 hover:-translate-y-0.5 hover:border-white/25 sm:p-3.5`}>
+                <div
+                  key={r.label}
+                  className={`rounded-xl border ${r.border} ${r.bg} p-3 transition duration-300 hover:-translate-y-0.5 hover:border-white/25 sm:p-3.5 ${hoveredRoleKey === r.key ? `${r.glow} border-white/85 bg-white/[0.14] shadow-[0_0_34px_rgba(255,255,255,0.28),0_0_18px_rgba(255,255,255,0.22)] -translate-y-0.5` : ''}`}
+                  onMouseEnter={() => setHoveredRoleKey(r.key)}
+                  onMouseLeave={() => setHoveredRoleKey(null)}
+                >
                   <div className={`mb-2 flex items-center gap-2.5 font-semibold ${r.color}`}>
                     <span className={`inline-flex rounded-md border ${r.border} bg-white/5 p-1.5`}>
                       <r.icon className="h-3.5 w-3.5" />
