@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Building2, Mail, MapPin, Phone, Send, ShieldCheck, Users } from 'lucide-react';
 import { api } from '../../../services/api';
 import { AccessRequestPayload } from '../../../types';
@@ -8,7 +8,7 @@ const initialForm: AccessRequestPayload = {
   responsableNombre: '',
   responsableEmail: '',
   responsableTelefono: '',
-  pais: '',
+  pais: 'Argentina',
   ciudad: '',
   cantidadCelulas: undefined,
   cantidadUsuarios: undefined,
@@ -17,6 +17,8 @@ const initialForm: AccessRequestPayload = {
 
 export const AccessRequestForm: React.FC = () => {
   const [formData, setFormData] = useState<AccessRequestPayload>(initialForm);
+  const [cityOptions, setCityOptions] = useState<string[]>([]);
+  const [citySearch, setCitySearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -46,6 +48,52 @@ export const AccessRequestForm: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const query = citySearch.trim();
+
+    if (query.length < 2) {
+      setCityOptions([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `https://apis.datos.gob.ar/georef/api/localidades?nombre=${encodeURIComponent(query)}&max=30&campos=nombre,provincia`,
+          { signal: controller.signal }
+        );
+
+        if (!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+        const localidades = Array.isArray(data?.localidades) ? data.localidades : [];
+
+        const formatted = localidades
+          .map((item: any) => {
+            const nombre = item?.nombre?.trim();
+            const provincia = item?.provincia?.nombre?.trim();
+            if (!nombre) return null;
+            return provincia ? `${nombre}, ${provincia}` : nombre;
+          })
+          .filter(Boolean);
+
+        setCityOptions(Array.from(new Set(formatted)) as string[]);
+      } catch (fetchError: any) {
+        if (fetchError?.name !== 'AbortError') {
+          setCityOptions([]);
+        }
+      }
+    }, 250);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [citySearch]);
 
   const inputCls = 'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-500 transition focus:border-emerald-500/50 focus:bg-white/10 focus:outline-none focus:ring-1 focus:ring-emerald-500/30';
   const labelCls = 'mb-2 flex items-center gap-2 text-sm font-semibold text-slate-300';
@@ -134,10 +182,9 @@ export const AccessRequestForm: React.FC = () => {
               País
             </span>
             <input
-              value={formData.pais || ''}
-              onChange={(e) => handleChange('pais', e.target.value)}
+              value="Argentina"
+              readOnly
               className={inputCls}
-              placeholder="Argentina"
             />
           </label>
 
@@ -147,37 +194,21 @@ export const AccessRequestForm: React.FC = () => {
               Ciudad
             </span>
             <input
+              list="argentina-ciudades"
               value={formData.ciudad || ''}
-              onChange={(e) => handleChange('ciudad', e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                handleChange('ciudad', value);
+                setCitySearch(value);
+              }}
               className={inputCls}
-              placeholder="Buenos Aires"
+              placeholder="Escribí para buscar ciudades de Argentina"
             />
-          </label>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-slate-300">Cantidad estimada de células</span>
-            <input
-              type="number"
-              min={0}
-              value={formData.cantidadCelulas ?? ''}
-              onChange={(e) => handleChange('cantidadCelulas', e.target.value)}
-              className={inputCls}
-              placeholder="5"
-            />
-          </label>
-
-          <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-slate-300">Cantidad estimada de usuarios</span>
-            <input
-              type="number"
-              min={0}
-              value={formData.cantidadUsuarios ?? ''}
-              onChange={(e) => handleChange('cantidadUsuarios', e.target.value)}
-              className={inputCls}
-              placeholder="30"
-            />
+            <datalist id="argentina-ciudades">
+              {cityOptions.map((city) => (
+                <option key={city} value={city} />
+              ))}
+            </datalist>
           </label>
         </div>
 

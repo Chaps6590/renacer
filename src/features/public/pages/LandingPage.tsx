@@ -67,7 +67,7 @@ export const LandingPage: React.FC = () => {
         <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#07101f]/80 backdrop-blur-xl">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-2">
-              <img src={kairosDestello} alt="Kairos" className="h-12 object-contain [mix-blend-mode:screen]" />
+              <img src={kairosDestello} alt="Kairos" className="h-11 w-auto object-contain [mix-blend-mode:screen] sm:h-14" />
             </div>
             <div className="flex items-center gap-3">
               <a
@@ -91,16 +91,12 @@ export const LandingPage: React.FC = () => {
         <section className="mx-auto max-w-7xl px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pt-28">
           <div className="mx-auto max-w-3xl text-center">
             {/* Logo hero */}
-            <div className="flex flex-col items-center gap-6">
-              <img
-                src={kairosDestello}
-                alt="Kairos"
-                className="h-16 sm:h-20 object-contain [mix-blend-mode:screen]"
-              />
+            <div className="flex flex-col items-center gap-4">
+
               <img
                 src={kairosNombre}
                 alt="Kairos"
-                className="h-10 sm:h-14 object-contain [mix-blend-mode:screen]"
+                className="h-24 w-auto max-w-[88vw] object-contain [mix-blend-mode:screen] brightness-150 sm:h-32 md:h-40"
               />
             </div>
 
