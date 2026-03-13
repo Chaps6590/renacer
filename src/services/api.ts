@@ -92,6 +92,13 @@ class ApiService {
     });
   }
 
+  async createAccessRequest(requestData: any) {
+    return this.request('/public/access-requests', {
+      method: 'POST',
+      body: JSON.stringify(requestData),
+    });
+  }
+
   // Perfil endpoints
   async getMe() {
     return this.request('/auth/me', {

@@ -170,3 +170,15 @@ export interface PeticionPastor {
   resuelta: boolean;
   fechaResolucion?: string;
 }
+
+export interface AccessRequestPayload {
+  iglesiaNombre: string;
+  responsableNombre: string;
+  responsableEmail: string;
+  responsableTelefono?: string;
+  pais?: string;
+  ciudad?: string;
+  cantidadCelulas?: number;
+  cantidadUsuarios?: number;
+  mensaje?: string;
+}

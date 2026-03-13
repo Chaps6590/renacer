@@ -10,6 +10,7 @@ import { PastorDashboard } from './components/pastor/PastorDashboard';
 import AdminDashboard from './components/admin/AdminDashboard';
 import LiderDashboard from './components/lider/LiderDashboard';
 import SupervisorDashboard from './components/supervisor/SupervisorDashboard';
+import LandingPage from './features/public/pages/LandingPage';
 
 const Dashboard: React.FC = () => {
   // Este componente redirige según el rol del usuario
@@ -109,6 +110,7 @@ function App() {
         <DataProvider>
           {isOffline && <OfflineBanner />}
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
@@ -144,8 +146,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </DataProvider>
       </AuthProvider>

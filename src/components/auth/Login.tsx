@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
 import logo from '../../assets/images/logoRenacer2.png';
@@ -95,6 +95,12 @@ export const Login: React.FC = () => {
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Bienvenido de vuelta</h2>
             <p className="text-gray-600 dark:text-gray-400">Inicia sesión para continuar</p>
+            <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+              ¿Tu iglesia todavía no está dada de alta?{' '}
+              <Link to="/" className="font-semibold text-blue-600 hover:text-blue-700">
+                Solicitar adhesión
+              </Link>
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -178,6 +184,13 @@ export const Login: React.FC = () => {
                 )}
               </span>
             </button>
+
+            <Link
+              to="/"
+              className="block text-center text-sm font-semibold text-gray-600 transition hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+            >
+              Volver a la página principal
+            </Link>
           </form>
         </div>
       </div>
