@@ -66,11 +66,9 @@ export const LandingPage: React.FC = () => {
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#07101f]/80 backdrop-blur-xl">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center">
-                <img src={kairosDestello} alt="Kairos" className="h-9 w-9 object-contain drop-shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
-              </div>
-              <img src={kairosNombre} alt="Kairos" className="h-6 object-contain brightness-0 invert" />
+            <div className="flex items-center gap-2">
+              <img src={kairosDestello} alt="Kairos" className="h-10 w-10 object-contain [mix-blend-mode:screen] drop-shadow-[0_0_10px_rgba(52,211,153,0.7)]" />
+              <img src={kairosNombre} alt="Kairos" className="h-7 object-contain [mix-blend-mode:screen] brightness-[3]" />
             </div>
             <div className="flex items-center gap-3">
               <a
@@ -94,16 +92,16 @@ export const LandingPage: React.FC = () => {
         <section className="mx-auto max-w-7xl px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pt-28">
           <div className="mx-auto max-w-3xl text-center">
             {/* Logo hero */}
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-2">
               <img
                 src={kairosDestello}
                 alt="Kairos"
-                className="h-24 w-24 object-contain drop-shadow-[0_0_40px_rgba(52,211,153,0.5)] sm:h-28 sm:w-28"
+                className="h-32 w-32 object-contain [mix-blend-mode:screen] drop-shadow-[0_0_60px_rgba(52,211,153,0.6)] sm:h-40 sm:w-40"
               />
               <img
                 src={kairosNombre}
                 alt="Kairos"
-                className="h-10 object-contain brightness-0 invert sm:h-12"
+                className="h-12 object-contain [mix-blend-mode:screen] brightness-[4] sm:h-14"
               />
             </div>
 
@@ -233,8 +231,8 @@ export const LandingPage: React.FC = () => {
 
         {/* Footer */}
         <footer className="border-t border-white/[0.06] py-10 text-center">
-          <img src={kairosDestello} alt="Kairos" className="mx-auto mb-3 h-10 w-10 object-contain opacity-60" />
-          <img src={kairosNombre} alt="Kairos" className="mx-auto mb-4 h-5 object-contain brightness-0 invert opacity-40" />
+          <img src={kairosDestello} alt="Kairos" className="mx-auto mb-2 h-10 w-10 object-contain [mix-blend-mode:screen] opacity-70" />
+          <img src={kairosNombre} alt="Kairos" className="mx-auto mb-4 h-5 object-contain [mix-blend-mode:screen] brightness-[2] opacity-50" />
           <p className="text-sm text-slate-600">© {new Date().getFullYear()} Kairos · Plataforma de gestión ministerial</p>
         </footer>
       </div>
