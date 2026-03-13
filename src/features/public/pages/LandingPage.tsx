@@ -37,9 +37,11 @@ const features = [
 ];
 
 const roles = [
-  { color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', icon: Building2, label: 'Iglesia', desc: 'Casa espiritual con visión propia, cobertura pastoral y administración local para su crecimiento.' },
-  { color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'bg-cyan-500/10', icon: Shield, label: 'Administrador de iglesia', desc: 'Responsable de organizar usuarios, permisos, equipos y recursos para sostener la operación diaria.' },
-  { color: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/10', icon: Users, label: 'Usuarios y células', desc: 'Estructura basada en Plan Felipe: pastor, líder de red, supervisor, líder de célula y miembros.' },
+  { color: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', icon: Building2, label: 'Pastor principal', desc: 'Guía la visión espiritual de toda la iglesia: dirección, enseñanza, estrategia de crecimiento y supervisión general.' },
+  { color: 'text-cyan-400', border: 'border-cyan-500/20', bg: 'bg-cyan-500/10', icon: Shield, label: 'Líderes generales', desc: 'Coordinan áreas grandes del ministerio, entrenan líderes y sostienen la visión pastoral. Referencia: 1 líder general puede acompañar 3 a 5 redes.' },
+  { color: 'text-sky-400', border: 'border-sky-500/20', bg: 'bg-sky-500/10', icon: Users, label: 'Líderes de red', desc: 'Dan seguimiento a supervisores, realizan reuniones de liderazgo y monitorean el crecimiento. Referencia: 1 red puede tener 4 a 6 supervisores.' },
+  { color: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/10', icon: Shield, label: 'Supervisores', desc: 'Acompañan a los líderes de célula: cuidan, visitan, ayudan en problemas y capacitan. Referencia: 1 supervisor puede supervisar 4 a 5 células.' },
+  { color: 'text-orange-300', border: 'border-orange-400/20', bg: 'bg-orange-400/10', icon: Users, label: 'Líder de célula', desc: 'Dirige el grupo pequeño en casa, discipula, cuida y evangeliza. Regla común: 10 a 12 personas; al crecer, la célula se multiplica.' },
 ];
 
 const steps = [
@@ -166,12 +168,12 @@ export const LandingPage: React.FC = () => {
           <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 shadow-2xl shadow-[#020712]/30 backdrop-blur-sm sm:p-8 lg:p-10">
             <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:gap-10">
             <div className="flex flex-col justify-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-300 sm:text-sm">Fase siguiente</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-300 sm:text-sm">Fundamento ministerial</p>
               <h2 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-4xl">
-                Estructura prevista para cada iglesia
+                Estructura basada en Plan Felipe
               </h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300/90 sm:text-base">
-                Cada iglesia que se sume a Kairos tendrá su propio espacio aislado con administración independiente, jerarquía de roles y datos completamente separados del resto de las iglesias.
+                Esta estructura se fundamenta en el Plan Felipe: una cadena de liderazgo clara que ordena el cuidado pastoral, el discipulado y la multiplicación de células en cada iglesia.
               </p>
               <div className="mt-6 rounded-2xl border border-cyan-400/20 bg-gradient-to-br from-cyan-500/12 via-[#071626]/70 to-[#091321]/80 p-4 shadow-lg shadow-cyan-950/20 sm:p-5">
                 <p className="inline-flex rounded-full border border-cyan-300/25 bg-cyan-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">Fundamento · Plan Felipe</p>
@@ -216,16 +218,16 @@ export const LandingPage: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-2.5 sm:space-y-3">
               {roles.map((r) => (
-                <div key={r.label} className={`rounded-2xl border ${r.border} ${r.bg} p-4 transition duration-300 hover:-translate-y-0.5 hover:border-white/25 sm:p-5`}>
-                  <div className={`mb-3 flex items-center gap-3 font-semibold ${r.color}`}>
-                    <span className={`inline-flex rounded-lg border ${r.border} bg-white/5 p-2`}>
-                      <r.icon className="h-4 w-4" />
+                <div key={r.label} className={`rounded-xl border ${r.border} ${r.bg} p-3 transition duration-300 hover:-translate-y-0.5 hover:border-white/25 sm:p-3.5`}>
+                  <div className={`mb-2 flex items-center gap-2.5 font-semibold ${r.color}`}>
+                    <span className={`inline-flex rounded-md border ${r.border} bg-white/5 p-1.5`}>
+                      <r.icon className="h-3.5 w-3.5" />
                     </span>
-                    <span className="text-xl">{r.label}</span>
+                    <span className="text-base sm:text-lg">{r.label}</span>
                   </div>
-                  <p className="text-sm leading-7 text-slate-300/85">{r.desc}</p>
+                  <p className="text-xs leading-5 text-slate-300/85 sm:text-sm sm:leading-6">{r.desc}</p>
                 </div>
               ))}
             </div>
