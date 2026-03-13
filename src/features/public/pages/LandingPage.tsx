@@ -92,16 +92,16 @@ export const LandingPage: React.FC = () => {
         <section className="mx-auto max-w-7xl px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pt-28">
           <div className="mx-auto max-w-3xl text-center">
             {/* Logo hero */}
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-6">
               <img
                 src={kairosDestello}
                 alt="Kairos"
-                className="h-32 w-32 object-contain [mix-blend-mode:screen] drop-shadow-[0_0_60px_rgba(52,211,153,0.6)] sm:h-40 sm:w-40"
+                className="h-56 w-56 object-contain [mix-blend-mode:screen] drop-shadow-[0_0_80px_rgba(52,211,153,0.7)] sm:h-72 sm:w-72"
               />
               <img
                 src={kairosNombre}
                 alt="Kairos"
-                className="h-12 object-contain [mix-blend-mode:screen] brightness-[4] sm:h-14"
+                className="h-16 object-contain [mix-blend-mode:screen] brightness-[4] sm:h-20"
               />
             </div>
 
