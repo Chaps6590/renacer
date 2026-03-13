@@ -96,7 +96,7 @@ export const LandingPage: React.FC = () => {
               <img
                 src={kairosNombre}
                 alt="Kairos"
-                className="h-24 w-auto max-w-[88vw] object-contain [mix-blend-mode:screen] brightness-150 sm:h-32 md:h-40"
+                className="h-44 w-auto max-w-[94vw] object-contain [mix-blend-mode:screen] sm:h-52 md:h-60"
               />
             </div>
 
