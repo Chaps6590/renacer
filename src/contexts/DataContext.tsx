@@ -337,6 +337,63 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           createdAt: new Date(c.createdAt)
         }));
         setCelulas(celulasTransformadas);
+      } else if (user?.role === 'supervisor') {
+        const celulasData = await api.getCelulas() as any[];
+        const celulasTransformadas = celulasData.map((c: any) => ({
+          id: c.id,
+          name: c.nombre,
+          liderId: c.liderId,
+          liderName: c.lider?.name || '',
+          liderEmail: c.lider?.email || undefined,
+          liderPhone: c.lider?.telefono || undefined,
+          liderFechaNacimiento: c.lider?.fechaNacimiento || undefined,
+          supervisorId: c.supervisorId || undefined,
+          supervisorName: c.supervisor?.name || undefined,
+          supervisorEmail: c.supervisor?.email || undefined,
+          diaSemana: c.dia,
+          horario: c.horario,
+          coLideres: (c.coLideres || []).map((col: any) => ({
+            ...col,
+            phone: col.telefono,
+            fechaNacimiento: col.fechaNacimiento
+          })),
+          miembros: (c.miembros || []).map((m: any) => ({
+            ...m,
+            name: m.nombre,
+            phone: m.telefono
+          })),
+          createdAt: new Date(c.createdAt)
+        }));
+        setCelulas(celulasTransformadas);
+      } else if (user?.role === 'lider' || user?.role === 'colider' || user?.role === 'timoteo') {
+        const miCelula = await api.getMiCelula() as any;
+        if (miCelula) {
+          const celulaTransformada = {
+            id: miCelula.id,
+            name: miCelula.nombre,
+            liderId: miCelula.liderId,
+            liderName: miCelula.lider?.name || '',
+            liderEmail: miCelula.lider?.email || undefined,
+            liderPhone: miCelula.lider?.telefono || undefined,
+            liderFechaNacimiento: miCelula.lider?.fechaNacimiento || undefined,
+            diaSemana: miCelula.dia,
+            horario: miCelula.horario,
+            coLideres: (miCelula.coLideres || []).map((col: any) => ({
+              ...col,
+              phone: col.telefono,
+              fechaNacimiento: col.fechaNacimiento
+            })),
+            miembros: (miCelula.miembros || []).map((m: any) => ({
+              ...m,
+              name: m.nombre,
+              phone: m.telefono
+            })),
+            createdAt: new Date(miCelula.createdAt)
+          };
+          setCelulas([celulaTransformada]);
+        } else {
+          setCelulas([]);
+        }
       }
     } catch (error) {
       console.error('Error refreshing celulas:', error);
@@ -388,7 +445,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         name: m.nombre,
         phone: m.telefono
       };
-      setCelulas(celulas.map(c => {
+      setCelulas(prev => prev.map(c => {
         if (c.id === celulaId) {
           return { ...c, miembros: [...c.miembros, nuevoMiembro] };
         }
@@ -441,7 +498,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const removeColiderFromCelula = async (celulaId: string, coliderId: string) => {
     try {
       await api.removeColider(celulaId, coliderId);
-      setCelulas(celulas.map(c => {
+      setCelulas(prev => prev.map(c => {
         if (c.id === celulaId) {
           return { ...c, coLideres: c.coLideres.filter(col => col.id !== coliderId) };
         }
@@ -460,7 +517,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       const res = await api.updateMiembro(celulaId, miembroId, payload) as any;
       // Cuando backend promociona a colíder, elimina/inhabilita el miembro para evitar duplicados.
       if (res?.removedMiembroId) {
-        setCelulas(celulas.map(c => {
+        setCelulas(prev => prev.map(c => {
           if (c.id === celulaId) {
             return {
               ...c,

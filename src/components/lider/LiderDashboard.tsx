@@ -212,7 +212,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
 const LiderDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { celulas, addMiembroToCelula, removeMiembroFromCelula, removeColiderFromCelula, updateMiembroRol, updateMiembroFormacion, getPendientesAsistencia, noticias } = useData();
+  const { celulas, addMiembroToCelula, removeMiembroFromCelula, removeColiderFromCelula, updateMiembroRol, updateMiembroFormacion, getPendientesAsistencia, noticias, recargarCelulas } = useData();
   const [showAsistencia, setShowAsistencia] = useState(false);
   const [showAddMiembro, setShowAddMiembro] = useState(false);
   const [showPendientes, setShowPendientes] = useState(false);
@@ -596,12 +596,15 @@ const LiderDashboard: React.FC = () => {
           addedAt: new Date()
         } as any);
 
+        await recargarCelulas();
+
         setShowRoleDialog(false);
         setSelectedMiembro(null);
         return;
       }
 
       await updateMiembroRol(miCelula.id, selectedMiembro.id, newRole as any, emailParaActualizar);
+      await recargarCelulas();
       setShowRoleDialog(false);
       setSelectedMiembro(null);
     } catch (error: any) {
