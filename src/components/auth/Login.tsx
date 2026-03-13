@@ -76,7 +76,7 @@ export const Login: React.FC = () => {
               <div className="relative w-full h-full bg-white/20 backdrop-blur-sm rounded-full shadow-2xl p-1.5 border-2 border-white/50 ring-2 ring-white/35">
                 <img 
                   src={logo} 
-                  alt="Logo Iglesia Renacer" 
+                  alt="Logo Kairos" 
                   className="w-full h-full object-contain rounded-full drop-shadow-[0_4px_14px_rgba(255,255,255,0.35)]"
                 />
               </div>

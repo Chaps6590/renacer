@@ -34,10 +34,10 @@ export const LandingPage: React.FC = () => {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-sky-500 p-1 shadow-lg">
-              <img src={logo} alt="Renacer" className="h-full w-full rounded-xl object-contain bg-white/85 p-1" />
+              <img src={logo} alt="Kairos" className="h-full w-full rounded-xl object-contain bg-white/85 p-1" />
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700">Renacer Platform</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700">Kairos</p>
               <h1 className="text-lg font-bold text-slate-950">Favor y Influencia</h1>
             </div>
           </div>

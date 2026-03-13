@@ -22,7 +22,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           <div className="relative w-20 h-20">
             <div className="absolute inset-0 bg-blue-400 rounded-full blur-xl opacity-30 animate-pulse"></div>
             <div className="relative w-full h-full bg-white rounded-full shadow-xl p-1.5 border-2 border-blue-100">
-              <img src="/icons/logoRenacer.png" alt="Renacer" className="w-full h-full object-cover rounded-full" />
+              <img src="/icons/logoRenacer.png" alt="Kairos" className="w-full h-full object-cover rounded-full" />
             </div>
           </div>
 
@@ -37,7 +37,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           {/* Text */}
           <div className="text-center">
             <p className="text-blue-700 font-semibold text-base tracking-wide">Cargando...</p>
-            <p className="text-blue-400 text-xs mt-1">Iglesia Renacer</p>
+            <p className="text-blue-400 text-xs mt-1">Kairos</p>
           </div>
         </div>
       </div>
