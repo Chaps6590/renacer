@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Building2, ChevronRight, Shield, Users } from 'lucide-react';
+import { ArrowRight, Building2, ChevronRight, MapPin, Shield, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import kairosDestello from '../../../assets/images/KairosDestello.png';
 import kairosNombre from '../../../assets/images/KairosNombre.png';
@@ -50,6 +50,16 @@ const steps = [
   { num: '03', title: 'Creación de la iglesia', desc: 'Se habilita la iglesia con su propio link y espacio configurado.' },
   { num: '04', title: 'Alta del administrador', desc: 'Se asigna el administrador principal y se envían las credenciales.' },
   { num: '05', title: 'En producción', desc: 'El equipo carga células, supervisores, líderes y miembros.' },
+];
+
+const kairosChurches = [
+  {
+    name: 'Renacer',
+    city: 'Parana',
+    province: 'Entre Rios',
+    status: 'Activa en Kairos',
+    note: 'Iglesia en operacion con estructura celular y seguimiento ministerial.',
+  },
 ];
 
 const planFelipeLevels = [
@@ -296,6 +306,42 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
           <AccessRequestForm />
+        </section>
+
+        {/* Iglesias activas */}
+        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 sm:pb-20 lg:px-8">
+          <div className="rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-emerald-500/10 via-[#0a1b2f]/80 to-[#091523]/90 p-5 backdrop-blur-sm sm:p-8">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-300 sm:text-sm">Comunidad Kairos</p>
+              <h2 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-4xl">Iglesias que ya forman parte</h2>
+              <p className="mt-3 text-sm leading-7 text-slate-300 sm:text-base">
+                Estas iglesias ya estan integradas y trabajando dentro de la plataforma.
+              </p>
+            </div>
+
+            <div className="mt-6 grid gap-4 sm:mt-8">
+              {kairosChurches.map((church) => (
+                <article
+                  key={`${church.name}-${church.city}`}
+                  className="rounded-2xl border border-emerald-300/30 bg-white/[0.07] p-4 shadow-[0_0_28px_rgba(16,185,129,0.15)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_36px_rgba(16,185,129,0.28)] sm:p-5"
+                >
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-200">
+                        {church.status}
+                      </div>
+                      <h3 className="mt-3 text-xl font-extrabold text-white sm:text-2xl">{church.name}</h3>
+                      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">{church.note}</p>
+                    </div>
+                    <div className="inline-flex items-center gap-2 rounded-xl border border-cyan-300/25 bg-cyan-300/10 px-3 py-2 text-sm font-semibold text-cyan-100">
+                      <MapPin className="h-4 w-4" />
+                      <span>{church.city}, {church.province}</span>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
         </section>
 
         {/* Footer */}
