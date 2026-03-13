@@ -139,11 +139,11 @@ export const AccessRequestForm: React.FC = () => {
   const labelCls = 'mb-2 flex items-center gap-2 text-sm font-semibold text-slate-300';
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm md:p-8">
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm sm:p-6 md:p-8">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-400">Solicitud de adhesión</p>
-          <h2 className="mt-2 text-2xl font-bold text-white">Completá tus datos</h2>
+          <h2 className="mt-2 text-xl font-bold text-white sm:text-2xl">Completá tus datos</h2>
           <p className="mt-2 max-w-xl text-sm text-slate-400">
             Registramos tu pedido para iniciar el alta, la configuración inicial y la asignación del administrador principal.
           </p>
@@ -153,7 +153,7 @@ export const AccessRequestForm: React.FC = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         <div className="grid gap-4 md:grid-cols-2">
           <label className="block">
             <span className={labelCls}>
@@ -297,13 +297,13 @@ export const AccessRequestForm: React.FC = () => {
         )}
 
         <div className="flex flex-col gap-3 border-t border-white/10 pt-5 md:flex-row md:items-center md:justify-between">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm leading-6 text-slate-500">
             La solicitud no crea la iglesia automáticamente. Primero pasa a revisión y validación operativa.
           </p>
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 md:w-auto"
           >
             <Send className="h-4 w-4" />
             {loading ? 'Enviando...' : 'Enviar solicitud'}

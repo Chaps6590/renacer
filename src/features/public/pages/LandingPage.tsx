@@ -65,9 +65,9 @@ export const LandingPage: React.FC = () => {
       <div className="relative z-10">
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#07101f]/80 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
             <div className="flex items-center gap-2">
-              <img src={kairosDestello} alt="Kairos" className="h-11 w-auto object-contain [mix-blend-mode:screen] sm:h-14" />
+              <img src={kairosDestello} alt="Kairos" className="h-9 w-auto object-contain [mix-blend-mode:screen] sm:h-10" />
             </div>
             <div className="flex items-center gap-3">
               <a
@@ -78,7 +78,7 @@ export const LandingPage: React.FC = () => {
               </a>
               <Link
                 to="/login"
-                className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-400"
+                className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-slate-900 shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-400"
               >
                 Ingresar
                 <ArrowRight className="h-4 w-4" />
@@ -88,42 +88,41 @@ export const LandingPage: React.FC = () => {
         </header>
 
         {/* Hero */}
-        <section className="mx-auto max-w-7xl px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pt-28">
+        <section className="mx-auto max-w-7xl px-4 pb-16 pt-14 sm:px-6 sm:pb-20 sm:pt-14 lg:px-8 lg:pt-16">
           <div className="mx-auto max-w-3xl text-center">
             {/* Logo hero */}
             <div className="flex flex-col items-center gap-4">
-
               <img
                 src={kairosNombre}
                 alt="Kairos"
-                className="h-44 w-auto max-w-[94vw] object-contain [mix-blend-mode:screen] sm:h-52 md:h-60"
+                className="h-32 w-auto max-w-[92vw] object-contain [mix-blend-mode:screen] sm:h-44 md:h-52 lg:h-60"
               />
             </div>
 
-            <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-400">
+            <div className="mt-6 inline-flex max-w-full items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-center text-xs font-semibold text-emerald-400 sm:mt-8 sm:px-4 sm:text-sm">
               <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-              Plataforma Multi-Iglesia · En construcción activa
+              El tiempo de Dios para una nueva generación de liderazgo
             </div>
-            <h1 className="mt-8 text-5xl font-black leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Gestión pastoral para{' '}
+            <h1 className="mt-7 text-3xl font-black leading-[1.08] tracking-tight text-white sm:mt-8 sm:text-5xl lg:text-7xl">
+              Liderazgo, visión y discipulado{' '}
               <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-                iglesias con células
+                en un solo lugar.
               </span>
             </h1>
-            <p className="mt-6 text-lg leading-8 text-slate-400">
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400 sm:mt-6 sm:text-lg sm:leading-8">
               Una plataforma unificada para registrar asistencia, hacer seguimiento de miembros, gestionar formación y coordinar pastores, supervisores y líderes — con total aislamiento de datos entre iglesias.
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-4">
               <a
                 href="#solicitud"
-                className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-7 py-4 text-sm font-bold text-slate-900 shadow-xl shadow-emerald-500/30 transition hover:bg-emerald-400"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-3.5 text-sm font-bold text-slate-900 shadow-xl shadow-emerald-500/30 transition hover:bg-emerald-400 sm:w-auto sm:px-7 sm:py-4"
               >
                 Solicitar adhesión
                 <ChevronRight className="h-4 w-4" />
               </a>
               <Link
                 to="/login"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-4 text-sm font-semibold text-slate-300 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-semibold text-slate-300 transition hover:border-white/20 hover:bg-white/10 hover:text-white sm:w-auto sm:px-7 sm:py-4"
               >
                 Ya tengo acceso
                 <ArrowRight className="h-4 w-4" />
@@ -132,11 +131,11 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* Feature cards */}
-          <div className="mt-20 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-14 grid gap-4 sm:mt-20 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <div
                 key={f.title}
-                className={`rounded-2xl border ${f.cardBorder} ${f.cardBg} p-6 backdrop-blur-sm transition duration-200 hover:scale-[1.02]`}
+                className={`rounded-2xl border ${f.cardBorder} ${f.cardBg} p-5 backdrop-blur-sm transition duration-200 hover:scale-[1.02] sm:p-6`}
               >
                 <div className={`mb-4 inline-flex rounded-xl border ${f.iconBg} p-2.5`}>
                   <f.icon className={`h-5 w-5 ${f.iconColor}`} />
@@ -154,20 +153,20 @@ export const LandingPage: React.FC = () => {
         </div>
 
         {/* Estructura por iglesia */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="grid gap-14 lg:grid-cols-[1fr_1fr]">
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="grid gap-10 sm:gap-14 lg:grid-cols-[1fr_1fr]">
             <div className="flex flex-col justify-center">
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-400">Fase siguiente</p>
-              <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">
+              <h2 className="mt-3 text-2xl font-bold text-white sm:text-4xl">
                 Estructura prevista para cada iglesia
               </h2>
-              <p className="mt-4 text-base leading-7 text-slate-400">
+              <p className="mt-4 text-sm leading-7 text-slate-400 sm:text-base">
                 Cada iglesia que se sume a Kairos tendrá su propio espacio aislado con administración independiente, jerarquía de roles y datos completamente separados del resto de las iglesias.
               </p>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {roles.map((r) => (
-                <div key={r.label} className={`rounded-2xl border ${r.border} ${r.bg} p-5`}>
+                <div key={r.label} className={`rounded-2xl border ${r.border} ${r.bg} p-4 sm:p-5`}>
                   <div className={`mb-2 flex items-center gap-2 font-semibold ${r.color}`}>
                     <r.icon className="h-5 w-5" />
                     <span>{r.label}</span>
@@ -185,18 +184,18 @@ export const LandingPage: React.FC = () => {
         </div>
 
         {/* Steps */}
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-400">Proceso de alta</p>
-            <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Cómo se incorpora tu iglesia</h2>
-            <p className="mt-4 text-base text-slate-400">
+            <h2 className="mt-3 text-2xl font-bold text-white sm:text-4xl">Cómo se incorpora tu iglesia</h2>
+            <p className="mt-4 text-sm text-slate-400 sm:text-base">
               La adhesión es el primer paso de un proceso ordenado. No se crea acceso anónimo — cada iglesia pasa por validación antes de activarse.
             </p>
           </div>
-          <div className="relative mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="relative mt-10 grid gap-3 sm:mt-14 sm:gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {steps.map((step, idx) => (
-              <div key={step.num} className="relative rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <p className="text-3xl font-black text-emerald-500/25">{step.num}</p>
+              <div key={step.num} className="relative rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur sm:p-5">
+                <p className="text-2xl font-black text-emerald-500/25 sm:text-3xl">{step.num}</p>
                 <h3 className="mt-3 text-sm font-bold text-white">{step.title}</h3>
                 <p className="mt-2 text-xs leading-5 text-slate-500">{step.desc}</p>
                 {idx < steps.length - 1 && (
@@ -213,11 +212,11 @@ export const LandingPage: React.FC = () => {
         </div>
 
         {/* Form */}
-        <section id="solicitud" className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
+        <section id="solicitud" className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="mb-10 text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-400">Adhesión</p>
-            <h2 className="mt-3 text-3xl font-bold text-white sm:text-4xl">Sumá tu iglesia a Kairos</h2>
-            <p className="mt-3 text-base text-slate-400">
+            <h2 className="mt-3 text-2xl font-bold text-white sm:text-4xl">Sumá tu iglesia a Kairos</h2>
+            <p className="mt-3 text-sm text-slate-400 sm:text-base">
               Completá el formulario y nos ponemos en contacto para iniciar el alta.
             </p>
           </div>
@@ -225,9 +224,19 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-white/[0.06] py-10 text-center">
+        <footer className="border-t border-white/[0.06] px-4 py-10 text-center sm:px-6">
           <img src={kairosNombre} alt="Kairos" className="mx-auto mb-4 h-5 object-contain [mix-blend-mode:screen] brightness-[2] opacity-50" />
-          <p className="text-sm text-slate-600">© {new Date().getFullYear()} Kairos · Plataforma de gestión ministerial</p>
+          <p className="text-xs text-slate-600 sm:text-sm">© {new Date().getFullYear()} Kairos · Plataforma de gestión ministerial</p>
+          <a
+            href="https://www.chapstech.cloud/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center text-3xl font-extrabold tracking-tight text-white transition-opacity hover:opacity-90"
+            aria-label="Desarrollado por Chaps Tech"
+          >
+            <span>Chaps</span>
+            <span className="ml-2 text-cyan-400">Tech</span>
+          </a>
         </footer>
       </div>
     </div>
