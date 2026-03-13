@@ -1,7 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { Building2, Mail, MapPin, Phone, Send, ShieldCheck, Users } from 'lucide-react';
+import { Building2, ChevronDown, Mail, MapPin, Phone, Send, ShieldCheck, Users } from 'lucide-react';
 import { api } from '../../../services/api';
 import { AccessRequestPayload } from '../../../types';
+
+const ARGENTINA_PROVINCES = [
+  'Buenos Aires',
+  'Catamarca',
+  'Chaco',
+  'Chubut',
+  'Cordoba',
+  'Corrientes',
+  'Entre Rios',
+  'Formosa',
+  'Jujuy',
+  'La Pampa',
+  'La Rioja',
+  'Mendoza',
+  'Misiones',
+  'Neuquen',
+  'Rio Negro',
+  'Salta',
+  'San Juan',
+  'San Luis',
+  'Santa Cruz',
+  'Santa Fe',
+  'Santiago del Estero',
+  'Tierra del Fuego',
+  'Tucuman',
+  'Ciudad Autonoma de Buenos Aires'
+];
 
 const initialForm: AccessRequestPayload = {
   iglesiaNombre: '',
@@ -17,8 +44,10 @@ const initialForm: AccessRequestPayload = {
 
 export const AccessRequestForm: React.FC = () => {
   const [formData, setFormData] = useState<AccessRequestPayload>(initialForm);
+  const [selectedProvince, setSelectedProvince] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
   const [cityOptions, setCityOptions] = useState<string[]>([]);
-  const [citySearch, setCitySearch] = useState('');
+  const [cityLoading, setCityLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -39,9 +68,18 @@ export const AccessRequestForm: React.FC = () => {
     setSuccessMessage(null);
 
     try {
-      const response: any = await api.createAccessRequest(formData);
+      const payload: AccessRequestPayload = {
+        ...formData,
+        pais: 'Argentina',
+        ciudad: selectedCity && selectedProvince ? `${selectedCity}, ${selectedProvince}` : undefined
+      };
+
+      const response: any = await api.createAccessRequest(payload);
       setSuccessMessage(response.message || 'Solicitud enviada correctamente.');
       setFormData(initialForm);
+      setSelectedProvince('');
+      setSelectedCity('');
+      setCityOptions([]);
     } catch (submitError: any) {
       setError(submitError?.message || 'No se pudo enviar la solicitud.');
     } finally {
@@ -50,22 +88,24 @@ export const AccessRequestForm: React.FC = () => {
   };
 
   useEffect(() => {
-    const query = citySearch.trim();
-
-    if (query.length < 2) {
+    if (!selectedProvince) {
       setCityOptions([]);
+      setSelectedCity('');
       return;
     }
 
     const controller = new AbortController();
-    const timer = setTimeout(async () => {
+    setCityLoading(true);
+
+    const loadCities = async () => {
       try {
         const response = await fetch(
-          `https://apis.datos.gob.ar/georef/api/localidades?nombre=${encodeURIComponent(query)}&max=30&campos=nombre,provincia`,
+          `https://apis.datos.gob.ar/georef/api/localidades?provincia=${encodeURIComponent(selectedProvince)}&max=5000&campos=nombre&aplanar=true`,
           { signal: controller.signal }
         );
 
         if (!response.ok) {
+          setCityOptions([]);
           return;
         }
 
@@ -73,29 +113,29 @@ export const AccessRequestForm: React.FC = () => {
         const localidades = Array.isArray(data?.localidades) ? data.localidades : [];
 
         const formatted = localidades
-          .map((item: any) => {
-            const nombre = item?.nombre?.trim();
-            const provincia = item?.provincia?.nombre?.trim();
-            if (!nombre) return null;
-            return provincia ? `${nombre}, ${provincia}` : nombre;
-          })
-          .filter(Boolean);
+          .map((item: any) => item?.nombre?.trim())
+          .filter(Boolean)
+          .sort((a: string, b: string) => a.localeCompare(b, 'es'));
 
         setCityOptions(Array.from(new Set(formatted)) as string[]);
       } catch (fetchError: any) {
         if (fetchError?.name !== 'AbortError') {
           setCityOptions([]);
         }
+      } finally {
+        setCityLoading(false);
       }
-    }, 250);
+    };
+
+    loadCities();
 
     return () => {
       controller.abort();
-      clearTimeout(timer);
     };
-  }, [citySearch]);
+  }, [selectedProvince]);
 
   const inputCls = 'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-500 transition focus:border-emerald-500/50 focus:bg-white/10 focus:outline-none focus:ring-1 focus:ring-emerald-500/30';
+  const selectCls = `${inputCls} appearance-none pr-11 text-slate-100 disabled:cursor-not-allowed disabled:opacity-70`;
   const labelCls = 'mb-2 flex items-center gap-2 text-sm font-semibold text-slate-300';
 
   return (
@@ -179,13 +219,26 @@ export const AccessRequestForm: React.FC = () => {
           <label className="block">
             <span className={labelCls}>
               <MapPin className="h-4 w-4 text-emerald-400" />
-              País
+              Provincia
             </span>
-            <input
-              value="Argentina"
-              readOnly
-              className={inputCls}
-            />
+            <div className="relative">
+              <select
+                value={selectedProvince}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedProvince(value);
+                  setSelectedCity('');
+                }}
+                className={selectCls}
+                required
+              >
+                <option className="bg-slate-900 text-white" value="">Seleccionar provincia</option>
+                {ARGENTINA_PROVINCES.map((province) => (
+                  <option className="bg-slate-900 text-white" key={province} value={province}>{province}</option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            </div>
           </label>
 
           <label className="block">
@@ -193,22 +246,31 @@ export const AccessRequestForm: React.FC = () => {
               <MapPin className="h-4 w-4 text-emerald-400" />
               Ciudad
             </span>
-            <input
-              list="argentina-ciudades"
-              value={formData.ciudad || ''}
-              onChange={(e) => {
-                const value = e.target.value;
-                handleChange('ciudad', value);
-                setCitySearch(value);
-              }}
-              className={inputCls}
-              placeholder="Escribí para buscar ciudades de Argentina"
-            />
-            <datalist id="argentina-ciudades">
-              {cityOptions.map((city) => (
-                <option key={city} value={city} />
-              ))}
-            </datalist>
+            <div className="relative">
+              <select
+                value={selectedCity}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedCity(value);
+                  handleChange('ciudad', value);
+                }}
+                className={selectCls}
+                disabled={!selectedProvince || cityLoading}
+                required
+              >
+                <option className="bg-slate-900 text-white" value="">
+                  {!selectedProvince
+                    ? 'Primero selecciona provincia'
+                    : cityLoading
+                      ? 'Cargando ciudades...'
+                      : 'Seleccionar ciudad'}
+                </option>
+                {cityOptions.map((city) => (
+                  <option className="bg-slate-900 text-white" key={city} value={city}>{city}</option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            </div>
           </label>
         </div>
 

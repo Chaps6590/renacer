@@ -226,7 +226,6 @@ export const LandingPage: React.FC = () => {
 
         {/* Footer */}
         <footer className="border-t border-white/[0.06] py-10 text-center">
-          <img src={kairosDestello} alt="Kairos" className="mx-auto mb-2 h-10 w-10 object-contain [mix-blend-mode:screen] opacity-70" />
           <img src={kairosNombre} alt="Kairos" className="mx-auto mb-4 h-5 object-contain [mix-blend-mode:screen] brightness-[2] opacity-50" />
           <p className="text-sm text-slate-600">© {new Date().getFullYear()} Kairos · Plataforma de gestión ministerial</p>
         </footer>
