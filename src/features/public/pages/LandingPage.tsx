@@ -50,6 +50,15 @@ const steps = [
   { num: '05', title: 'En producción', desc: 'El equipo carga células, supervisores, líderes y miembros.' },
 ];
 
+const planFelipeLevels = [
+  'Iglesia',
+  'Pastor',
+  'Líder de Red',
+  'Supervisor',
+  'Líder de Célula',
+  'Miembros',
+];
+
 export const LandingPage: React.FC = () => {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[#07101f] text-white">
@@ -110,7 +119,7 @@ export const LandingPage: React.FC = () => {
               </span>
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400 sm:mt-6 sm:text-lg sm:leading-8">
-              Una plataforma unificada para registrar asistencia, hacer seguimiento de miembros, gestionar formación y coordinar pastores, supervisores y líderes — con total aislamiento de datos entre iglesias.
+              Una plataforma unificada para registrar asistencia, hacer seguimiento de miembros, gestionar formación y coordinar pastores, supervisores y líderes.
             </p>
             <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-4">
               <a
@@ -163,6 +172,48 @@ export const LandingPage: React.FC = () => {
               <p className="mt-4 text-sm leading-7 text-slate-400 sm:text-base">
                 Cada iglesia que se sume a Kairos tendrá su propio espacio aislado con administración independiente, jerarquía de roles y datos completamente separados del resto de las iglesias.
               </p>
+              <div className="mt-6 rounded-2xl border border-cyan-500/20 bg-gradient-to-b from-cyan-500/15 to-slate-900/40 p-4 sm:p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Fundamento · Plan Felipe</p>
+                <div className="mt-4 rounded-xl border border-cyan-300/15 bg-slate-950/30 p-3 sm:p-4">
+                  {planFelipeLevels.map((level, idx) => (
+                    <div
+                      key={level}
+                      className="relative pb-3 last:pb-0"
+                      style={{ paddingLeft: `${idx * 18 + 28}px` }}
+                    >
+                      {idx > 0 && (
+                        <>
+                          <span
+                            className="absolute w-px bg-cyan-300/40"
+                            style={{ left: `${idx * 18 + 10}px`, top: '-0.45rem', height: '1.05rem' }}
+                            aria-hidden="true"
+                          />
+                          <span
+                            className="absolute h-px bg-cyan-300/40"
+                            style={{ left: `${idx * 18 + 10}px`, top: '0.6rem', width: '14px' }}
+                            aria-hidden="true"
+                          />
+                          <span
+                            className="absolute h-1.5 w-1.5 rounded-full bg-cyan-300/70"
+                            style={{ left: `${idx * 18 + 8}px`, top: '0.48rem' }}
+                            aria-hidden="true"
+                          />
+                        </>
+                      )}
+                      {idx === 0 && (
+                        <span
+                          className="absolute h-2 w-2 rounded-full bg-cyan-300/80 shadow-[0_0_12px_rgba(103,232,249,0.45)]"
+                          style={{ left: '8px', top: '0.42rem' }}
+                          aria-hidden="true"
+                        />
+                      )}
+                      <div className="rounded-lg border border-cyan-300/20 bg-slate-900/60 px-3 py-2.5">
+                        <span className="text-sm font-semibold text-slate-100">{level}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
             <div className="space-y-3 sm:space-y-4">
               {roles.map((r) => (
