@@ -13,6 +13,11 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
         runtimeCaching: [
           {
+            // Nunca cachear endpoints de API para evitar datos auth stale.
+            urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
+            handler: 'NetworkOnly'
+          },
+          {
             urlPattern: /^https:\/\/.*\.com\/.*/i,
             handler: 'NetworkFirst',
             options: {

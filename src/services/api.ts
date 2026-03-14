@@ -12,10 +12,60 @@ interface RequestOptions extends RequestInit {
 
 class ApiService {
   private baseUrl: string;
+  private isHandlingAuthFailure: boolean;
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
+    this.isHandlingAuthFailure = false;
     console.log('API Service initialized with baseUrl:', this.baseUrl);
+  }
+
+  private isAuthTokenError(status: number, message?: string): boolean {
+    if (status === 401) return true;
+    if (status !== 403) return false;
+
+    const normalized = String(message || '').toLowerCase();
+    return (
+      normalized.includes('token') ||
+      normalized.includes('jwt') ||
+      normalized.includes('expir') ||
+      normalized.includes('sesion') ||
+      normalized.includes('sesión') ||
+      normalized.includes('invalido') ||
+      normalized.includes('inválido')
+    );
+  }
+
+  private async clearBrowserCaches(): Promise<void> {
+    if (!('caches' in window)) return;
+
+    try {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+    } catch (error) {
+      console.warn('[ApiService] Failed to clear browser caches:', error);
+    }
+  }
+
+  private async forceRelogin(reason: string): Promise<void> {
+    if (this.isHandlingAuthFailure) return;
+
+    this.isHandlingAuthFailure = true;
+    console.warn(`[ApiService] Forcing relogin: ${reason}`);
+
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.clear();
+
+    window.dispatchEvent(new CustomEvent('renacer:force-logout', { detail: { reason } }));
+    await this.clearBrowserCaches();
+
+    if (window.location.pathname !== '/login') {
+      window.location.replace('/login?reason=session-expired');
+      return;
+    }
+
+    this.isHandlingAuthFailure = false;
   }
 
   private async request<T>(
@@ -49,23 +99,22 @@ class ApiService {
 
       const response = await fetch(url, config);
 
-      if (response.status === 401) {
-        console.error(`[ApiService] Auth error (401) on ${endpoint}. Clearing session...`);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        if (!endpoint.includes('/auth/login')) {
-          window.location.href = '/login';
-        }
-      } else if (response.status === 403) {
-        // No autorizado, lanzar error especial pero no desloguear
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'No tienes permisos para realizar esta acción.');
-      }
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        const errorMessage = (errorData as any).message || `HTTP error! status: ${response.status}`;
+        const isAuthEndpoint = endpoint.includes('/auth/login') || endpoint.includes('/auth/register');
+
+        if (!isAuthEndpoint && this.isAuthTokenError(response.status, errorMessage)) {
+          await this.forceRelogin(String(errorMessage));
+          throw new Error('Tu sesión venció. Vuelve a iniciar sesión.');
+        }
+
+        if (response.status === 403) {
+          throw new Error((errorData as any).message || 'No tienes permisos para realizar esta acción.');
+        }
+
         console.error('API error response:', errorData);
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();

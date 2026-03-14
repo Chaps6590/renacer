@@ -29,38 +29,68 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const clearSession = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    setUser(null);
+  };
+
+  const normalizeUser = (rawUser: any): User => ({
+    ...rawUser,
+    role: String(rawUser.role || '').toLowerCase() as UserRole,
+  });
+
   useEffect(() => {
     // Verificar si hay una sesión guardada completa
-    const refreshUser = () => {
+    const refreshUser = async () => {
       const savedUser = localStorage.getItem('user');
       const savedToken = localStorage.getItem('token');
+
       if (savedUser && savedToken) {
         try {
-          const parsedUser = JSON.parse(savedUser);
-          const normalizedUser: User = {
-            ...parsedUser,
-            role: String(parsedUser.role || '').toLowerCase() as UserRole,
-          };
+          const normalizedUser = normalizeUser(JSON.parse(savedUser));
           setUser(normalizedUser);
-          localStorage.setItem('user', JSON.stringify(normalizedUser));
+
+          // Revalidar con backend para detectar token vencido o cambios de rol
+          try {
+            const me: any = await api.getMe();
+            const refreshedUser: User = normalizeUser({
+              ...normalizedUser,
+              id: me.id,
+              name: me.name,
+              email: me.email,
+              role: me.role,
+            });
+            setUser(refreshedUser);
+            localStorage.setItem('user', JSON.stringify(refreshedUser));
+          } catch (error) {
+            console.warn('[AuthContext] Session validation failed, clearing session...');
+            clearSession();
+          }
         } catch (error) {
           console.warn('[AuthContext] Invalid saved user, clearing session...');
-          localStorage.removeItem('user');
-          localStorage.removeItem('token');
-          setUser(null);
+          clearSession();
         }
       } else if (savedUser || savedToken) {
         // Si solo hay uno de los dos, la sesión está corrupta
         console.warn('[AuthContext] Incomplete session found, clearing...');
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        setUser(null);
+        clearSession();
       }
+
       setIsLoading(false);
     };
+
+    const handleForcedLogout = () => {
+      clearSession();
+    };
+
     refreshUser();
     window.addEventListener('storage', refreshUser);
-    return () => window.removeEventListener('storage', refreshUser);
+    window.addEventListener('renacer:force-logout', handleForcedLogout as EventListener);
+    return () => {
+      window.removeEventListener('storage', refreshUser);
+      window.removeEventListener('renacer:force-logout', handleForcedLogout as EventListener);
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -83,8 +113,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
-    } catch (error) {
-      throw new Error('Error al iniciar sesión');
+    } catch (error: any) {
+      throw new Error(error?.message || 'Error al iniciar sesión');
     } finally {
       setIsLoading(false);
     }
@@ -111,17 +141,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setUser(newUser);
       localStorage.setItem('user', JSON.stringify(newUser));
-    } catch (error) {
-      throw new Error('Error al registrarse');
+    } catch (error: any) {
+      throw new Error(error?.message || 'Error al registrarse');
     } finally {
       setIsLoading(false);
     }
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    clearSession();
   };
 
   const value = {

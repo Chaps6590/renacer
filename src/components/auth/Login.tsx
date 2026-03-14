@@ -19,6 +19,14 @@ export const Login: React.FC = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('reason') === 'session-expired') {
+      setError('Tu sesión venció. Volvé a iniciar sesión.');
+      window.history.replaceState({}, '', '/login');
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -27,8 +35,8 @@ export const Login: React.FC = () => {
     try {
       await login(email, password);
       navigate('/dashboard', { replace: true });
-    } catch (err) {
-      setError('Credenciales inválidas. Por favor, intenta nuevamente.');
+    } catch (err: any) {
+      setError(err?.message || 'Credenciales inválidas. Por favor, intenta nuevamente.');
     } finally {
       setLoading(false);
     }
