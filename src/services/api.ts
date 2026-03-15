@@ -423,15 +423,82 @@ class ApiService {
     });
   }
 
-  async getAuditLogs(limit = 200, onlyFailures = false) {
+  async getAuditLogs(options: {
+    limit?: number;
+    onlyFailures?: boolean;
+    outcome?: 'SUCCESS' | 'FAILURE' | 'UNKNOWN' | '';
+    action?: string;
+    user?: string;
+    pathContains?: string;
+    from?: string;
+    to?: string;
+  } = {}) {
+    const {
+      limit = 200,
+      onlyFailures = false,
+      outcome = '',
+      action = '',
+      user = '',
+      pathContains = '',
+      from = '',
+      to = '',
+    } = options;
+
     const params = new URLSearchParams({
       limit: String(limit),
       onlyFailures: String(onlyFailures),
     });
 
+    if (outcome) params.set('outcome', outcome);
+    if (action.trim()) params.set('action', action.trim());
+    if (user.trim()) params.set('user', user.trim());
+    if (pathContains.trim()) params.set('pathContains', pathContains.trim());
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
+
     return this.request(`/audit?${params.toString()}`, {
       method: 'GET',
     });
+  }
+
+  async downloadAuditCsv(options: {
+    limit?: number;
+    onlyFailures?: boolean;
+    outcome?: 'SUCCESS' | 'FAILURE' | 'UNKNOWN' | '';
+    action?: string;
+    user?: string;
+    pathContains?: string;
+    from?: string;
+    to?: string;
+  } = {}) {
+    const token = localStorage.getItem('token');
+    const params = new URLSearchParams({
+      limit: String(options.limit ?? 200),
+      onlyFailures: String(options.onlyFailures ?? false),
+      format: 'csv',
+    });
+
+    if (options.outcome) params.set('outcome', options.outcome);
+    if (options.action?.trim()) params.set('action', options.action.trim());
+    if (options.user?.trim()) params.set('user', options.user.trim());
+    if (options.pathContains?.trim()) params.set('pathContains', options.pathContains.trim());
+    if (options.from) params.set('from', options.from);
+    if (options.to) params.set('to', options.to);
+
+    const response = await fetch(`${this.baseUrl}/audit?${params.toString()}`, {
+      method: 'GET',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error((errorData as any).message || `HTTP error! status: ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    return blob;
   }
 }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { RefreshCw, AlertTriangle, ShieldCheck, Filter, Clock3 } from 'lucide-react';
+import { RefreshCw, AlertTriangle, ShieldCheck, Filter, Clock3, Download, FileJson } from 'lucide-react';
 import { api } from '../../services/api';
 import { AuditLogEntry } from '../../types';
 
@@ -16,13 +16,28 @@ const AdminAuditLogs: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [onlyFailures, setOnlyFailures] = useState(false);
   const [limit, setLimit] = useState(200);
+  const [userFilter, setUserFilter] = useState('');
+  const [actionFilter, setActionFilter] = useState('');
+  const [pathFilter, setPathFilter] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [outcomeFilter, setOutcomeFilter] = useState<'' | 'SUCCESS' | 'FAILURE' | 'UNKNOWN'>('');
 
   const fetchLogs = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await api.getAuditLogs(limit, onlyFailures) as { logs?: AuditLogEntry[] };
+      const response = await api.getAuditLogs({
+        limit,
+        onlyFailures,
+        outcome: outcomeFilter,
+        action: actionFilter,
+        user: userFilter,
+        pathContains: pathFilter,
+        from: fromDate ? `${fromDate}T00:00:00.000Z` : '',
+        to: toDate ? `${toDate}T23:59:59.999Z` : '',
+      }) as { logs?: AuditLogEntry[] };
       setLogs(response.logs || []);
     } catch (err: any) {
       console.error(err);
@@ -32,9 +47,47 @@ const AdminAuditLogs: React.FC = () => {
     }
   };
 
+  const downloadCsv = async () => {
+    try {
+      const blob = await api.downloadAuditCsv({
+        limit,
+        onlyFailures,
+        outcome: outcomeFilter,
+        action: actionFilter,
+        user: userFilter,
+        pathContains: pathFilter,
+        from: fromDate ? `${fromDate}T00:00:00.000Z` : '',
+        to: toDate ? `${toDate}T23:59:59.999Z` : '',
+      });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `audit-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      setError(err.message || 'No se pudo descargar el CSV.');
+    }
+  };
+
+  const downloadJson = () => {
+    const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `audit-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     fetchLogs();
-  }, [onlyFailures, limit]);
+  }, [onlyFailures, limit, outcomeFilter]);
 
   const failureCount = useMemo(() => logs.filter((log) => log.outcome === 'FAILURE').length, [logs]);
 
@@ -59,8 +112,8 @@ const AdminAuditLogs: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-3">
-          <div className="md:col-span-2">
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div>
             <label htmlFor="limit" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cantidad de registros</label>
             <select
               id="limit"
@@ -75,7 +128,65 @@ const AdminAuditLogs: React.FC = () => {
             </select>
           </div>
 
-          <div className="md:col-span-1 flex items-end">
+          <div>
+            <label htmlFor="outcome" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Resultado</label>
+            <select
+              id="outcome"
+              className="input"
+              value={outcomeFilter}
+              onChange={(e) => setOutcomeFilter(e.target.value as '' | 'SUCCESS' | 'FAILURE' | 'UNKNOWN')}
+            >
+              <option value="">Todos</option>
+              <option value="SUCCESS">Éxito</option>
+              <option value="FAILURE">Fallo</option>
+              <option value="UNKNOWN">Sin clasificar</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="userFilter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Usuario (email)</label>
+            <input
+              id="userFilter"
+              className="input"
+              placeholder="ej: admin@..."
+              value={userFilter}
+              onChange={(e) => setUserFilter(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="actionFilter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Acción exacta</label>
+            <input
+              id="actionFilter"
+              className="input"
+              placeholder="ej: POST_USERS"
+              value={actionFilter}
+              onChange={(e) => setActionFilter(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="pathFilter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Path contiene</label>
+            <input
+              id="pathFilter"
+              className="input"
+              placeholder="ej: /api/celulas"
+              value={pathFilter}
+              onChange={(e) => setPathFilter(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="fromDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Desde</label>
+            <input id="fromDate" type="date" className="input" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+          </div>
+
+          <div>
+            <label htmlFor="toDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Hasta</label>
+            <input id="toDate" type="date" className="input" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+          </div>
+
+          <div className="flex items-end">
             <label className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <input
                 type="checkbox"
@@ -88,10 +199,18 @@ const AdminAuditLogs: React.FC = () => {
             </label>
           </div>
 
-          <div className="md:col-span-1 flex items-end">
+          <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
             <button className="btn btn-secondary w-full flex items-center justify-center gap-2" onClick={fetchLogs} disabled={loading}>
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              Refrescar
+              Aplicar filtros
+            </button>
+            <button className="btn btn-secondary w-full flex items-center justify-center gap-2" onClick={downloadCsv}>
+              <Download className="w-4 h-4" />
+              Descargar CSV
+            </button>
+            <button className="btn btn-secondary w-full flex items-center justify-center gap-2" onClick={downloadJson}>
+              <FileJson className="w-4 h-4" />
+              Descargar JSON
             </button>
           </div>
         </div>
