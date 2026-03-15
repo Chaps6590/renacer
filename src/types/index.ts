@@ -170,3 +170,19 @@ export interface PeticionPastor {
   resuelta: boolean;
   fechaResolucion?: string;
 }
+
+export interface AuditLogEntry {
+  timestamp?: string;
+  event: string;
+  action: string;
+  outcome: 'SUCCESS' | 'FAILURE' | 'UNKNOWN';
+  reason?: string;
+  method?: string;
+  path?: string;
+  statusCode?: number;
+  userId?: string;
+  userEmail?: string;
+  userRole?: string;
+  ip?: string;
+  durationMs?: number;
+}

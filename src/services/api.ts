@@ -422,6 +422,17 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  async getAuditLogs(limit = 200, onlyFailures = false) {
+    const params = new URLSearchParams({
+      limit: String(limit),
+      onlyFailures: String(onlyFailures),
+    });
+
+    return this.request(`/audit?${params.toString()}`, {
+      method: 'GET',
+    });
+  }
 }
 
 export const api = new ApiService(API_BASE);
