@@ -35,6 +35,13 @@ interface DataContextType {
     escuelaLiderazgo?: boolean;
     fechaEscuelaLiderazgo?: string;
   }) => Promise<void>;
+  updateMiembroDatos: (celulaId: string, miembroId: string, data: {
+    name?: string;
+    phone?: string;
+    email?: string;
+    direccion?: string;
+    fechaNacimiento?: string;
+  }) => Promise<void>;
 
   // Funciones de asistencia
   registrarAsistencia: (asistencia: AsistenciaRecord) => Promise<void>;
@@ -553,6 +560,36 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     }
   };
 
+  const updateMiembroDatos = async (celulaId: string, miembroId: string, data: {
+    name?: string;
+    phone?: string;
+    email?: string;
+    direccion?: string;
+    fechaNacimiento?: string;
+  }) => {
+    try {
+      const res = await api.updateMiembro(celulaId, miembroId, data) as any;
+      const m = res.miembro || res;
+      const miembroActualizado: Miembro = {
+        ...m,
+        name: m.nombre,
+        phone: m.telefono
+      };
+      setCelulas(celulas.map(c => {
+        if (c.id === celulaId) {
+          return {
+            ...c,
+            miembros: c.miembros.map(miembro => miembro.id === miembroId ? miembroActualizado : miembro)
+          };
+        }
+        return c;
+      }));
+    } catch (error) {
+      console.error('Error updating miembro datos:', error);
+      throw error;
+    }
+  };
+
   const updateMiembroFormacion = async (celulaId: string, miembroId: string, data: {
     isBautizado?: boolean;
     tieneDiscipulado?: boolean;
@@ -884,6 +921,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     removeColiderFromCelula,
     updateMiembroRol,
     updateMiembroFormacion,
+    updateMiembroDatos,
     registrarAsistencia,
     actualizarMotivoFalta,
     registrarAccionPastoral,

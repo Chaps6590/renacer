@@ -212,7 +212,7 @@ const AddMiembroModal: React.FC<AddMiembroModalProps> = ({ isOpen, onClose, onAd
 
 const LiderDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { celulas, addMiembroToCelula, removeMiembroFromCelula, removeColiderFromCelula, updateMiembroRol, updateMiembroFormacion, getPendientesAsistencia, noticias, recargarCelulas } = useData();
+  const { celulas, addMiembroToCelula, removeMiembroFromCelula, removeColiderFromCelula, updateMiembroRol, updateMiembroFormacion, updateMiembroDatos, getPendientesAsistencia, noticias, recargarCelulas } = useData();
   const [showAsistencia, setShowAsistencia] = useState(false);
   const [showAddMiembro, setShowAddMiembro] = useState(false);
   const [showPendientes, setShowPendientes] = useState(false);
@@ -433,12 +433,52 @@ const LiderDashboard: React.FC = () => {
   };
 
   // Nuevas funciones para acciones mejoradas
+  const handleEditDatos = (miembro: any) => {
+    setSelectedMiembro(miembro);
+    setEditMiembroData({
+      name: miembro.name || '',
+      phone: miembro.phone || '',
+      email: miembro.email || '',
+      direccion: miembro.direccion || '',
+      fechaNacimiento: miembro.fechaNacimiento ? String(miembro.fechaNacimiento).slice(0, 10) : ''
+    });
+    setShowEditMiembro(true);
+  };
+
+  const confirmEditDatos = async () => {
+    if (!selectedMiembro || !miCelula) return;
+    try {
+      await updateMiembroDatos(miCelula.id, selectedMiembro.id, {
+        name: editMiembroData.name.trim() || undefined,
+        phone: editMiembroData.phone.trim() || undefined,
+        email: editMiembroData.email.trim() || undefined,
+        direccion: editMiembroData.direccion.trim() || undefined,
+        fechaNacimiento: editMiembroData.fechaNacimiento || undefined
+      });
+      setShowEditMiembro(false);
+      setSelectedMiembro(null);
+    } catch (error: any) {
+      setDeleteError(error?.message || 'Error al editar los datos del miembro.');
+      setShowEditMiembro(false);
+      setSelectedMiembro(null);
+      setTimeout(() => setDeleteError(null), 6000);
+    }
+  };
+
   const handleDeleteMiembro = (miembro: any) => {
     setSelectedMiembro(miembro);
     setShowDeleteConfirm(true);
   };
 
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [showEditMiembro, setShowEditMiembro] = useState(false);
+  const [editMiembroData, setEditMiembroData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    direccion: '',
+    fechaNacimiento: ''
+  });
   const confirmDeleteMiembro = async () => {
     if (selectedMiembro && miCelula && canDeleteMembers) {
       const isLiderPrincipal = selectedMiembro.id === miCelula.liderId;
@@ -1394,6 +1434,84 @@ const LiderDashboard: React.FC = () => {
           onClose={() => setShowCumpleanos(false)}
         />
 
+        {/* Modal de editar datos de miembro */}
+        {showEditMiembro && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+            <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-4 text-center">
+                <h3 className="text-xl font-bold text-white flex items-center justify-center gap-2">
+                  <Edit className="w-5 h-5" />
+                  Editar Datos
+                </h3>
+                <p className="text-violet-100 text-sm mt-1">{selectedMiembro?.name}</p>
+              </div>
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Nombre Completo *</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    value={editMiembroData.name}
+                    onChange={(e) => setEditMiembroData(prev => ({ ...prev, name: e.target.value }))}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Teléfono</label>
+                  <input
+                    type="tel"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    value={editMiembroData.phone}
+                    onChange={(e) => setEditMiembroData(prev => ({ ...prev, phone: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Fecha de Nacimiento</label>
+                  <input
+                    type="date"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    value={editMiembroData.fechaNacimiento}
+                    onChange={(e) => setEditMiembroData(prev => ({ ...prev, fechaNacimiento: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Correo Electrónico</label>
+                  <input
+                    type="email"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    value={editMiembroData.email}
+                    onChange={(e) => setEditMiembroData(prev => ({ ...prev, email: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Dirección</label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    value={editMiembroData.direccion}
+                    onChange={(e) => setEditMiembroData(prev => ({ ...prev, direccion: e.target.value }))}
+                  />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={() => { setShowEditMiembro(false); setSelectedMiembro(null); }}
+                    className="flex-1 px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:bg-gray-700 transition"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={confirmEditDatos}
+                    disabled={!editMiembroData.name.trim()}
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 disabled:opacity-50 text-white font-semibold rounded-xl transition shadow-lg"
+                  >
+                    Guardar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Modal de detalle de miembro (móvil) */}
         {miembroDetalle && (
           <div
@@ -1567,55 +1685,78 @@ const LiderDashboard: React.FC = () => {
                   const canDeleteByRole = isTimoteo ? ['nuevo', 'visita', 'miembro'].includes(rolDetalle) : true;
                   const canDeleteThisDetalle = canDeleteMembers && !isLiderPrincipalDetalle && miembroDetalle.id !== user?.id && canDeleteByRole && !isUserColiderDetalle;
                   const canEditFormacionDetalle = canUpdateFormacion && rolDetalle !== 'lider' && !isUserColiderDetalle;
+                  const canEditDatosDetalle = canChangeRoles && rolDetalle !== 'lider' && !isUserColiderDetalle;
                   return (
-                    <div className="flex gap-3">
-                      <button
-                        disabled={!canEditFormacionDetalle}
-                        onClick={() => {
-                          if (!canEditFormacionDetalle) return;
-                          handleEditFormacion(miembroDetalle);
-                        }}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm active:scale-95 transition-transform ${
-                          canEditFormacionDetalle
-                            ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700'
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                        }`}
-                      >
-                        <Edit className="w-4 h-4" />
-                        Formación
-                      </button>
-                      <button
-                        disabled={!canEditThisDetalle}
-                        onClick={() => {
-                          if (!canEditThisDetalle) return;
-                          setMiembroDetalle(null);
-                          handleChangeRole(miembroDetalle);
-                        }}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm active:scale-95 transition-transform ${
-                          canEditThisDetalle
-                            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-700'
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                        }`}
-                      >
-                        <Edit className="w-4 h-4" />
-                        Cambiar Rol
-                      </button>
-                      <button
-                        disabled={!canDeleteThisDetalle}
-                        onClick={() => {
-                          if (!canDeleteThisDetalle) return;
-                          setMiembroDetalle(null);
-                          handleDeleteMiembro(miembroDetalle);
-                        }}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm active:scale-95 transition-transform ${
-                          canDeleteThisDetalle
-                            ? 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-700'
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                        }`}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Eliminar
-                      </button>
+                    <div className="space-y-2">
+                      {/* Fila 1: Editar datos y Formación */}
+                      <div className="flex gap-2">
+                        <button
+                          disabled={!canEditDatosDetalle}
+                          onClick={() => {
+                            if (!canEditDatosDetalle) return;
+                            setMiembroDetalle(null);
+                            handleEditDatos(miembroDetalle);
+                          }}
+                          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm active:scale-95 transition-transform ${
+                            canEditDatosDetalle
+                              ? 'bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-300 border border-violet-200 dark:border-violet-700'
+                              : 'bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                          }`}
+                        >
+                          <Edit className="w-4 h-4" />
+                          Editar
+                        </button>
+                        <button
+                          disabled={!canEditFormacionDetalle}
+                          onClick={() => {
+                            if (!canEditFormacionDetalle) return;
+                            handleEditFormacion(miembroDetalle);
+                          }}
+                          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm active:scale-95 transition-transform ${
+                            canEditFormacionDetalle
+                              ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700'
+                              : 'bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                          }`}
+                        >
+                          <Edit className="w-4 h-4" />
+                          Formación
+                        </button>
+                      </div>
+                      {/* Fila 2: Cambiar Rol y Eliminar */}
+                      <div className="flex gap-2">
+                        <button
+                          disabled={!canEditThisDetalle}
+                          onClick={() => {
+                            if (!canEditThisDetalle) return;
+                            setMiembroDetalle(null);
+                            handleChangeRole(miembroDetalle);
+                          }}
+                          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm active:scale-95 transition-transform ${
+                            canEditThisDetalle
+                              ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-700'
+                              : 'bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                          }`}
+                        >
+                          <Edit className="w-4 h-4" />
+                          Cambiar Rol
+                        </button>
+                        <button
+                          disabled={!canDeleteThisDetalle}
+                          onClick={() => {
+                            if (!canDeleteThisDetalle) return;
+                            setMiembroDetalle(null);
+                            handleDeleteMiembro(miembroDetalle);
+                          }}
+                          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-semibold text-sm active:scale-95 transition-transform ${
+                            canDeleteThisDetalle
+                              ? 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-700'
+                              : 'bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                          }`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Eliminar
+                        </button>
+                      </div>
                     </div>
                   );
                 })()}
