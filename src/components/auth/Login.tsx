@@ -47,36 +47,39 @@ export const Login: React.FC = () => {
 
       {/* ── Banner de migración ───────────────────────────────────────── */}
       <div className="fixed top-0 inset-x-0 z-50">
-        <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white px-4 py-3 shadow-lg">
+        <div className="bg-gradient-to-r from-indigo-700 via-blue-700 to-indigo-800 text-white px-4 py-4 shadow-xl border-b-2 border-indigo-400">
           <div className="max-w-2xl mx-auto text-center">
-            <p className="text-sm font-semibold mb-0.5">
+            <p className="text-base font-bold mb-1">
               🎉 ¡Renacer se mudó a una nueva plataforma!
             </p>
-            <p className="text-xs text-blue-200 mb-2">
-              Ya podés acceder con tus mismos datos en nuestra nueva app Kairos.
+            <p className="text-sm text-blue-200 mb-3">
+              Ya podés acceder con tus mismos datos en nuestra nueva app <span className="font-bold text-white">Kairos</span>.
             </p>
-            <a
-              href="https://kairos.chapstech.cloud/login/renacer"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 bg-white text-blue-700 font-bold text-xs px-4 py-2 rounded-full shadow hover:bg-blue-50 transition"
-            >
-              Ir a la nueva app
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+            <div className="relative inline-flex">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-300 opacity-50"></span>
+              <a
+                href="https://kairos-app.net/login/renacer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative inline-flex items-center gap-1.5 bg-yellow-400 text-indigo-900 font-bold text-sm px-5 py-2.5 rounded-full shadow-lg hover:bg-yellow-300 transition"
+              >
+                Ir a la nueva app
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Background Pattern */}
-      <div className="absolute inset-0 overflow-hidden pt-20">
+      <div className="absolute inset-0 overflow-hidden pt-28">
         <div className="absolute -top-4 -left-4 w-24 h-24 bg-sky-200 dark:bg-sky-900 rounded-full opacity-20 animate-pulse"></div>
         <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-blue-300 dark:bg-blue-900 rounded-full opacity-15 animate-pulse delay-1000"></div>
         <div className="absolute bottom-1/4 left-1/3 w-20 h-20 bg-sky-400 dark:bg-sky-800 rounded-full opacity-10 animate-pulse delay-2000"></div>
       </div>
 
       {/* Main Container */}
-      <div className="relative bg-white/80 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700 w-full max-w-md overflow-hidden mt-20">
+      <div className="relative bg-white/80 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700 w-full max-w-md overflow-hidden mt-28">
         {/* Header with Gradient */}
         <div className="relative bg-gradient-to-r from-blue-600 to-sky-600 px-8 pt-12 pb-8 text-center">
           {/* Subtle Pattern Overlay */}
