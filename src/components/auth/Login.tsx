@@ -10,6 +10,7 @@ export const Login: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showDeprecationAlert, setShowDeprecationAlert] = useState(true);
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
 
@@ -44,6 +45,46 @@ export const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+
+      {/* ── Modal de plataforma deprecada ──────────────────────────────── */}
+      {showDeprecationAlert && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-red-200 dark:border-red-800 w-full max-w-md overflow-hidden">
+            <div className="bg-gradient-to-r from-red-600 to-rose-600 px-6 py-5 text-white text-center">
+              <div className="text-4xl mb-2">⚠️</div>
+              <h2 className="text-xl font-bold">Plataforma fuera de servicio</h2>
+            </div>
+            <div className="px-6 py-6 text-center space-y-3">
+              <p className="text-gray-800 dark:text-gray-100 font-semibold text-base">
+                Esta plataforma ya no está activa.
+              </p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                Cualquier acción que realices aquí — registros, asistencias, donaciones — <span className="font-semibold text-red-600 dark:text-red-400">ya no tendrá efecto</span> ni será procesada.
+              </p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                Por favor, usá la nueva app <span className="font-bold text-indigo-600 dark:text-indigo-400">Kairos</span> para continuar gestionando los datos de tu iglesia.
+              </p>
+              <a
+                href="https://kairos-app.net/login/renacer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-indigo-900 font-bold text-sm px-6 py-3 rounded-full shadow-md transition"
+              >
+                Ir a Kairos
+                <ExternalLink className="w-4 h-4" />
+              </a>
+              <div className="pt-2">
+                <button
+                  onClick={() => setShowDeprecationAlert(false)}
+                  className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 underline transition"
+                >
+                  Entendido, continuar de todas formas
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Banner de migración ───────────────────────────────────────── */}
       <div className="fixed top-0 inset-x-0 z-50">
