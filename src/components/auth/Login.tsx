@@ -64,15 +64,13 @@ export const Login: React.FC = () => {
               <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                 Por favor, usá la nueva app <span className="font-bold text-indigo-600 dark:text-indigo-400">Kairos</span> para continuar gestionando los datos de tu iglesia.
               </p>
-              <a
-                href="https://kairos-app.net/login/renacer"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => window.open('https://kairos-app.net/login/renacer', '_blank', 'noopener,noreferrer')}
                 className="mt-2 inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-indigo-900 font-bold text-sm px-6 py-3 rounded-full shadow-md transition"
               >
                 Ir a Kairos
                 <ExternalLink className="w-4 h-4" />
-              </a>
+              </button>
               <div className="pt-2">
                 <button
                   onClick={() => setShowDeprecationAlert(false)}
@@ -98,15 +96,13 @@ export const Login: React.FC = () => {
             </p>
             <div className="relative inline-flex">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-300 opacity-50"></span>
-              <a
-                href="https://kairos-app.net/login/renacer"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => window.open('https://kairos-app.net/login/renacer', '_blank', 'noopener,noreferrer')}
                 className="relative inline-flex items-center gap-1.5 bg-yellow-400 text-indigo-900 font-bold text-sm px-5 py-2.5 rounded-full shadow-lg hover:bg-yellow-300 transition"
               >
                 Ir a la nueva app
                 <ExternalLink className="w-4 h-4" />
-              </a>
+              </button>
             </div>
           </div>
         </div>
